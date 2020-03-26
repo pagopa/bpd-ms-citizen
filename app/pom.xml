@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bpd-citizen</artifactId>
+        <groupId>eu.sia.bpd</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>citizen-app</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>eu.sia.bpd</groupId>
+            <artifactId>citizen-api-web</artifactId>
+            <version>${meda.demo.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <finalName>${project.parent.artifactId}-${project.parent.version}-FATJAR</finalName>
+                    <outputDirectory>../target</outputDirectory>
+                </configuration>
+            </plugin>
+<!--            TODO: a cosa serve?-->
+<!--            <plugin>-->
+<!--                <groupId>pl.project13.maven</groupId>-->
+<!--                <artifactId>git-commit-id-plugin</artifactId>-->
+<!--                <version>4.0.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>get-the-git-infos</id>-->
+<!--                        <goals>-->
+<!--                            <goal>revision</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>-->
+<!--                    <prefix>git</prefix>-->
+<!--                    <verbose>false</verbose>-->
+<!--                    <generateGitPropertiesFile>true</generateGitPropertiesFile>-->
+<!--                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties-->
+<!--                    </generateGitPropertiesFilename>-->
+<!--                    <excludeProperties>-->
+<!--                        <excludeProperty>git.build.host</excludeProperty>-->
+<!--                        <excludeProperty>.*\.user\..*</excludeProperty>-->
+<!--                    </excludeProperties>-->
+<!--                    <gitDescribe>-->
+<!--                        <skip>false</skip>-->
+<!--                        <always>false</always>-->
+<!--                        <dirty>-dirty</dirty>-->
+<!--                    </gitDescribe>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+        </plugins>
+    </build>
+
+</project>
