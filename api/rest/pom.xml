@@ -2,18 +2,13 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>it.gov.pagopa.bpd.ms</groupId>
-        <artifactId>citizen</artifactId>
+        <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
+        <artifactId>citizen-api</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>${project.parent.groupId}.citizen</groupId>
-    <artifactId>${project.parent.artifactId}-integration</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>jpa</module>
-    </modules>
+    <groupId>${project.parent.groupId}.api</groupId>
+    <artifactId>${project.parent.artifactId}-rest</artifactId>
 
 </project>

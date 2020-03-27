@@ -1,2 +1,0 @@
-# bpd-citizen
-bpd-citizen

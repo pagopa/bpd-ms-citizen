@@ -1,5 +1,5 @@
 server:
-  port: ${DEMO_PORT:8082}
+  port: ${CITIZEN_PORT:8080}
 
 spring:
   application:
@@ -16,6 +16,11 @@ info:
 error-manager:
   enabled: true
 
+meda:
+  core:
+    sessioncontext:
+      enabled: false
+
 logging:
   level:
-    eu.sia.bpd.demo: ${LOG_LEVEL_DEMO:DEBUG}
+    it.gov.pagopa.bpd..citizen: ${LOG_LEVEL_CITIZEN:DEBUG}

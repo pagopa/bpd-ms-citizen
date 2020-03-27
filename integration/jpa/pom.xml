@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
         <artifactId>citizen-integration</artifactId>
-        <groupId>eu.sia.bpd</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>citizen-integration-jpa</artifactId>
+    <groupId>${project.parent.groupId}.integration</groupId>
+    <artifactId>${project.parent.artifactId}-jpa</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>eu.sia.meda</groupId>
             <artifactId>meda-arch-jpa</artifactId>
         </dependency>
-        <!--        inglobare nel dependency management ???-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.11</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
