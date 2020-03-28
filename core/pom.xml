@@ -3,18 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>it.gov.pagopa.bpd.ms</groupId>
-        <artifactId>citizen</artifactId>
+        <artifactId>bpd-citizen</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>${project.parent.groupId}.citizen</groupId>
-    <artifactId>${project.parent.artifactId}-core</artifactId>
+    <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
+    <artifactId>bpd-citizen-core</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
-            <artifactId>citizen-integration-jpa</artifactId>
+            <artifactId>bpd-citizen-integration-jpa</artifactId>
             <version>${bpd.citizen.version}</version>
         </dependency>
     </dependencies>
