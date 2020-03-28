@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.command;
+package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.model.entity.Citizen;
 

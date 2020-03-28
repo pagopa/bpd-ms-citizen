@@ -2,10 +2,11 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
-import it.gov.pagopa.bpd.citizen.command.CitizenDAOService;
+import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.dto.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.entity.Citizen;
 import it.gov.pagopa.bpd.citizen.model.resource.CitizenResource;
+import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,21 +17,28 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     private final CitizenDAOService citizenDAOService;
     private final CitizenResourceAssembler citizenResourceAssembler;
+    private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
 
 
     @Autowired
-    public BpdCitizenControllerImpl(CitizenDAOService citizenDAOService, CitizenResourceAssembler citizenResourceAssembler) {
+    public BpdCitizenControllerImpl(CitizenDAOService citizenDAOService,
+                                    CitizenResourceAssembler citizenResourceAssembler,
+                                    ModelFactory<CitizenDTO, Citizen> citizenFactory) {
         this.citizenDAOService = citizenDAOService;
         this.citizenResourceAssembler = citizenResourceAssembler;
+        this.citizenFactory = citizenFactory;
     }
 
     @Override
     public CitizenResource insert(CitizenDTO citizen) {
         System.out.println("Start insert");
 
-        final Citizen entity = citizen.toEntity();
-        Citizen citizenEntity = citizenDAOService.insert(entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+//        final Citizen entity = citizen.toEntity();
+//        Citizen citizenEntity = citizenDAOService.insert(entity);
+//        return citizenResourceAssembler.toResource(citizenEntity);
+
+        final Citizen entity = citizenFactory.createModel(citizen);
+        return citizenResourceAssembler.toResource(entity);
     }
 
     @Override
