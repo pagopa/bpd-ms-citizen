@@ -1,19 +1,14 @@
 package it.gov.pagopa.bpd.citizen.model.resource;
 
-import eu.sia.meda.core.resource.BaseResource;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.hateoas.core.Relation;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Relation(value = "citizenResource", collectionRelation = "citizenResources")
-public class CitizenResource extends BaseResource {
+@EqualsAndHashCode(of = "fiscalCode", callSuper = false)
+public class CitizenResource {
 
     private String fiscalCode;
     private String payoffInstr;

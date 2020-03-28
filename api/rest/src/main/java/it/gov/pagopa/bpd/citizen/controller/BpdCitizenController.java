@@ -13,7 +13,7 @@ public interface BpdCitizenController {
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    CitizenResource insert(@RequestBody CitizenDTO citizen);
+    CitizenResource create(@RequestBody CitizenDTO citizen);
 
     @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)

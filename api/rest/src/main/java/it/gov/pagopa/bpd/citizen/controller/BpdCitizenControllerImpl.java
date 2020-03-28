@@ -30,15 +30,13 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource insert(CitizenDTO citizen) {
-        System.out.println("Start insert");
+    public CitizenResource create(CitizenDTO citizen) {
+        System.out.println("Start create");
 
-//        final Citizen entity = citizen.toEntity();
-//        Citizen citizenEntity = citizenDAOService.insert(entity);
-//        return citizenResourceAssembler.toResource(citizenEntity);
+        final Citizen entity = citizen.toEntity();
+        Citizen citizenEntity = citizenDAOService.insert(entity);
 
-        final Citizen entity = citizenFactory.createModel(citizen);
-        return citizenResourceAssembler.toResource(entity);
+        return citizenResourceAssembler.toResource(citizenEntity);
     }
 
     @Override

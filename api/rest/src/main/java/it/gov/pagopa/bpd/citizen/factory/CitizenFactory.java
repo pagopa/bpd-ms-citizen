@@ -13,7 +13,7 @@ class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
         result.setFiscalCode(dto.getFiscalCode());
         result.setPayoffInstr(dto.getPayoffInstr());
         result.setPayoffInstrType(dto.getPayoffInstrType());
-//        result.setTimestamp(dto.getTimestamp());
+        result.setTimestamp(dto.getTimestamp());
 
         return result;
     }
