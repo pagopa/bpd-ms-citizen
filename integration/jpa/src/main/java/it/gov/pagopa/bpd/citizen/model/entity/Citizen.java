@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -29,5 +29,5 @@ public class Citizen implements Serializable {
     private String payoffInstrType;
 
     @Column(name = "timestamp_t")
-    private Date timestamp;
+    private ZonedDateTime timestamp;
 }

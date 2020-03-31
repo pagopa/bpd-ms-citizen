@@ -36,6 +36,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         final Citizen entity = citizen.toEntity();
         Citizen citizenEntity = citizenDAOService.insert(entity);
 
+
         return citizenResourceAssembler.toResource(citizenEntity);
     }
 
