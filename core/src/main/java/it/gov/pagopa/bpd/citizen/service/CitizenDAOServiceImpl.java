@@ -22,6 +22,9 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
 
     @Override
     public Citizen insert(Citizen cz) {
+        if (citizenDAO.existsById(cz.getFiscalCode())) {
+            throw new RuntimeException("Già esistente");
+        }
         return citizenDAO.save(cz);
     }
 

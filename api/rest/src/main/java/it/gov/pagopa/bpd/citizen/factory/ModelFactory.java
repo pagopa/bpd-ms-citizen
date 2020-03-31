@@ -1,8 +1,6 @@
 package it.gov.pagopa.bpd.citizen.factory;
 
-import it.gov.pagopa.bpd.citizen.model.dto.DTO;
-
-public interface ModelFactory<T extends DTO, U> {
+public interface ModelFactory<T, U> {
 
     U createModel(T dto);
 

@@ -14,4 +14,8 @@ class CitizenDAOImpl extends JPAConnectorImpl<Citizen, String> implements Citize
     public CitizenDAOImpl(EntityManager em) {
         super(Citizen.class, em);
     }
+
 }
+
+
+
