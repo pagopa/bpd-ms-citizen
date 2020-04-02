@@ -25,6 +25,7 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
         if (citizenDAO.existsById(cz.getFiscalCode())) {
             throw new RuntimeException("Già esistente");
         }
+        cz.setInsertUser(cz.getFiscalCode());
         return citizenDAO.save(cz);
     }
 
@@ -35,6 +36,7 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
 
     @Override
     public Citizen update(Citizen cz) {
+        cz.setUpdateUser(cz.getFiscalCode());
         return citizenDAO.save(cz);
     }
 

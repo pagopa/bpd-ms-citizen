@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
@@ -25,4 +27,15 @@ public abstract class BaseEntity implements Serializable {
 
     @Column(name = "ENABLED_B")
     private boolean enabled = true;
+
+    @PrePersist
+    protected void onCreate() {
+        insertDate = ZonedDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateDate = ZonedDateTime.now();
+    }
+
 }

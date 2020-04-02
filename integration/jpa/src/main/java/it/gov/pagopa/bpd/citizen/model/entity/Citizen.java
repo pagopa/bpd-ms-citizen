@@ -29,4 +29,5 @@ public class Citizen extends BaseEntity {
 
     @Column(name = "timestamp_t")
     private ZonedDateTime timestamp;
+
 }
