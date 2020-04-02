@@ -33,7 +33,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     public CitizenResource create(CitizenDTO citizen) {
         System.out.println("Start create");
 
-        final Citizen entity = citizen.toEntity();
+        final Citizen entity = citizenFactory.createModel(citizen);
         Citizen citizenEntity = citizenDAOService.insert(entity);
 
 
@@ -53,7 +53,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     public CitizenResource update(CitizenDTO citizen) {
         System.out.println("Start update");
 
-        final Citizen entity = citizen.toEntity();
+        final Citizen entity = citizenFactory.createModel(citizen);
         Citizen citizenEntity = citizenDAOService.update(entity);
         return citizenResourceAssembler.toResource(citizenEntity);
     }

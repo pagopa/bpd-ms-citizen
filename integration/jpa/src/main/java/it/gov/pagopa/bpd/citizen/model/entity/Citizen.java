@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -16,7 +15,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"fiscalCode"}, callSuper = false)
 @Table(name = "bpd_citizen", schema = "\"BPD_TEST\"")
-public class Citizen implements Serializable {
+public class Citizen extends BaseEntity {
 
     @Id
     @Column(name = "fiscal_code_c")
