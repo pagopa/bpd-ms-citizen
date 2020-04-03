@@ -6,11 +6,9 @@ import java.util.Optional;
 
 public interface CitizenDAOService {
 
-    Citizen insert(Citizen cz);
-
     Optional<Citizen> find(String fiscalCode);
 
-    Citizen update(Citizen cz);
+    Citizen update(String fiscalCode, Citizen cz);
 
     void delete(String fiscalCode);
 

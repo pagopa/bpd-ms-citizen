@@ -14,20 +14,20 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"fiscalCode"}, callSuper = false)
-@Table(name = "bpd_citizen", schema = "\"BPD_TEST\"")
+@Table(name = "bpd_citizen", schema = "bpd_test")
 public class Citizen extends BaseEntity {
 
     @Id
-    @Column(name = "fiscal_code_c")
+    @Column(name = "fiscal_code_s")
     private String fiscalCode;
 
-    @Column(name = "payoff_instr_c")
+    @Column(name = "payoff_instr_s")
     private String payoffInstr;
 
     @Column(name = "payoff_instr_type_c")
     private String payoffInstrType;
 
-    @Column(name = "timestamp_t")
-    private ZonedDateTime timestamp;
+    @Column(name = "timestamp_tc_t")
+    private ZonedDateTime timestamp_tc;
 
 }

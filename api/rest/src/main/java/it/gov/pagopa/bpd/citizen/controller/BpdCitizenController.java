@@ -11,20 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("citizens")
 public interface BpdCitizenController {
 
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    CitizenResource create(@RequestBody CitizenDTO citizen);
-
     @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenResource find(@PathVariable String fiscalCode);
 
-    @PutMapping(value = "{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource update(@RequestBody CitizenDTO citizen);
+    CitizenResource update(@PathVariable String fiscalCode, @RequestBody CitizenDTO citizen);
 
     @DeleteMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable String fiscalCode);
 
 }

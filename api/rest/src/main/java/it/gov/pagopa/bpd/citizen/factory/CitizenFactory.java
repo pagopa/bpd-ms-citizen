@@ -10,10 +10,8 @@ class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
     @Override
     public Citizen createModel(CitizenDTO dto) {
         final Citizen result = new Citizen();
-        result.setFiscalCode(dto.getFiscalCode());
-        result.setPayoffInstr(dto.getPayoffInstr());
-        result.setPayoffInstrType(dto.getPayoffInstrType());
-        result.setTimestamp(dto.getTimestamp());
+
+        result.setTimestamp_tc(dto.getTimestamp_tc());
 
         return result;
     }

@@ -7,8 +7,5 @@ import java.time.ZonedDateTime;
 @Data
 public class CitizenDTO {
 
-    private String fiscalCode;
-    private String payoffInstr;
-    private String payoffInstrType;
-    private ZonedDateTime timestamp;
+    private ZonedDateTime timestamp_tc;
 }

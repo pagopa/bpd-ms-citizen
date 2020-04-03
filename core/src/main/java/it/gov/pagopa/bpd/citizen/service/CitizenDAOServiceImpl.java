@@ -21,27 +21,19 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
     }
 
     @Override
-    public Citizen insert(Citizen cz) {
-        if (citizenDAO.existsById(cz.getFiscalCode())) {
-            throw new RuntimeException("Già esistente");
-        }
-        cz.setInsertUser(cz.getFiscalCode());
-        return citizenDAO.save(cz);
-    }
-
-    @Override
     public Optional<Citizen> find(String fiscalCode) {
         return citizenDAO.findById(fiscalCode);
     }
 
     @Override
-    public Citizen update(Citizen cz) {
-        cz.setUpdateUser(cz.getFiscalCode());
+    public Citizen update(String fiscalCode, Citizen cz) {
+        cz.setUpdateUser(fiscalCode);
         return citizenDAO.save(cz);
     }
 
     @Override
     public void delete(String fiscalCode) {
-        citizenDAO.deleteById(fiscalCode);
+        Citizen citizen = citizenDAO.getOne(fiscalCode);
+        update(fiscalCode, citizen);
     }
 }
