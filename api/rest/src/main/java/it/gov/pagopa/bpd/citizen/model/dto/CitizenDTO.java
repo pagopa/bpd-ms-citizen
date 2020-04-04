@@ -7,5 +7,5 @@ import java.time.ZonedDateTime;
 @Data
 public class CitizenDTO {
 
-    private ZonedDateTime timestamp_tc;
+    private ZonedDateTime timestampTc;
 }

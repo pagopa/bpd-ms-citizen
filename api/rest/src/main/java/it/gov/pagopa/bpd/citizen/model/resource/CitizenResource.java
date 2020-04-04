@@ -13,6 +13,6 @@ public class CitizenResource {
     private String fiscalCode;
     private String payoffInstr;
     private String payoffInstrType;
-    private ZonedDateTime timestamp_tc;
+    private ZonedDateTime timestampTc;
 
 }

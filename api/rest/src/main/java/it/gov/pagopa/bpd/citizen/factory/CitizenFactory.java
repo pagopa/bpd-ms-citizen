@@ -11,7 +11,7 @@ class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
     public Citizen createModel(CitizenDTO dto) {
         final Citizen result = new Citizen();
 
-        result.setTimestamp_tc(dto.getTimestamp_tc());
+        result.setTimestampTc(dto.getTimestampTc());
 
         return result;
     }

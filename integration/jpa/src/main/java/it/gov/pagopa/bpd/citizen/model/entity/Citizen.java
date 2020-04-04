@@ -28,6 +28,6 @@ public class Citizen extends BaseEntity {
     private String payoffInstrType;
 
     @Column(name = "timestamp_tc_t")
-    private ZonedDateTime timestamp_tc;
+    private ZonedDateTime timestampTc;
 
 }
