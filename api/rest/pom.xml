@@ -11,4 +11,11 @@
     <groupId>it.gov.pagopa.bpd.ms.citizen.api</groupId>
     <artifactId>bpd-ms-citizen-api-rest</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>it.gov.pagopa.bpd.commons.api</groupId>
+            <artifactId>bpd-commons-api-rest</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

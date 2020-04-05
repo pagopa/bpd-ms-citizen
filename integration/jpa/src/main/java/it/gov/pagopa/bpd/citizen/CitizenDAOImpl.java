@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 
-@Service
-class CitizenDAOImpl extends JPAConnectorImpl<Citizen, String> implements CitizenDAO {
+//@Service
+//class CitizenDAOImpl extends JPAConnectorImpl<Citizen, String> implements CitizenDAO {
+class CitizenDAOImpl extends JPAConnectorImpl<Citizen, String> {
 
-    @Autowired
+//    @Autowired
     public CitizenDAOImpl(EntityManager em) {
         super(Citizen.class, em);
     }

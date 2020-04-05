@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.citizen;
 
-import eu.sia.meda.connector.jpa.JPAConnector;
+import eu.sia.meda.connector.jpa.CrudJpaDAO;
 import it.gov.pagopa.bpd.citizen.model.entity.Citizen;
+import org.springframework.stereotype.Repository;
 
-public interface CitizenDAO extends JPAConnector<Citizen, String> {
+@Repository
+public interface CitizenDAO extends CrudJpaDAO<Citizen, String> {
 }

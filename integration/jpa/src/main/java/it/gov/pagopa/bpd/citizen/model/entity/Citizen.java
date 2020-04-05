@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.model.entity;
 
+import it.gov.pagopa.bpd.common.model.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
