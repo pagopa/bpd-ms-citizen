@@ -16,6 +16,10 @@
             <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
             <artifactId>bpd-ms-citizen-integration-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>it.gov.pagopa.bpd.commons</groupId>
+            <artifactId>bpd-commons-core</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
