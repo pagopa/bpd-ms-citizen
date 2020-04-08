@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.model.entity;
+package it.gov.pagopa.bpd.citizen.service.service.model.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.Where;

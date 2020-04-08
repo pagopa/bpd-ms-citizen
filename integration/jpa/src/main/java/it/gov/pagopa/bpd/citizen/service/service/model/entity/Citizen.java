@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.model.entity;
+package it.gov.pagopa.bpd.citizen.service.service.model.entity;
 
 import it.gov.pagopa.bpd.common.model.entity.BaseEntity;
 import lombok.Data;

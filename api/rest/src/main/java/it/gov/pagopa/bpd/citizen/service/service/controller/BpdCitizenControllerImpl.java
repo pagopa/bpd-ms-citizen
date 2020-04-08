@@ -1,12 +1,12 @@
-package it.gov.pagopa.bpd.citizen.controller;
+package it.gov.pagopa.bpd.citizen.service.service.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
-import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
-import it.gov.pagopa.bpd.citizen.model.dto.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.model.entity.Citizen;
-import it.gov.pagopa.bpd.citizen.model.resource.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
+import it.gov.pagopa.bpd.citizen.service.service.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.service.service.factory.ModelFactory;
+import it.gov.pagopa.bpd.citizen.service.service.model.dto.CitizenDTO;
+import it.gov.pagopa.bpd.citizen.service.service.model.entity.Citizen;
+import it.gov.pagopa.bpd.citizen.service.service.model.resource.CitizenResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
