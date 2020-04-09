@@ -14,5 +14,6 @@ public class CitizenResource {
     private String payoffInstr;
     private String payoffInstrType;
     private ZonedDateTime timestampTc;
+    private boolean enabled;
 
 }
