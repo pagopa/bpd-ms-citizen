@@ -1,7 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import it.gov.pagopa.bpd.citizen.service.service.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.service.service.model.entity.Citizen;
+import it.gov.pagopa.bpd.citizen.service.model.entity.Citizen;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,7 +1,7 @@
-package it.gov.pagopa.bpd.citizen.service.service;
+package it.gov.pagopa.bpd.citizen.service;
 
 import eu.sia.meda.layers.connector.query.CriteriaQuery;
-import it.gov.pagopa.bpd.citizen.service.service.model.entity.Citizen;
+import it.gov.pagopa.bpd.citizen.service.model.entity.Citizen;
 import it.gov.pagopa.bpd.common.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;

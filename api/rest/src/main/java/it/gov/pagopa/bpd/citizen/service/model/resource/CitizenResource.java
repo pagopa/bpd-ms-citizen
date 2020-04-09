@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.service.service.model.resource;
+package it.gov.pagopa.bpd.citizen.service.model.resource;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

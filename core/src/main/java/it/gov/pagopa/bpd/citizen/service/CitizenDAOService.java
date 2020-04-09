@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import it.gov.pagopa.bpd.citizen.service.service.model.entity.Citizen;
+import it.gov.pagopa.bpd.citizen.service.model.entity.Citizen;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.service.service.model.dto;
+package it.gov.pagopa.bpd.citizen.service.model.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.service.service.factory;
+package it.gov.pagopa.bpd.citizen.service.factory;
 
 public interface ModelFactory<T, U> {
 
