@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"fiscalCode"}, callSuper = false)
-@Table(name = "bpd_citizen", schema = "bpd_test")
+@Table(name = "bpd_citizen")
 public class Citizen extends BaseEntity {
 
     @Id
