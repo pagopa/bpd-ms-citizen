@@ -5,8 +5,7 @@ import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import org.springframework.stereotype.Component;
 
 @Component
-public
-class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
+public class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
 
     @Override
     public Citizen createModel(CitizenDTO dto) {

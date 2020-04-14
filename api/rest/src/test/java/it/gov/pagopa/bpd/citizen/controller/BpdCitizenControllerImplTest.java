@@ -51,6 +51,7 @@ public class BpdCitizenControllerImplTest {
         Citizen citizen = new Citizen();
         Optional<Citizen> optional = Optional.of(citizen);
         citizen.setFiscalCode("fiscalCode");
+
         BDDMockito.doReturn(Optional.of(citizen)).when(citizenDAOServiceMock).find(Mockito.eq("fiscalCode"));
 
         BDDMockito.doReturn(new Citizen()).when(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));

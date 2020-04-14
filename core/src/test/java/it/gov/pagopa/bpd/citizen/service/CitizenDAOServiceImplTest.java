@@ -50,6 +50,7 @@ public class CitizenDAOServiceImplTest {
     @Test
     public void find() {
         Optional<Citizen> citizen = citizenDAOService.find("test");
+
         Assert.assertNotNull(citizen.orElse(null));
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq("test"));
     }
@@ -58,6 +59,7 @@ public class CitizenDAOServiceImplTest {
     public void update() {
         Citizen citizen = new Citizen();
         citizenDAOService.update("test", citizen);
+
         Assert.assertNotNull(citizen);
         BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
     }
@@ -65,6 +67,7 @@ public class CitizenDAOServiceImplTest {
     @Test
     public void delete() {
         citizenDAOService.delete("test");
+
         BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
     }
 }
