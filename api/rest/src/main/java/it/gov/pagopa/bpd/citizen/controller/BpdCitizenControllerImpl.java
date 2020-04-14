@@ -31,8 +31,8 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource find(String fiscalCode) {
-        System.out.println("Start find by fiscal code");
-        System.out.println("fiscalCode = [" + fiscalCode + "]");
+        logger.debug("Start find by fiscal code");
+        logger.debug("fiscalCode = [" + fiscalCode + "]");
 
         final Optional<Citizen> citizen = citizenDAOService.find(fiscalCode);
         return citizenResourceAssembler.toResource(citizen.get());
@@ -40,20 +40,19 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource update(String fiscalCode, CitizenDTO citizen) {
-        System.out.println("Start update");
-        System.out.println("fiscalCode = [" + fiscalCode + "]");
+        logger.debug("Start update");
+        logger.debug("fiscalCode = [" + fiscalCode + "]");
 
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
-        entity.setPayoffInstr("ur84yrbvhyr");       //TODO sistemare dopo i test
         Citizen citizenEntity = citizenDAOService.update(fiscalCode, entity);
         return citizenResourceAssembler.toResource(citizenEntity);
     }
 
     @Override
     public void delete(String fiscalCode) {
-        System.out.println("Start delete");
-        System.out.println("fiscalCode = [" + fiscalCode + "]");
+        logger.debug("Start delete");
+        logger.debug("fiscalCode = [" + fiscalCode + "]");
 
         citizenDAOService.delete(fiscalCode);
     }

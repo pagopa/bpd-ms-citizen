@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
-@RequestMapping("citizens")
+@RequestMapping("/bpd/citizens")
 public interface BpdCitizenController {
 
     @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
