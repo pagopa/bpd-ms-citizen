@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.service.controller;
+package it.gov.pagopa.bpd.citizen.controller;
 
 import org.junit.Test;
 

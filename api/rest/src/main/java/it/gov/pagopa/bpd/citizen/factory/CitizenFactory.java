@@ -1,7 +1,7 @@
-package it.gov.pagopa.bpd.citizen.service.factory;
+package it.gov.pagopa.bpd.citizen.factory;
 
-import it.gov.pagopa.bpd.citizen.service.model.dto.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.service.model.entity.Citizen;
+import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import org.springframework.stereotype.Component;
 
 @Component

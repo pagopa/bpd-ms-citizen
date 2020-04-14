@@ -1,8 +1,8 @@
-package it.gov.pagopa.bpd.citizen.service.controller;
+package it.gov.pagopa.bpd.citizen.controller;
 
 import io.swagger.annotations.Api;
-import it.gov.pagopa.bpd.citizen.service.model.dto.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.service.model.resource.CitizenResource;
+import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

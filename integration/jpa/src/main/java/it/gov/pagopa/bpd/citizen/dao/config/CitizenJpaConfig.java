@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.service.config;
+package it.gov.pagopa.bpd.citizen.dao.config;
 
 import eu.sia.meda.connector.jpa.JPAConnectorImpl;
 import eu.sia.meda.connector.jpa.config.JPAConnectorConfig;

@@ -1,7 +1,7 @@
-package it.gov.pagopa.bpd.citizen.service.assembler;
+package it.gov.pagopa.bpd.citizen.assembler;
 
-import it.gov.pagopa.bpd.citizen.service.model.entity.Citizen;
-import it.gov.pagopa.bpd.citizen.service.model.resource.CitizenResource;
+import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
