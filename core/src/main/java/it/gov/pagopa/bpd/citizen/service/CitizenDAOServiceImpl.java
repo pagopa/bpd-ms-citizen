@@ -32,6 +32,15 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
     }
 
     @Override
+    public Citizen patch(String fiscalCode, Citizen cz) {
+        Citizen citizen = citizenDAO.getOne(fiscalCode);
+        citizen.setPayoffInstr(cz.getPayoffInstr());
+        citizen.setPayoffInstrType(cz.getPayoffInstrType());
+        citizen.setUpdateUser(fiscalCode);
+        return citizenDAO.save(citizen);
+    }
+
+    @Override
     public void delete(String fiscalCode) {
         Citizen citizen = citizenDAO.getOne(fiscalCode);
         update(fiscalCode, citizen);

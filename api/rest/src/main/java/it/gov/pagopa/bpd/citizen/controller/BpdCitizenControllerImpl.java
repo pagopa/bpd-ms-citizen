@@ -52,6 +52,20 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
+    public CitizenResource updatePaymentMethod(String fiscalCode, CitizenDTO citizen) {
+        logger.debug("Start update");
+        logger.debug("fiscalCode = [" + fiscalCode + "]");
+
+        final Citizen entity = citizenFactory.createModel(citizen);
+        entity.setFiscalCode(fiscalCode);
+        entity.setPayoffInstr(citizen.getPayoffInstr());
+        entity.setPayoffInstrType(citizen.getPayoffInstrType());
+        Citizen citizenEntity = citizenDAOService.patch(fiscalCode, entity);
+        return citizenResourceAssembler.toResource(citizenEntity);
+    }
+
+
+    @Override
     public void delete(String fiscalCode) {
         logger.debug("Start delete");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
@@ -60,13 +74,13 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-
     public void updateTC(@Valid @NotBlank String fiscalCode, @Valid CitizenDTO citizen) {
         logger.debug("Start update T&C");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
+
         Citizen citizenEntity = citizenDAOService.update(fiscalCode, entity);
     }
 }

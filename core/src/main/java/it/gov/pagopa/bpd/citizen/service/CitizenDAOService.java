@@ -10,6 +10,8 @@ public interface CitizenDAOService {
 
     Citizen update(String fiscalCode, Citizen cz);
 
+    Citizen patch(String fiscalCode, Citizen cz);
+
     void delete(String fiscalCode);
 
 }
