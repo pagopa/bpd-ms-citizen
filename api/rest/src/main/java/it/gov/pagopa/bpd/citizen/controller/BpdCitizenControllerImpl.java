@@ -10,6 +10,8 @@ import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @RestController
@@ -57,4 +59,14 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         citizenDAOService.delete(fiscalCode);
     }
 
+    @Override
+
+    public void updateTC(@Valid @NotBlank String fiscalCode, @Valid CitizenDTO citizen) {
+        logger.debug("Start update T&C");
+        logger.debug("fiscalCode = [" + fiscalCode + "]");
+
+        final Citizen entity = citizenFactory.createModel(citizen);
+        entity.setFiscalCode(fiscalCode);
+        Citizen citizenEntity = citizenDAOService.update(fiscalCode, entity);
+    }
 }

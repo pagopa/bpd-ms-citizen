@@ -11,19 +11,23 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
-@RequestMapping("/bpd/enrollment/io/citizens")
+@RequestMapping("/bpd")
 public interface BpdCitizenController {
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource find(@PathVariable("id") @Valid @NotBlank String fiscalCode);
+    CitizenResource find(@PathVariable @Valid @NotBlank String fiscalCode);
 
-    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource update(@PathVariable("id") @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+    CitizenResource update(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
 
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "/enrollment/io/citizens/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    void updateTC(@PathVariable("id") @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+
+    @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable("id") @Valid @NotBlank String fiscalCode);
+    void delete(@PathVariable @Valid @NotBlank String fiscalCode);
 
 }
