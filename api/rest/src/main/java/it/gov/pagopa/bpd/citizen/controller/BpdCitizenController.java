@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
 @RequestMapping("/bpd/citizens")
@@ -15,14 +16,14 @@ public interface BpdCitizenController {
 
     @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource find(@PathVariable String fiscalCode);
+    CitizenResource find(@PathVariable @Valid @NotBlank String fiscalCode);
 
     @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource update(@PathVariable String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+    CitizenResource update(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
 
     @DeleteMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable String fiscalCode);
+    void delete(@PathVariable @Valid @NotBlank String fiscalCode);
 
 }
