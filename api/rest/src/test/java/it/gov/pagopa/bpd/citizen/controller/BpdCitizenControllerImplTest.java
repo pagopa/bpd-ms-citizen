@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,7 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doReturn(new Citizen()).when(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
 
         BDDMockito.doNothing().when(citizenDAOServiceMock).delete(Mockito.eq("fiscalCode"));
+
     }
 
 
@@ -100,5 +102,37 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         BDDMockito.verify(citizenDAOServiceMock).delete(Mockito.any());
+    }
+
+    @Test
+    public void updateTCOK() throws Exception {
+        CitizenDTO citizen = new CitizenDTO();
+        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/fiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(citizen)))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        BDDMockito.verify(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
+        BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
+    }
+
+    @Test(expected = ArgumentsAreDifferent.class)
+    public void updateTCInvalidArguments() throws Exception {
+        CitizenDTO citizen = new CitizenDTO();
+        try {
+            MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/wrongFiscalCode")
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(objectMapper.writeValueAsString(citizen)))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                    .andReturn();
+        } finally {
+            BDDMockito.verify(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
+            BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
+        }
+
+
     }
 }

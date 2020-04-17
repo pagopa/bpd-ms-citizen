@@ -21,7 +21,7 @@ public interface BpdCitizenController {
 
     @PutMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource update(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+    CitizenResource update(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody CitizenDTO citizen);
 
     @PatchMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -29,7 +29,7 @@ public interface BpdCitizenController {
 
     @PutMapping(value = "/enrollment/io/citizens/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    void updateTC(@PathVariable("id") @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+    void updateTC(@PathVariable("id") @Valid @NotBlank String fiscalCode, @RequestBody CitizenDTO citizen);
 
     @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
