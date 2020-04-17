@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import io.swagger.annotations.Api;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,10 +23,9 @@ public interface BpdCitizenController {
     @ResponseStatus(HttpStatus.OK)
     CitizenResource update(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
 
-    //TODO eliminare
     @PatchMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource updatePaymentMethod(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenDTO citizen);
+    CitizenResource updatePaymentMethod(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenPatchDTO citizen);
 
     @PutMapping(value = "/enrollment/io/citizens/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)

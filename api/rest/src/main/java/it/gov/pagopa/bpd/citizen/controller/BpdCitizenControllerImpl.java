@@ -5,6 +5,7 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,17 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenDAOService citizenDAOService;
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
+    private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
 
 
     @Autowired
     public BpdCitizenControllerImpl(CitizenDAOService citizenDAOService,
                                     CitizenResourceAssembler citizenResourceAssembler,
-                                    ModelFactory<CitizenDTO, Citizen> citizenFactory) {
+                                    ModelFactory<CitizenDTO, Citizen> citizenFactory, ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory) {
         this.citizenDAOService = citizenDAOService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
+        this.citizenPatchFactory = citizenPatchFactory;
     }
 
     @Override
@@ -52,11 +55,11 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource updatePaymentMethod(String fiscalCode, CitizenDTO citizen) {
+    public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
         logger.debug("Start update");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
-        final Citizen entity = citizenFactory.createModel(citizen);
+        final Citizen entity = citizenPatchFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
         entity.setPayoffInstr(citizen.getPayoffInstr());
         entity.setPayoffInstrType(citizen.getPayoffInstrType());
