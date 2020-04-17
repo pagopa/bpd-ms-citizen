@@ -1,11 +1,14 @@
 package it.gov.pagopa.bpd.citizen.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.config.ArchConfiguration;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
+import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
 import org.junit.Assert;
@@ -28,6 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,6 +49,8 @@ public class BpdCitizenControllerImplTest {
     private CitizenResourceAssembler citizenResourceAssemblerMock;
     @SpyBean
     private CitizenFactory citizenFactoryMock;
+    @SpyBean
+    private CitizenPatchFactory citizenPatchFactoryMock;
 
     @PostConstruct
     public void configureTest() {
@@ -53,11 +59,25 @@ public class BpdCitizenControllerImplTest {
         Optional<Citizen> optional = Optional.of(citizen);
         citizen.setFiscalCode("fiscalCode");
 
+        Citizen citizenPatched = new Citizen();
+        citizenPatched.setPayoffInstr("Test");
+        citizenPatched.setPayoffInstrType("Test");
+        citizenPatched.setUpdateUser("fiscalCode");
+
+        Citizen citizenPatch = new Citizen();
+        citizenPatch.setPayoffInstr("Test");
+        citizenPatch.setPayoffInstrType("Test");
+
         BDDMockito.doReturn(Optional.of(citizen)).when(citizenDAOServiceMock).find(Mockito.eq("fiscalCode"));
 
         BDDMockito.doReturn(new Citizen()).when(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
 
         BDDMockito.doNothing().when(citizenDAOServiceMock).delete(Mockito.eq("fiscalCode"));
+
+        BDDMockito.doReturn(citizenPatched).when(citizenDAOServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(citizenPatch));
+
+        BDDMockito.doThrow(new EntityNotFoundException("Unable to find it.gov.pagopa.bpd.citizen.model.Citizen with id noFiscalCode"))
+                .when(citizenDAOServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
 
     }
 
@@ -135,4 +155,66 @@ public class BpdCitizenControllerImplTest {
 
 
     }
+
+    @Test
+    public void updatePaymentMethod() throws Exception {
+
+        CitizenPatchDTO citizen = new CitizenPatchDTO();
+        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstrType("Test");
+
+        Citizen expCitizen = new Citizen();
+        expCitizen.setPayoffInstr("Test");
+        expCitizen.setPayoffInstrType("Test");
+
+        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(citizen)))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        BDDMockito.verify(citizenDAOServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(expCitizen));
+        BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.eq(citizen));
+        expCitizen.setUpdateUser("fiscalCode");
+        BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.eq(expCitizen));
+    }
+
+    @Test
+    public void updatePaymentMethodKO() throws Exception {
+
+        CitizenPatchDTO citizen = new CitizenPatchDTO();
+        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstrType("Test");
+
+        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(citizen)))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+
+        BDDMockito.verify(citizenDAOServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
+        BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.any());
+        BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
+
+    }
+
+    @Test
+    public void updatePaymentMethodKoValidation() throws Exception {
+
+        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(new CitizenPatchDTO())))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+
+        BDDMockito.verifyZeroInteractions(citizenDAOServiceMock);
+        BDDMockito.verifyZeroInteractions(citizenPatchFactoryMock);
+        BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
+
+    }
+
+
 }

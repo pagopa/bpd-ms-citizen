@@ -8,12 +8,18 @@ import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class BpdCitizenControllerImpl extends StatelessController implements BpdCitizenController {
 
     private final CitizenDAOService citizenDAOService;
@@ -54,15 +60,22 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
-        logger.debug("Start update");
+        logger.debug("Start patch");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
-        final Citizen entity = citizenPatchFactory.createModel(citizen);
-        entity.setFiscalCode(fiscalCode);
-        entity.setPayoffInstr(citizen.getPayoffInstr());
-        entity.setPayoffInstrType(citizen.getPayoffInstrType());
-        Citizen citizenEntity = citizenDAOService.patch(fiscalCode, entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+        try {
+            final Citizen entity = citizenPatchFactory.createModel(citizen);
+            entity.setPayoffInstr(citizen.getPayoffInstr());
+            entity.setPayoffInstrType(citizen.getPayoffInstrType());
+            Citizen citizenEntity = citizenDAOService.patch(fiscalCode, entity);
+            return citizenResourceAssembler.toResource(citizenEntity);
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error(e.getMessage(), e);
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 
