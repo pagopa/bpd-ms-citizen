@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.citizen.dao;
 
 import eu.sia.meda.layers.connector.query.CriteriaQuery;
-import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.common.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,6 @@ public class CitizenDAOTest extends BaseCrudJpaDAOTest<CitizenDAO, Citizen, Stri
 
     @Override
     protected void alterEntityToUpdate(Citizen entity) {
-        entity.setPayoffInstrType("changed");
         entity.setPayoffInstr("changed");
     }
 

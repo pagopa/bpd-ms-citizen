@@ -1,16 +1,15 @@
 package it.gov.pagopa.bpd.citizen.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.config.ArchConfiguration;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
-import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
-import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
+import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +43,7 @@ public class BpdCitizenControllerImplTest {
     protected MockMvc mvc;
     protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
     @MockBean
-    private CitizenDAOService citizenDAOServiceMock;
+    private CitizenService citizenDAOServiceMock;
     @SpyBean
     private CitizenResourceAssembler citizenResourceAssemblerMock;
     @SpyBean
@@ -56,17 +55,16 @@ public class BpdCitizenControllerImplTest {
     public void configureTest() {
 
         Citizen citizen = new Citizen();
-        Optional<Citizen> optional = Optional.of(citizen);
         citizen.setFiscalCode("fiscalCode");
 
         Citizen citizenPatched = new Citizen();
         citizenPatched.setPayoffInstr("Test");
-        citizenPatched.setPayoffInstrType("Test");
+        citizenPatched.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
         citizenPatched.setUpdateUser("fiscalCode");
 
         Citizen citizenPatch = new Citizen();
         citizenPatch.setPayoffInstr("Test");
-        citizenPatch.setPayoffInstrType("Test");
+        citizenPatch.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
         BDDMockito.doReturn(Optional.of(citizen)).when(citizenDAOServiceMock).find(Mockito.eq("fiscalCode"));
 
@@ -76,7 +74,7 @@ public class BpdCitizenControllerImplTest {
 
         BDDMockito.doReturn(citizenPatched).when(citizenDAOServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(citizenPatch));
 
-        BDDMockito.doThrow(new EntityNotFoundException("Unable to find it.gov.pagopa.bpd.citizen.model.Citizen with id noFiscalCode"))
+        BDDMockito.doThrow(new EntityNotFoundException("Unable to find " + Citizen.class.getName() + " with id noFiscalCode"))
                 .when(citizenDAOServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
 
     }
@@ -84,7 +82,7 @@ public class BpdCitizenControllerImplTest {
 
     @Test
     public void find() throws Exception {
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -101,7 +99,7 @@ public class BpdCitizenControllerImplTest {
     @Test
     public void update() throws Exception {
         CitizenDTO citizen = new CitizenDTO();
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.put("/bpd/citizens/fiscalCode")
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
@@ -127,7 +125,7 @@ public class BpdCitizenControllerImplTest {
     @Test
     public void updateTCOK() throws Exception {
         CitizenDTO citizen = new CitizenDTO();
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/fiscalCode")
+        mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
@@ -142,7 +140,7 @@ public class BpdCitizenControllerImplTest {
     public void updateTCInvalidArguments() throws Exception {
         CitizenDTO citizen = new CitizenDTO();
         try {
-            MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/wrongFiscalCode")
+            mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/wrongFiscalCode")
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(objectMapper.writeValueAsString(citizen)))
@@ -161,13 +159,13 @@ public class BpdCitizenControllerImplTest {
 
         CitizenPatchDTO citizen = new CitizenPatchDTO();
         citizen.setPayoffInstr("Test");
-        citizen.setPayoffInstrType("Test");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
         Citizen expCitizen = new Citizen();
         expCitizen.setPayoffInstr("Test");
-        expCitizen.setPayoffInstrType("Test");
+        expCitizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
+        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
@@ -185,9 +183,9 @@ public class BpdCitizenControllerImplTest {
 
         CitizenPatchDTO citizen = new CitizenPatchDTO();
         citizen.setPayoffInstr("Test");
-        citizen.setPayoffInstrType("Test");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
+        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
@@ -203,7 +201,7 @@ public class BpdCitizenControllerImplTest {
     @Test
     public void updatePaymentMethodKoValidation() throws Exception {
 
-        MvcResult result = (MvcResult) mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
+        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(new CitizenPatchDTO())))

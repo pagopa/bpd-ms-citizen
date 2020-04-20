@@ -3,12 +3,12 @@ package it.gov.pagopa.bpd.citizen.model;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 public class CitizenDTO {
 
     @NotNull
-    private ZonedDateTime timestampTc;
+    private OffsetDateTime timestampTC;
 
 }
