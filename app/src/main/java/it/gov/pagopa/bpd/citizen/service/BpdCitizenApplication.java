@@ -10,8 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"eu.sia.meda", "it.gov.pagopa.bpd"})
 public class BpdCitizenApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BpdCitizenApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BpdCitizenApplication.class, args);
+    }
 
 }

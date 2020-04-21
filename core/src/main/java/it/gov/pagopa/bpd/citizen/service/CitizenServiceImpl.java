@@ -1,23 +1,28 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
+import it.gov.pagopa.bpd.citizen.dao.FileStorageDAO;
 import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.model.FileStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Service
 @Slf4j
-class CitizenDAOServiceImpl implements CitizenDAOService {
+class CitizenServiceImpl implements CitizenService {
 
 
     private final CitizenDAO citizenDAO;
+    private final FileStorageDAO fileStorageDAO;
 
     @Autowired
-    public CitizenDAOServiceImpl(CitizenDAO citizenDAO) {
+    public CitizenServiceImpl(CitizenDAO citizenDAO, FileStorageDAO fileStorageDAO) {
         this.citizenDAO = citizenDAO;
+        this.fileStorageDAO = fileStorageDAO;
     }
 
     @Override
@@ -44,5 +49,11 @@ class CitizenDAOServiceImpl implements CitizenDAOService {
     public void delete(String fiscalCode) {
         Citizen citizen = citizenDAO.getOne(fiscalCode);
         update(fiscalCode, citizen);
+    }
+
+    @Override
+    public byte[] getPdf(OffsetDateTime toodayDate) {
+        FileStorage fileStorage = fileStorageDAO.getPdf(toodayDate);
+        return fileStorage.getFile();
     }
 }

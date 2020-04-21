@@ -7,7 +7,7 @@ import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
-import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
+import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ public class BpdCitizenControllerImplTest {
     protected MockMvc mvc;
     protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
     @MockBean
-    private CitizenDAOService citizenDAOServiceMock;
+    private CitizenService citizenServiceMock;
     @SpyBean
     private CitizenResourceAssembler citizenResourceAssemblerMock;
     @SpyBean
@@ -53,11 +53,11 @@ public class BpdCitizenControllerImplTest {
         Optional<Citizen> optional = Optional.of(citizen);
         citizen.setFiscalCode("fiscalCode");
 
-        BDDMockito.doReturn(Optional.of(citizen)).when(citizenDAOServiceMock).find(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(Optional.of(citizen)).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
 
-        BDDMockito.doReturn(new Citizen()).when(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
+        BDDMockito.doReturn(new Citizen()).when(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
 
-        BDDMockito.doNothing().when(citizenDAOServiceMock).delete(Mockito.eq("fiscalCode"));
+        BDDMockito.doNothing().when(citizenServiceMock).delete(Mockito.eq("fiscalCode"));
 
     }
 
@@ -74,7 +74,7 @@ public class BpdCitizenControllerImplTest {
                 CitizenResource.class);
 
         Assert.assertNotNull(pageResult);
-        BDDMockito.verify(citizenDAOServiceMock).find(Mockito.eq("fiscalCode"));
+        BDDMockito.verify(citizenServiceMock).find(Mockito.eq("fiscalCode"));
         BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.any(Citizen.class));
     }
 
@@ -91,7 +91,7 @@ public class BpdCitizenControllerImplTest {
                 CitizenResource.class);
 
         Assert.assertNotNull(pageResult);
-        BDDMockito.verify(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
+        BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
         BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
         BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.any(Citizen.class));
     }
@@ -101,7 +101,7 @@ public class BpdCitizenControllerImplTest {
         mvc.perform(MockMvcRequestBuilders.delete("/bpd/citizens/fiscalCode"))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
-        BDDMockito.verify(citizenDAOServiceMock).delete(Mockito.any());
+        BDDMockito.verify(citizenServiceMock).delete(Mockito.any());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        BDDMockito.verify(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
+        BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
         BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
     }
 
@@ -129,7 +129,7 @@ public class BpdCitizenControllerImplTest {
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
         } finally {
-            BDDMockito.verify(citizenDAOServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
+            BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
             BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
         }
 

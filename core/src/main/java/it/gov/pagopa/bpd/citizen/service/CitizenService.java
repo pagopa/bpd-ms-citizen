@@ -2,9 +2,10 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.model.Citizen;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
-public interface CitizenDAOService {
+public interface CitizenService {
 
     Optional<Citizen> find(String fiscalCode);
 
@@ -13,5 +14,7 @@ public interface CitizenDAOService {
     Citizen patch(String fiscalCode, Citizen cz);
 
     void delete(String fiscalCode);
+
+    byte[] getPdf(OffsetDateTime toodayDate);
 
 }

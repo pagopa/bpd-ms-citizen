@@ -7,26 +7,35 @@ import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
-import it.gov.pagopa.bpd.citizen.service.CitizenDAOService;
+import it.gov.pagopa.bpd.citizen.service.CitizenService;
+import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @RestController
 public class BpdCitizenControllerImpl extends StatelessController implements BpdCitizenController {
 
-    private final CitizenDAOService citizenDAOService;
+    private final CitizenService citizenService;
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
     private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
+//    private final ICityService cityService;
 
 
     @Autowired
-    public BpdCitizenControllerImpl(CitizenDAOService citizenDAOService,
+    public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory, ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory) {
-        this.citizenDAOService = citizenDAOService;
+        this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
         this.citizenPatchFactory = citizenPatchFactory;
@@ -37,7 +46,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         logger.debug("Start find by fiscal code");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
-        final Optional<Citizen> citizen = citizenDAOService.find(fiscalCode);
+        final Optional<Citizen> citizen = citizenService.find(fiscalCode);
         return citizenResourceAssembler.toResource(citizen.get());
     }
 
@@ -48,7 +57,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
-        Citizen citizenEntity = citizenDAOService.update(fiscalCode, entity);
+        Citizen citizenEntity = citizenService.update(fiscalCode, entity);
         return citizenResourceAssembler.toResource(citizenEntity);
     }
 
@@ -61,7 +70,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         entity.setFiscalCode(fiscalCode);
         entity.setPayoffInstr(citizen.getPayoffInstr());
         entity.setPayoffInstrType(citizen.getPayoffInstrType());
-        Citizen citizenEntity = citizenDAOService.patch(fiscalCode, entity);
+        Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
         return citizenResourceAssembler.toResource(citizenEntity);
     }
 
@@ -71,8 +80,9 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         logger.debug("Start delete");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
-        citizenDAOService.delete(fiscalCode);
+        citizenService.delete(fiscalCode);
     }
+
 
     @Override
     public void updateTC(String fiscalCode, CitizenDTO citizen) {
@@ -82,6 +92,21 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
 
-        Citizen citizenEntity = citizenDAOService.update(fiscalCode, entity);
+        Citizen citizenEntity = citizenService.update(fiscalCode, entity);
     }
+
+    @Override
+    public ResponseEntity<InputStreamResource> tcReport() throws FileNotFoundException {
+        byte[] file = citizenService.getPdf(OffsetDateTime.now());
+        var headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=terms&conditionreport.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(new ByteArrayInputStream(file)));
+    }
+
 }
+

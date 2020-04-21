@@ -4,12 +4,15 @@ import io.swagger.annotations.Api;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.FileNotFoundException;
 
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
 @RequestMapping("/bpd")
@@ -34,5 +37,9 @@ public interface BpdCitizenController {
     @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Valid @NotBlank String fiscalCode);
+
+    @RequestMapping(value = "/citizens/pdfreport", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    ResponseEntity<InputStreamResource> tcReport() throws FileNotFoundException;
 
 }
