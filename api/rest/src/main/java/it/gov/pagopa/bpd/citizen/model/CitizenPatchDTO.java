@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.model;
 
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ public class CitizenPatchDTO {
     @NotNull
     @Size(max = 27)
     private String payoffInstr;
-    @Size(max = 4)
-    private String payoffInstrType;
+    @NotNull
+    private Citizen.PayoffInstrumentType payoffInstrType;
 
 }

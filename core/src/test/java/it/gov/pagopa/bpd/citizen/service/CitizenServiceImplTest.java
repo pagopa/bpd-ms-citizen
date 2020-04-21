@@ -1,10 +1,12 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
@@ -70,4 +73,38 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
     }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void patch() {
+        Citizen citizen = new Citizen();
+        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizenService.patch("fiscalCode", citizen);
+        citizen.setUpdateUser("fiscalCode");
+
+        BDDMockito.verify(citizenDAOMock).getOne(Mockito.eq("fiscalCode"));
+        BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
+    }
+
+    @Test
+    public void patchKO() {
+        BDDMockito.when(citizenDAOMock.getOne(Mockito.eq("NoFiscalCode"))).
+                thenThrow(new EntityNotFoundException(
+                        "Unable to find " + Citizen.class.getName() + " with id NoFiscalCode"));
+
+        Citizen citizen = new Citizen();
+        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        exceptionRule.expect(EntityNotFoundException.class);
+        exceptionRule.expectMessage("Unable to find " + Citizen.class.getName() + " with id NoFiscalCode");
+        citizenService.patch("NoFiscalCode", citizen);
+
+        BDDMockito.verify(citizenDAOMock).getOne(Mockito.eq("NoFiscalCode"));
+        BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
+    }
+
+
 }

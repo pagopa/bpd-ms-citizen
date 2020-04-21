@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.citizen.assembler;
 
-import it.gov.pagopa.bpd.citizen.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

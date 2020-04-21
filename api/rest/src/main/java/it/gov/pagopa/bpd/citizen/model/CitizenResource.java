@@ -3,7 +3,7 @@ package it.gov.pagopa.bpd.citizen.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 
 @Data
@@ -13,7 +13,7 @@ public class CitizenResource {
     private String fiscalCode;
     private String payoffInstr;
     private String payoffInstrType;
-    private ZonedDateTime timestampTc;
+    private OffsetDateTime timestampTC;
     private boolean enabled;
 
 }
