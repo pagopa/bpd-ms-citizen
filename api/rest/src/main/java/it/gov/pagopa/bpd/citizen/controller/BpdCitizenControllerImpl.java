@@ -28,7 +28,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
     private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
-//    private final ICityService cityService;
 
 
     @Autowired

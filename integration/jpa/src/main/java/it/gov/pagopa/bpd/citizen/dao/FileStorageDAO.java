@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.citizen.dao;
 
 import eu.sia.meda.connector.jpa.CrudJpaDAO;
-import it.gov.pagopa.bpd.citizen.model.FileStorage;
+import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.citizen.model;
+package it.gov.pagopa.bpd.citizen.dao.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

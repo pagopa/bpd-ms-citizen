@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
+import it.gov.pagopa.bpd.citizen.dao.FileStorageDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,20 +19,27 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = CitizenServiceImpl.class)
 public class CitizenServiceImplTest {
 
+    private final OffsetDateTime DATE = OffsetDateTime.now();
+
     @MockBean
     private CitizenDAO citizenDAOMock;
+    @MockBean
+    private FileStorageDAO fileStorageDAOMock;
     @Autowired
     private CitizenService citizenService;
+
 
     @Before
     public void initTest() {
         Mockito.reset(citizenDAOMock);
+        Mockito.reset(fileStorageDAOMock);
 
         Mockito.when(citizenDAOMock.findById(Mockito.any())).thenAnswer((Answer<Optional<Citizen>>)
                 invocation -> {
@@ -47,6 +56,11 @@ public class CitizenServiceImplTest {
         Citizen citizen = new Citizen();
         BDDMockito.when(citizenDAOMock.save(Mockito.eq(citizen))).thenAnswer((Answer<Citizen>)
                 invocation -> citizen);
+
+        FileStorage fileStorage = new FileStorage();
+        fileStorage.setFile("prova".getBytes());
+        Mockito.when(fileStorageDAOMock.getPdf(Mockito.eq(DATE))).thenAnswer((Answer<FileStorage>)
+                invocation -> fileStorage);
     }
 
 
@@ -106,5 +120,19 @@ public class CitizenServiceImplTest {
         BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
     }
 
+    @Test
+    public void getPdf() {
+        byte[] file = citizenService.getPdf(DATE);
 
+        Assert.assertNotNull(file);
+        BDDMockito.verify(fileStorageDAOMock).getPdf(DATE);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getPdfKO() {
+        byte[] file = citizenService.getPdf(OffsetDateTime.parse("1970-01-01T00:00:00.000Z"));
+
+        Assert.assertNull(file);
+        BDDMockito.verify(fileStorageDAOMock).getPdf(DATE);
+    }
 }
