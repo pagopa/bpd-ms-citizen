@@ -2,8 +2,8 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
-import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
@@ -84,7 +84,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
 
     @Override
-    public void updateTC(String fiscalCode, CitizenDTO citizen) {
+    public void updateTC(String fiscalCode, CitizenDTO citizen) {//TODO:remove me
         logger.debug("Start update T&C");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
