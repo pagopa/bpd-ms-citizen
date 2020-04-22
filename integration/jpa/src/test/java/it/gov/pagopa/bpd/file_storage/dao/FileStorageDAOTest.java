@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.util.function.Function;
 
-public class FileStorageDAOTest extends BaseCrudJpaDAOTest<FileStorageDAO, FileStorage, String> {
+public class FileStorageDAOTest extends BaseCrudJpaDAOTest<FileStorageDAO, FileStorage, Long> {
 
     @Autowired
     private FileStorageDAO fileStorageDAO;
@@ -29,12 +29,12 @@ public class FileStorageDAOTest extends BaseCrudJpaDAOTest<FileStorageDAO, FileS
     }
 
     @Override
-    protected void setId(FileStorage entity, String id) {
+    protected void setId(FileStorage entity, Long id) {
         entity.setId(id);
     }
 
     @Override
-    protected String getId(FileStorage entity) {
+    protected Long getId(FileStorage entity) {
         return entity.getId();
     }
 
@@ -44,12 +44,12 @@ public class FileStorageDAOTest extends BaseCrudJpaDAOTest<FileStorageDAO, FileS
     }
 
     @Override
-    protected Function<Integer, String> idBuilderFn() {
-        return (bias) -> "id" + bias;
+    protected Function<Integer, Long> idBuilderFn() {
+        return (bias) -> null;
     }
 
     @Data
     private static class FileStorageCriteria implements CriteriaQuery<FileStorage> {
-        private String id;
+        private Long id;
     }
 }

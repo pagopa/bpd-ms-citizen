@@ -19,7 +19,7 @@ public class FileStorage implements Serializable {
 
     @Id
     @Column(name = "id")
-    private String id;
+    private Long id;
 
     @Column(name = "start_date_t")
     private OffsetDateTime startDate;
@@ -29,6 +29,9 @@ public class FileStorage implements Serializable {
 
     @Column(name = "type_t")
     private String type;
+
+    @Column(name = "fileName_t")
+    private String fileName;
 
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")

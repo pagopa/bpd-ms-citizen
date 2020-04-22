@@ -2,26 +2,30 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
-import it.gov.pagopa.bpd.citizen.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
-import lombok.var;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class BpdCitizenControllerImpl extends StatelessController implements BpdCitizenController {
 
     private final CitizenService citizenService;
@@ -33,7 +37,8 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     @Autowired
     public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
-                                    ModelFactory<CitizenDTO, Citizen> citizenFactory, ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory) {
+                                    ModelFactory<CitizenDTO, Citizen> citizenFactory,
+                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
@@ -62,17 +67,22 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
-        logger.debug("Start update");
+        logger.debug("Start patch");
         logger.debug("fiscalCode = [" + fiscalCode + "]");
 
-        final Citizen entity = citizenPatchFactory.createModel(citizen);
-        entity.setFiscalCode(fiscalCode);
-        entity.setPayoffInstr(citizen.getPayoffInstr());
-        entity.setPayoffInstrType(citizen.getPayoffInstrType());
-        Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+        try {
+            final Citizen entity = citizenPatchFactory.createModel(citizen);
+            entity.setPayoffInstr(citizen.getPayoffInstr());
+            entity.setPayoffInstrType(citizen.getPayoffInstrType());
+            Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
+            return citizenResourceAssembler.toResource(citizenEntity);
+        } catch (EntityNotFoundException e) {
+            if (log.isErrorEnabled()) {
+                log.error(e.getMessage(), e);
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
-
 
     @Override
     public void delete(String fiscalCode) {
@@ -94,17 +104,19 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
     }
 
+
     @Override
-    public ResponseEntity<InputStreamResource> tcReport() throws FileNotFoundException {
-        byte[] file = citizenService.getPdf(OffsetDateTime.now());
-        var headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=terms&conditionreport.pdf");
+    public ResponseEntity<InputStreamResource> getTermsAndConditions() {
+        logger.debug("Start get T&C Report");
+        FileStorage file = citizenService.getFile(OffsetDateTime.now(), "TC");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=" + file.getFileName());
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(new ByteArrayInputStream(file)));
+                .body(new InputStreamResource(new ByteArrayInputStream(file.getFile())));
     }
 
 }

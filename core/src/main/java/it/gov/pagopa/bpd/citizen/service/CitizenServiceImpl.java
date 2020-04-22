@@ -58,9 +58,11 @@ class CitizenServiceImpl implements CitizenService {
         citizenDAO.save(citizen);
     }
 
+
     @Override
-    public byte[] getPdf(OffsetDateTime toodayDate) {
-        FileStorage fileStorage = fileStorageDAO.getPdf(toodayDate);
-        return fileStorage.getFile();
+    public FileStorage getFile(OffsetDateTime todayDate, String type) {
+        FileStorage fileStorage = fileStorageDAO.getFile(todayDate, type);
+        return fileStorage;
     }
+
 }

@@ -9,11 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 
 @Repository
-public interface FileStorageDAO extends CrudJpaDAO<FileStorage, String> {
+public interface FileStorageDAO extends CrudJpaDAO<FileStorage, Long> {
     @Query(value = "select fs " +
             "from FileStorage fs " +
-            "where :toodayDate between " +
-            "fs.startDate and fs.endDate"
+            "where :todayDate between " +
+            "fs.startDate and fs.endDate " +
+            "and fs.type = :type"
     )
-    FileStorage getPdf(@Param("toodayDate") OffsetDateTime toodayDate);
+    FileStorage getFile(@Param("todayDate") OffsetDateTime todayDate, String type);
 }

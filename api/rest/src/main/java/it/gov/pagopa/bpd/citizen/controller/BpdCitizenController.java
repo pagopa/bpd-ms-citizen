@@ -38,8 +38,8 @@ public interface BpdCitizenController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Valid @NotBlank String fiscalCode);
 
-    @RequestMapping(value = "/citizens/pdfreport", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/citizens/tc", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<InputStreamResource> tcReport() throws FileNotFoundException;
+    ResponseEntity<InputStreamResource> getTermsAndConditions() throws FileNotFoundException;
 
 }

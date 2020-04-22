@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -15,6 +16,6 @@ public interface CitizenService {
 
     void delete(String fiscalCode);
 
-    byte[] getPdf(OffsetDateTime toodayDate);
+    FileStorage getFile(OffsetDateTime toodayDate, String type);
 
 }

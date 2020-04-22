@@ -59,7 +59,8 @@ public class CitizenServiceImplTest {
 
         FileStorage fileStorage = new FileStorage();
         fileStorage.setFile("prova".getBytes());
-        Mockito.when(fileStorageDAOMock.getPdf(Mockito.eq(DATE))).thenAnswer((Answer<FileStorage>)
+        fileStorage.setType("prova");
+        Mockito.when(fileStorageDAOMock.getFile(Mockito.eq(DATE), Mockito.eq(fileStorage.getType()))).thenAnswer((Answer<FileStorage>)
                 invocation -> fileStorage);
     }
 
@@ -104,7 +105,7 @@ public class CitizenServiceImplTest {
     }
 
     @Test
-    public void patchKO() {
+    public void patch_KO() {
         BDDMockito.when(citizenDAOMock.getOne(Mockito.eq("NoFiscalCode"))).
                 thenThrow(new EntityNotFoundException(
                         "Unable to find " + Citizen.class.getName() + " with id NoFiscalCode"));
@@ -122,17 +123,17 @@ public class CitizenServiceImplTest {
 
     @Test
     public void getPdf() {
-        byte[] file = citizenService.getPdf(DATE);
+        FileStorage file = citizenService.getFile(DATE, "prova");
 
         Assert.assertNotNull(file);
-        BDDMockito.verify(fileStorageDAOMock).getPdf(DATE);
+        BDDMockito.verify(fileStorageDAOMock).getFile(DATE, "prova");
     }
 
     @Test(expected = NullPointerException.class)
-    public void getPdfKO() {
-        byte[] file = citizenService.getPdf(OffsetDateTime.parse("1970-01-01T00:00:00.000Z"));
+    public void getPdf_KO() {
+        FileStorage file = citizenService.getFile(OffsetDateTime.parse("1970-01-01T00:00:00.000Z"), "prova");
 
         Assert.assertNull(file);
-        BDDMockito.verify(fileStorageDAOMock).getPdf(DATE);
+        BDDMockito.verify(fileStorageDAOMock).getFile(DATE, "prova");
     }
 }
