@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.config.ArchConfiguration;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
@@ -17,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +31,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,7 +39,6 @@ import java.util.Optional;
 @EnableWebMvc
 public class BpdCitizenControllerImplTest {
 
-    private final OffsetDateTime DATE = OffsetDateTime.now();
 
     @Autowired
     protected MockMvc mvc;
@@ -83,10 +79,6 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doThrow(new EntityNotFoundException("Unable to find " + Citizen.class.getName() + " with id noFiscalCode"))
                 .when(citizenServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
 
-        FileStorage fileStorage = new FileStorage();
-        fileStorage.setFile("prova".getBytes());
-        Mockito.when(citizenServiceMock.getFile(Mockito.any(OffsetDateTime.class), Mockito.eq("TC"))).thenAnswer((Answer<FileStorage>)
-                invocation -> fileStorage);
     }
 
 
@@ -218,21 +210,6 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verifyZeroInteractions(citizenServiceMock);
         BDDMockito.verifyZeroInteractions(citizenPatchFactoryMock);
         BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
-    }
-
-    @Test
-    public void tcReport() throws Exception {
-
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/bpd/citizens/tc")
-                .contentType(MediaType.APPLICATION_PDF_VALUE)
-                .accept(MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-                .andReturn();
-        byte[] pageResult = result.getResponse().getContentAsByteArray();
-
-        Assert.assertNotNull(pageResult);
-        Assert.assertEquals(pageResult, pageResult);
-        BDDMockito.verify(citizenServiceMock).getFile(Mockito.any(OffsetDateTime.class), Mockito.eq("TC"));
     }
 
 }

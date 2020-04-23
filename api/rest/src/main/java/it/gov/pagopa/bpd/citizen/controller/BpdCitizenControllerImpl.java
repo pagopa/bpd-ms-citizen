@@ -3,8 +3,6 @@ package it.gov.pagopa.bpd.citizen.controller;
 import eu.sia.meda.core.controller.StatelessController;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
@@ -12,17 +10,11 @@ import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.ByteArrayInputStream;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @RestController
@@ -103,21 +95,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         entity.setFiscalCode(fiscalCode);
 
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
-    }
-
-
-    @Override
-    public ResponseEntity<InputStreamResource> getTermsAndConditions() {
-        logger.debug("Start get T&C Report");
-        FileStorage file = citizenService.getFile(OffsetDateTime.now(), "TC");
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=" + file.getFileName());
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(new ByteArrayInputStream(file.getFile())));
     }
 
 }

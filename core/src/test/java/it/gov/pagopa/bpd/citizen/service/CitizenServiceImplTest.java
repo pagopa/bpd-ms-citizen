@@ -1,9 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.dao.FileStorageDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.FileStorage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,8 +28,6 @@ public class CitizenServiceImplTest {
 
     @MockBean
     private CitizenDAO citizenDAOMock;
-    @MockBean
-    private FileStorageDAO fileStorageDAOMock;
     @Autowired
     private CitizenService citizenService;
 
@@ -39,7 +35,6 @@ public class CitizenServiceImplTest {
     @Before
     public void initTest() {
         Mockito.reset(citizenDAOMock);
-        Mockito.reset(fileStorageDAOMock);
 
         Mockito.when(citizenDAOMock.findById(Mockito.any())).thenAnswer((Answer<Optional<Citizen>>)
                 invocation -> {
@@ -53,15 +48,6 @@ public class CitizenServiceImplTest {
                     return citizen;
                 });
 
-        Citizen citizen = new Citizen();
-        BDDMockito.when(citizenDAOMock.save(Mockito.eq(citizen))).thenAnswer((Answer<Citizen>)
-                invocation -> citizen);
-
-        FileStorage fileStorage = new FileStorage();
-        fileStorage.setFile("prova".getBytes());
-        fileStorage.setType("prova");
-        Mockito.when(fileStorageDAOMock.getFile(Mockito.eq(DATE), Mockito.eq(fileStorage.getType()))).thenAnswer((Answer<FileStorage>)
-                invocation -> fileStorage);
     }
 
 
@@ -121,19 +107,4 @@ public class CitizenServiceImplTest {
         BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
     }
 
-    @Test
-    public void getPdf() {
-        FileStorage file = citizenService.getFile(DATE, "prova");
-
-        Assert.assertNotNull(file);
-        BDDMockito.verify(fileStorageDAOMock).getFile(DATE, "prova");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getPdf_KO() {
-        FileStorage file = citizenService.getFile(OffsetDateTime.parse("1970-01-01T00:00:00.000Z"), "prova");
-
-        Assert.assertNull(file);
-        BDDMockito.verify(fileStorageDAOMock).getFile(DATE, "prova");
-    }
 }
