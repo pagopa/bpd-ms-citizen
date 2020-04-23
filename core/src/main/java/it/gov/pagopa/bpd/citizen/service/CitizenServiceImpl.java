@@ -52,7 +52,7 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public void delete(String fiscalCode) {
-        Citizen citizen = citizenDAO.getOne(fiscalCode);//TODO: if idempotent, use findById
+        Citizen citizen = citizenDAO.getOne(fiscalCode);
         citizen.setEnabled(false);
         citizen.setUpdateUser(fiscalCode);
         citizenDAO.save(citizen);
