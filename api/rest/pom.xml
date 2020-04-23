@@ -13,10 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>it.gov.pagopa.bpd.commons.api</groupId>
-            <artifactId>bpd-commons-api-rest</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>

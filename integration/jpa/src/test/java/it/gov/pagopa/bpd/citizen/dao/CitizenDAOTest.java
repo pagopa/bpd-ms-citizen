@@ -30,7 +30,7 @@ public class CitizenDAOTest extends BaseCrudJpaDAOTest<CitizenDAO, Citizen, Stri
 
 
     @Override
-    protected CitizenDAO getCitizenDAO() {
+    protected CitizenDAO getDao() {
         return citizenDAO;
     }
 
