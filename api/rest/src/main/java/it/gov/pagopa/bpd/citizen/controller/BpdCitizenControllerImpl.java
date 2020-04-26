@@ -8,7 +8,6 @@ import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +17,6 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @RestController
-@Slf4j
 public class BpdCitizenControllerImpl extends StatelessController implements BpdCitizenController {
 
     private final CitizenService citizenService;
@@ -40,8 +38,10 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource find(String fiscalCode) {
-        logger.debug("Start find by fiscal code");
-        logger.debug("fiscalCode = [" + fiscalCode + "]");
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.find");
+            logger.debug("fiscalCode = [" + fiscalCode + "]");
+        }
 
         final Optional<Citizen> citizen = citizenService.find(fiscalCode);
         return citizenResourceAssembler.toResource(citizen.get());
@@ -49,8 +49,10 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource update(String fiscalCode, CitizenDTO citizen) {
-        logger.debug("Start update");
-        logger.debug("fiscalCode = [" + fiscalCode + "]");
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.update");
+            logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
+        }
 
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
@@ -60,8 +62,10 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     @Override
     public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
-        logger.debug("Start patch");
-        logger.debug("fiscalCode = [" + fiscalCode + "]");
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.updatePaymentMethod");
+            logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
+        }
 
         try {
             final Citizen entity = citizenPatchFactory.createModel(citizen);
@@ -70,31 +74,34 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
             return citizenResourceAssembler.toResource(citizenEntity);
         } catch (EntityNotFoundException e) {
-            if (log.isErrorEnabled()) {
-                log.error(e.getMessage(), e);
+            if (logger.isErrorEnabled()) {
+                logger.error(e.getMessage(), e);
             }
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
     @Override
-    public void delete(String fiscalCode) {
-        logger.debug("Start delete");
-        logger.debug("fiscalCode = [" + fiscalCode + "]");
-
-        citizenService.delete(fiscalCode);
-    }
-
-
-    @Override
     public void updateTC(String fiscalCode, CitizenDTO citizen) {
-        logger.debug("Start update T&C");
-        logger.debug("fiscalCode = [" + fiscalCode + "]");
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.updateTC");
+            logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
+        }
 
         final Citizen entity = citizenFactory.createModel(citizen);
         entity.setFiscalCode(fiscalCode);
 
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
+    }
+
+    @Override
+    public void delete(String fiscalCode) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.delete");
+            logger.debug("fiscalCode = [" + fiscalCode + "]");
+        }
+
+        citizenService.delete(fiscalCode);
     }
 
 }
