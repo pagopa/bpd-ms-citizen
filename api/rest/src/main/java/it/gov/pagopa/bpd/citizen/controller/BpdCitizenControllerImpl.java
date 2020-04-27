@@ -1,11 +1,14 @@
 package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
+import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @RestController
@@ -23,17 +28,19 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
     private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
+    private final CitizenRankingResourceAssembler citizenRankingResourceAssembler;
 
 
     @Autowired
     public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory,
-                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory) {
+                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory, CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
         this.citizenPatchFactory = citizenPatchFactory;
+        this.citizenRankingResourceAssembler = citizenRankingResourceAssembler;
     }
 
     @Override
@@ -102,6 +109,25 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         }
 
         citizenService.delete(fiscalCode);
+    }
+
+    @Override
+    public CitizenRankingResource findRanking(@Valid @NotBlank String fiscalCode, Long awardPeriodId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.findRanking");
+            logger.debug("fiscalCode = [" + fiscalCode + "]");
+            logger.debug("awardPeriodId = [" + awardPeriodId + "]");
+        }
+        CitizenRanking foundRanking = citizenService.findRanking(fiscalCode, awardPeriodId);
+        Long attendeesNumber = citizenService.calculateAttendeesNumber();
+
+        if (foundRanking == null) {
+            logger.error("Codice Fiscale non trovato");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND);
+        }
+
+        return citizenRankingResourceAssembler.toResource(foundRanking, attendeesNumber);
     }
 
 }

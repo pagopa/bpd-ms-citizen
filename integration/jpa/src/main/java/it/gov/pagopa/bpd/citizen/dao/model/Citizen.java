@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.common.model.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"fiscalCode"}, callSuper = false)
 @Table(name = "bpd_citizen")
+@Where(clause = "ENABLED_B = 'TRUE'")
 public class Citizen extends BaseEntity {
 
     @Column(name = "payoff_instr_type_c")

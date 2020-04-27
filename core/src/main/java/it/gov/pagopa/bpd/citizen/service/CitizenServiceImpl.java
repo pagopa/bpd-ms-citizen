@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
+import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,13 @@ class CitizenServiceImpl implements CitizenService {
 
 
     private final CitizenDAO citizenDAO;
+    private final CitizenRankingDAO citizenRankingDAO;
 
 
     @Autowired
-    public CitizenServiceImpl(CitizenDAO citizenDAO) {
+    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO) {
         this.citizenDAO = citizenDAO;
+        this.citizenRankingDAO = citizenRankingDAO;
     }
 
 
@@ -51,6 +55,16 @@ class CitizenServiceImpl implements CitizenService {
         citizen.setEnabled(false);
         citizen.setUpdateUser(fiscalCode);
         citizenDAO.save(citizen);
+    }
+
+    @Override
+    public Long calculateAttendeesNumber() {
+        return citizenDAO.count();
+    }
+
+    @Override
+    public CitizenRanking findRanking(String fiscalCode, Long awardPeriodId) {
+        return citizenRankingDAO.findByFiscalCodeAndAwardPeriodId(fiscalCode, awardPeriodId);
     }
 
 }

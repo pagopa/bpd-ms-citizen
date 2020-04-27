@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
+import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,15 +21,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Random;
+
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = CitizenServiceImpl.class)
 public class CitizenServiceImplTest {
 
     private final OffsetDateTime DATE = OffsetDateTime.now();
+    private final Long attendeesNumberMock = new Random().nextLong();
+    private final Long rankingMock = new Random().nextLong();
 
     @MockBean
     private CitizenDAO citizenDAOMock;
+    @MockBean
+    private CitizenRankingDAO citizenRankingDAOMock;
     @Autowired
     private CitizenService citizenService;
 
@@ -47,6 +55,19 @@ public class CitizenServiceImplTest {
                     Citizen citizen = new Citizen();
                     return citizen;
                 });
+
+        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.anyString(), Mockito.anyLong()))
+                .thenAnswer((Answer<CitizenRanking>)
+                        invocation -> {
+                            CitizenRanking citizenRanking = new CitizenRanking();
+                            citizenRanking.setId(0L);
+                            citizenRanking.setFiscalCode("fiscalCode");
+                            citizenRanking.setRanking(rankingMock);
+                            return citizenRanking;
+                        });
+
+        Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
+                invocation -> attendeesNumberMock);
 
     }
 
@@ -105,6 +126,23 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).getOne(Mockito.eq("NoFiscalCode"));
         BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
+    }
+
+    @Test
+    public void findRanking() {
+        CitizenRanking citizenRanking = citizenService.findRanking("fiscalCode", 0L);
+
+        Assert.assertNotNull(citizenRanking);
+        Assert.assertEquals(rankingMock, citizenRanking.getRanking());
+        BDDMockito.verify(citizenRankingDAOMock, Mockito.atLeastOnce())
+                .findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.eq(0L));
+    }
+
+    @Test
+    public void calculateAttendeesNumber() {
+        Long attendeesNumber = citizenService.calculateAttendeesNumber();
+
+        Assert.assertEquals(attendeesNumberMock, attendeesNumber);
     }
 
 }

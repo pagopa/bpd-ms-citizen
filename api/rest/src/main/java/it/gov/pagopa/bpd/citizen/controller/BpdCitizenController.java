@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.citizen.controller;
 import io.swagger.annotations.Api;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,5 +35,10 @@ public interface BpdCitizenController {
     @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Valid @NotBlank String fiscalCode);
+
+    @GetMapping(value = "/citizens/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    CitizenRankingResource findRanking(@PathVariable @Valid @NotBlank String fiscalCode,
+                                       @RequestParam(value = "awardPeriodId") Long awardPeriodId);
 
 }

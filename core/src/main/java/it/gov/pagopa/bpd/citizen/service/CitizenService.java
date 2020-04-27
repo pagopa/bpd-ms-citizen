@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
 
 import java.util.Optional;
 
@@ -13,5 +14,9 @@ public interface CitizenService {
     Citizen patch(String fiscalCode, Citizen cz);
 
     void delete(String fiscalCode);
+
+    Long calculateAttendeesNumber();
+
+    CitizenRanking findRanking(String fiscalCode, Long awardPeriodId);
 
 }
