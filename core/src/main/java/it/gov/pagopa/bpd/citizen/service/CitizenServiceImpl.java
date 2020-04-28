@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * @See CitizenService
+ */
 @Service
 @Slf4j
 class CitizenServiceImpl implements CitizenService {

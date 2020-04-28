@@ -4,6 +4,9 @@ import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import org.springframework.stereotype.Service;
 
+/**
+ * Mapper between <CitizenRanking> Entity class and <CitizenRankingResource> Resource class
+ */
 @Service
 public class CitizenRankingResourceAssembler {
 

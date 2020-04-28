@@ -5,6 +5,9 @@ import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * Mapper between <Citizen> Entity class and <CitizenResource> Resource class
+ */
 @Service
 public class CitizenResourceAssembler {
 

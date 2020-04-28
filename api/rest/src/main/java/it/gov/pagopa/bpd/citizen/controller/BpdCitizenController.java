@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * Controller to expose MicroService
+ */
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
 @RequestMapping("/bpd")
 public interface BpdCitizenController {

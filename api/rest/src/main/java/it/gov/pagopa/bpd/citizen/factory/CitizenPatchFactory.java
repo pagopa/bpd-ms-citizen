@@ -4,6 +4,9 @@ import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper between <CitizenPatchDTO> DTO class and <Citizen> Entity class
+ */
 @Component
 public class CitizenPatchFactory implements ModelFactory<CitizenPatchDTO, Citizen> {
 

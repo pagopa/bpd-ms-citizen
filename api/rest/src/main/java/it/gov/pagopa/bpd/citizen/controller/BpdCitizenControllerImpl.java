@@ -21,6 +21,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
+/**
+ * @see BpdCitizenController
+ */
 @RestController
 public class BpdCitizenControllerImpl extends StatelessController implements BpdCitizenController {
 
