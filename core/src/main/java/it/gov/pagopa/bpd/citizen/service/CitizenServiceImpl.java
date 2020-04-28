@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,10 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenRanking findRanking(String fiscalCode, Long awardPeriodId) {
-        return citizenRankingDAO.findByFiscalCodeAndAwardPeriodId(fiscalCode, awardPeriodId);
+        CitizenRanking ranking = citizenRankingDAO.findByFiscalCodeAndAwardPeriodId(fiscalCode, awardPeriodId);
+        if (ranking == null) {
+            throw new CitizenRankingNotFoundException(fiscalCode);
+        }
+        return ranking;
     }
-
 }

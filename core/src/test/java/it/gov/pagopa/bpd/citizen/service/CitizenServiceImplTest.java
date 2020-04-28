@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +23,9 @@ import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.Random;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
@@ -56,7 +60,7 @@ public class CitizenServiceImplTest {
                     return citizen;
                 });
 
-        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.anyString(), Mockito.anyLong()))
+        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.anyLong()))
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> {
                             CitizenRanking citizenRanking = new CitizenRanking();
@@ -68,6 +72,10 @@ public class CitizenServiceImplTest {
 
         Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
                 invocation -> attendeesNumberMock);
+
+        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("wrongFiscalCode"), Mockito.anyLong()))
+                .thenAnswer((Answer<CitizenRanking>)
+                        invocation -> null);
 
     }
 
@@ -143,6 +151,16 @@ public class CitizenServiceImplTest {
         Long attendeesNumber = citizenService.calculateAttendeesNumber();
 
         Assert.assertEquals(attendeesNumberMock, attendeesNumber);
+    }
+
+    @Test(expected = CitizenRankingNotFoundException.class)
+    public void findRanking_KO() {
+        try {
+            CitizenRanking citizenRanking = citizenService.findRanking("wrongFiscalCode", 0L);
+        } finally {
+            verify(citizenRankingDAOMock, only()).findByFiscalCodeAndAwardPeriodId(eq("wrongFiscalCode"), eq(0L));
+            verify(citizenRankingDAOMock, times(1)).findByFiscalCodeAndAwardPeriodId(eq("wrongFiscalCode"), eq(0L));
+        }
     }
 
 }

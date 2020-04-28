@@ -121,12 +121,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         CitizenRanking foundRanking = citizenService.findRanking(fiscalCode, awardPeriodId);
         Long attendeesNumber = citizenService.calculateAttendeesNumber();
 
-        if (foundRanking == null) {
-            logger.error("Codice Fiscale non trovato");
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND);
-        }
-
         return citizenRankingResourceAssembler.toResource(foundRanking, attendeesNumber);
     }
 
