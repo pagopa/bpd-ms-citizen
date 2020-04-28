@@ -4,12 +4,12 @@ import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 /**
  * @See CitizenService
@@ -31,8 +31,8 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
-    public Optional<Citizen> find(String fiscalCode) {
-        return citizenDAO.findById(fiscalCode);
+    public Citizen find(String fiscalCode) {
+        return citizenDAO.findById(fiscalCode).orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
     }
 
 

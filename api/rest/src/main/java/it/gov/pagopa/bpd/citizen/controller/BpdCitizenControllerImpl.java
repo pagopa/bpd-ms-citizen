@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Optional;
 
 /**
  * @see BpdCitizenController
@@ -53,8 +52,8 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
 
-        final Optional<Citizen> citizen = citizenService.find(fiscalCode);
-        return citizenResourceAssembler.toResource(citizen.get());
+        final Citizen citizen = citizenService.find(fiscalCode);
+        return citizenResourceAssembler.toResource(citizen);
     }
 
     @Override

@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,6 +36,8 @@ public class CitizenServiceImplTest {
     private final OffsetDateTime DATE = OffsetDateTime.now();
     private final Long attendeesNumberMock = new Random().nextLong();
     private final Long rankingMock = new Random().nextLong();
+    private static final String EXISTING_FISCAL_CODE = "existing-fiscalCode";
+    private static final String NOT_EXISTING_FISCAL_CODE = "not-existing-fiscalCode";
 
     @MockBean
     private CitizenDAO citizenDAOMock;
@@ -48,10 +51,16 @@ public class CitizenServiceImplTest {
     public void initTest() {
         Mockito.reset(citizenDAOMock);
 
-        Mockito.when(citizenDAOMock.findById(Mockito.any())).thenAnswer((Answer<Optional<Citizen>>)
-                invocation -> {
-                    Citizen citizen = new Citizen();
-                    return Optional.of(citizen);
+        when(citizenDAOMock.findById(anyString()))
+                .thenAnswer(invocation -> {
+                    String fiscalCode = invocation.getArgument(0, String.class);
+                    Optional<Citizen> result = Optional.empty();
+                    if (EXISTING_FISCAL_CODE.equals(fiscalCode)) {
+                        Citizen citizen = new Citizen();
+                        citizen.setFiscalCode(fiscalCode);
+                        result = Optional.of(citizen);
+                    }
+                    return result;
                 });
 
         Mockito.when(citizenDAOMock.getOne(Mockito.anyString())).thenAnswer((Answer<Citizen>)
@@ -82,10 +91,20 @@ public class CitizenServiceImplTest {
 
     @Test
     public void find() {
-        Optional<Citizen> citizen = citizenService.find("test");
+        Citizen citizen = citizenService.find(EXISTING_FISCAL_CODE);
 
-        Assert.assertNotNull(citizen.orElse(null));
-        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq("test"));
+        Assert.assertNotNull(citizen);
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
+    }
+
+    @Test(expected = CitizenNotFoundException.class)
+    public void find_KO() {
+        try {
+            Citizen citizen = citizenService.find(NOT_EXISTING_FISCAL_CODE);
+        } finally {
+            verify(citizenDAOMock, only()).findById(eq(NOT_EXISTING_FISCAL_CODE));
+            verify(citizenDAOMock, times(1)).findById(eq(NOT_EXISTING_FISCAL_CODE));
+        }
     }
 
     @Test

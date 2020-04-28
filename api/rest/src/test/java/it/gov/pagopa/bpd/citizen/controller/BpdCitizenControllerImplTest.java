@@ -34,7 +34,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -65,7 +64,7 @@ public class BpdCitizenControllerImplTest {
         Citizen citizen = new Citizen();
         citizen.setFiscalCode("fiscalCode");
 
-        BDDMockito.doReturn(Optional.of(citizen)).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(citizen).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
         Citizen citizenPatched = new Citizen();
         citizenPatched.setPayoffInstr("Test");
         citizenPatched.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
@@ -80,7 +79,7 @@ public class BpdCitizenControllerImplTest {
         citizenRanking.setRanking(10L);
 
 
-        BDDMockito.doReturn(Optional.of(citizen)).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(citizen).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
 
         BDDMockito.doReturn(new Citizen()).when(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
 
