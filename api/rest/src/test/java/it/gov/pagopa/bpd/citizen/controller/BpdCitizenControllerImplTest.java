@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -136,36 +135,6 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 
         BDDMockito.verify(citizenServiceMock).delete(Mockito.any());
-    }
-
-    @Test
-    public void updateTC() throws Exception {
-        CitizenDTO citizen = new CitizenDTO();
-        mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/fiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(objectMapper.writeValueAsString(citizen)))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-                .andReturn();
-
-        BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
-        BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
-    }
-
-    @Test(expected = ArgumentsAreDifferent.class)
-    public void updateTCInvalidArguments() throws Exception {
-        CitizenDTO citizen = new CitizenDTO();
-        try {
-            mvc.perform(MockMvcRequestBuilders.put("/bpd/enrollment/io/citizens/wrongFiscalCode")
-                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .content(objectMapper.writeValueAsString(citizen)))
-                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-                    .andReturn();
-        } finally {
-            BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
-            BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
-        }
     }
 
     @Test

@@ -31,10 +31,6 @@ public interface BpdCitizenController {
     @ResponseStatus(HttpStatus.OK)
     CitizenResource updatePaymentMethod(@PathVariable @Valid @NotBlank String fiscalCode, @RequestBody @Valid CitizenPatchDTO citizen);
 
-    @PutMapping(value = "/enrollment/io/citizens/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    void updateTC(@PathVariable("id") @Valid @NotBlank String fiscalCode, @RequestBody CitizenDTO citizen);
-
     @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Valid @NotBlank String fiscalCode);

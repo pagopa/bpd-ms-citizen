@@ -81,18 +81,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     }
 
-    @Override
-    public void updateTC(String fiscalCode, CitizenDTO citizen) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("BpdCitizenControllerImpl.updateTC");
-            logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
-        }
-
-        final Citizen entity = citizenFactory.createModel(citizen);
-        entity.setFiscalCode(fiscalCode);
-
-        Citizen citizenEntity = citizenService.update(fiscalCode, entity);
-    }
 
     @Override
     public void delete(String fiscalCode) {

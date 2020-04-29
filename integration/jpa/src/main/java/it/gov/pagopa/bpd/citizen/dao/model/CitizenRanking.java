@@ -27,7 +27,7 @@ public class CitizenRanking extends BaseEntity {
     @Column(name = "award_period_id_n")
     private Long awardPeriodId;
 
-    @Column(name = "ranking")
+    @Column(name = "ranking_n")
     private Long ranking;
 
 }

@@ -62,12 +62,6 @@ public class CitizenServiceImplTest {
                     return result;
                 });
 
-//        Mockito.when(citizenDAOMock.getOne(Mockito.anyString())).thenAnswer((Answer<Citizen>)
-//                invocation -> {
-//                    Citizen citizen = new Citizen();
-//                    return citizen;
-//                });
-
         Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.anyLong()))
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> {
@@ -119,14 +113,6 @@ public class CitizenServiceImplTest {
     public void delete() {
         citizenService.delete(EXISTING_FISCAL_CODE);
 
-        BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
-    }
-
-    @Test(expected = CitizenNotFoundException.class)
-    public void delete_KO() {
-        citizenService.delete(NOT_EXISTING_FISCAL_CODE);
-
-        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(NOT_EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
     }
 

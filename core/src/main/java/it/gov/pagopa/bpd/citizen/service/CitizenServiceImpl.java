@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 /**
  * @See CitizenService
@@ -56,11 +58,12 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public void delete(String fiscalCode) {
-        Citizen citizen = citizenDAO.findById(fiscalCode)
-                .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
-        citizen.setEnabled(false);
-        citizen.setUpdateUser(fiscalCode);
-        citizenDAO.save(citizen);
+        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
+        if (citizen.isPresent()) {
+            citizen.get().setEnabled(false);
+            citizen.get().setUpdateUser(fiscalCode);
+            citizenDAO.save(citizen.get());
+        }
     }
 
     @Override
