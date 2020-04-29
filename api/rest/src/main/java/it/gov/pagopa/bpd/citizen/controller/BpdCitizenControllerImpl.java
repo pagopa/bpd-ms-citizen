@@ -12,11 +12,8 @@ import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -76,18 +73,12 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
         }
 
-        try {
-            final Citizen entity = citizenPatchFactory.createModel(citizen);
-            entity.setPayoffInstr(citizen.getPayoffInstr());
-            entity.setPayoffInstrType(citizen.getPayoffInstrType());
-            Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
-            return citizenResourceAssembler.toResource(citizenEntity);
-        } catch (EntityNotFoundException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error(e.getMessage(), e);
-            }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        final Citizen entity = citizenPatchFactory.createModel(citizen);
+        entity.setPayoffInstr(citizen.getPayoffInstr());
+        entity.setPayoffInstrType(citizen.getPayoffInstrType());
+        Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
+        return citizenResourceAssembler.toResource(citizenEntity);
+
     }
 
     @Override

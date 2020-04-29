@@ -192,24 +192,6 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.eq(expCitizen));
     }
 
-    @Test
-    public void updatePaymentMethodKO() throws Exception {
-
-        CitizenPatchDTO citizen = new CitizenPatchDTO();
-        citizen.setPayoffInstr("Test");
-        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-
-        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(objectMapper.writeValueAsString(citizen)))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andReturn();
-
-        BDDMockito.verify(citizenServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
-        BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.any());
-        BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
-    }
 
     @Test
     public void updatePaymentMethodKoValidation() throws Exception {

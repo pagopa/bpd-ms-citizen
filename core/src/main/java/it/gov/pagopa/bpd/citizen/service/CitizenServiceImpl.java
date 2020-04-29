@@ -45,7 +45,8 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public Citizen patch(String fiscalCode, Citizen cz) {
-        Citizen citizen = citizenDAO.getOne(fiscalCode);
+        Citizen citizen = citizenDAO.findById(fiscalCode)
+                .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
         citizen.setPayoffInstr(cz.getPayoffInstr());
         citizen.setPayoffInstrType(cz.getPayoffInstrType());
         citizen.setUpdateUser(fiscalCode);
@@ -55,7 +56,8 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public void delete(String fiscalCode) {
-        Citizen citizen = citizenDAO.getOne(fiscalCode);
+        Citizen citizen = citizenDAO.findById(fiscalCode)
+                .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
         citizen.setEnabled(false);
         citizen.setUpdateUser(fiscalCode);
         citizenDAO.save(citizen);

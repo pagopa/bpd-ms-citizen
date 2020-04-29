@@ -20,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -63,11 +62,11 @@ public class CitizenServiceImplTest {
                     return result;
                 });
 
-        Mockito.when(citizenDAOMock.getOne(Mockito.anyString())).thenAnswer((Answer<Citizen>)
-                invocation -> {
-                    Citizen citizen = new Citizen();
-                    return citizen;
-                });
+//        Mockito.when(citizenDAOMock.getOne(Mockito.anyString())).thenAnswer((Answer<Citizen>)
+//                invocation -> {
+//                    Citizen citizen = new Citizen();
+//                    return citizen;
+//                });
 
         Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.anyLong()))
                 .thenAnswer((Answer<CitizenRanking>)
@@ -118,8 +117,16 @@ public class CitizenServiceImplTest {
 
     @Test
     public void delete() {
-        citizenService.delete("test");
+        citizenService.delete(EXISTING_FISCAL_CODE);
 
+        BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
+    }
+
+    @Test(expected = CitizenNotFoundException.class)
+    public void delete_KO() {
+        citizenService.delete(NOT_EXISTING_FISCAL_CODE);
+
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(NOT_EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
     }
 
@@ -131,29 +138,25 @@ public class CitizenServiceImplTest {
         Citizen citizen = new Citizen();
         citizen.setPayoffInstr("Test");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-        citizenService.patch("fiscalCode", citizen);
-        citizen.setUpdateUser("fiscalCode");
+        citizen.setFiscalCode(EXISTING_FISCAL_CODE);
+        citizenService.patch(EXISTING_FISCAL_CODE, citizen);
+        citizen.setUpdateUser(EXISTING_FISCAL_CODE);
 
-        BDDMockito.verify(citizenDAOMock).getOne(Mockito.eq("fiscalCode"));
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
     }
 
-    @Test
+    @Test(expected = CitizenNotFoundException.class)
     public void patch_KO() {
-        BDDMockito.when(citizenDAOMock.getOne(Mockito.eq("NoFiscalCode"))).
-                thenThrow(new EntityNotFoundException(
-                        "Unable to find " + Citizen.class.getName() + " with id NoFiscalCode"));
-
         Citizen citizen = new Citizen();
         citizen.setPayoffInstr("Test");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-        exceptionRule.expect(EntityNotFoundException.class);
-        exceptionRule.expectMessage("Unable to find " + Citizen.class.getName() + " with id NoFiscalCode");
-        citizenService.patch("NoFiscalCode", citizen);
+        citizenService.patch(NOT_EXISTING_FISCAL_CODE, citizen);
 
-        BDDMockito.verify(citizenDAOMock).getOne(Mockito.eq("NoFiscalCode"));
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(NOT_EXISTING_FISCAL_CODE));
         BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
     }
+
 
     @Test
     public void findRanking() {
