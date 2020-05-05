@@ -5,6 +5,8 @@ spring:
   application:
     name: "@project.parent.artifactId@"
     version: "@project.version@"
+  profiles:
+    active: swaggerIT
 
 info:
   build:
@@ -24,3 +26,4 @@ meda:
 logging:
   level:
     it.gov.pagopa.bpd..citizen: ${LOG_LEVEL_CITIZEN:DEBUG}
+
