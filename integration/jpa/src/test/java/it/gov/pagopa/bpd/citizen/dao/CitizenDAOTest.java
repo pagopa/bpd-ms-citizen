@@ -55,7 +55,7 @@ public class CitizenDAOTest extends BaseCrudJpaDAOTest<CitizenDAO, Citizen, Stri
 
     @Override
     protected Function<Integer, String> idBuilderFn() {
-        return (bias) -> "fiscalCode" + bias;
+        return (bias) -> "fiscalCode".toUpperCase() + bias;
     }
 
 

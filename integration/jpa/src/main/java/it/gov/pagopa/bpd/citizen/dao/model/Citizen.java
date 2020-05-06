@@ -36,16 +36,12 @@ public class Citizen extends BaseEntity {
         IBAN
     }
 
-    @Override
-    protected void onUpdate() {
-        super.onUpdate();
-        setFiscalCode(fiscalCode.toUpperCase());
+    public String getFiscalCode() {
+        return fiscalCode != null ? fiscalCode.toUpperCase() : null;
     }
 
-    @Override
-    protected void onCreate() {
-        super.onCreate();
-        setFiscalCode(fiscalCode.toUpperCase());
+    public void setFiscalCode(String fiscalCode) {
+        this.fiscalCode = fiscalCode != null ? fiscalCode.toUpperCase() : null;
     }
 
 
