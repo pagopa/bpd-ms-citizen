@@ -36,10 +36,7 @@ public interface BpdCitizenController {
             @PathVariable
             @Valid @NotBlank
                     String fiscalCode,
-            @ApiParam(value = "${swagger.citizen.timestampTC}", required = true)
-            @RequestBody
-                    CitizenDTO citizen
-    );
+            @RequestBody CitizenDTO citizen);
 
     @PatchMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -48,11 +45,7 @@ public interface BpdCitizenController {
             @PathVariable
             @Valid @NotBlank
                     String fiscalCode,
-            @ApiParam(value = "${swagger.citizen.payoffInstr}", required = true)
-            @RequestBody
-            @Valid
-                    CitizenPatchDTO citizen
-    );
+            @RequestBody @Valid CitizenPatchDTO citizen);
 
     @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
