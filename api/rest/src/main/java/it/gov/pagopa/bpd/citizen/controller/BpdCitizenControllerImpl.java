@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * @see BpdCitizenController
@@ -43,7 +44,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource find(String fiscalCode) {
+    public CitizenResource find(@Size(max = 16) String fiscalCode) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.find");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
@@ -54,7 +55,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource update(String fiscalCode, CitizenDTO citizen) {
+    public CitizenResource update(@Size(max = 16) String fiscalCode, CitizenDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.update");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
@@ -67,7 +68,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
+    public CitizenResource updatePaymentMethod(@Size(max = 16) String fiscalCode, CitizenPatchDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.updatePaymentMethod");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
@@ -83,7 +84,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
 
     @Override
-    public void delete(String fiscalCode) {
+    public void delete(@Size(max = 16) String fiscalCode) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.delete");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
@@ -93,7 +94,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenRankingResource findRanking(@Valid @NotBlank String fiscalCode, Long awardPeriodId) {
+    public CitizenRankingResource findRanking(@Valid @NotBlank @Size(max = 16) String fiscalCode, Long awardPeriodId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.findRanking");
             logger.debug("fiscalCode = [" + fiscalCode + "]");

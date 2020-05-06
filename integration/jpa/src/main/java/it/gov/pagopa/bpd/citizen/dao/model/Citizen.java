@@ -21,6 +21,7 @@ public class Citizen extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PayoffInstrumentType payoffInstrType;
 
+
     @Id
     @Column(name = "fiscal_code_s")
     private String fiscalCode;
@@ -34,5 +35,18 @@ public class Citizen extends BaseEntity {
     public enum PayoffInstrumentType {
         IBAN
     }
+
+    @Override
+    protected void onUpdate() {
+        super.onUpdate();
+        setFiscalCode(fiscalCode.toUpperCase());
+    }
+
+    @Override
+    protected void onCreate() {
+        super.onCreate();
+        setFiscalCode(fiscalCode.toUpperCase());
+    }
+
 
 }
