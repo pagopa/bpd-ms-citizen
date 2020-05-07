@@ -6,18 +6,23 @@ import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
+import it.gov.pagopa.bpd.common.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  * Controller to expose MicroService
  */
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
 @RequestMapping("/bpd")
+@Validated
 public interface BpdCitizenController {
 
     @GetMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -25,7 +30,7 @@ public interface BpdCitizenController {
     CitizenResource find(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable
-            @Valid @NotBlank
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode
     );
 
@@ -34,7 +39,7 @@ public interface BpdCitizenController {
     CitizenResource update(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable
-            @Valid @NotBlank
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
             @RequestBody CitizenDTO citizen);
 
@@ -43,7 +48,7 @@ public interface BpdCitizenController {
     CitizenResource updatePaymentMethod(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable
-            @Valid @NotBlank
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
             @RequestBody @Valid CitizenPatchDTO citizen);
 
@@ -52,7 +57,7 @@ public interface BpdCitizenController {
     void delete(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable
-            @Valid @NotBlank
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode
     );
 
@@ -61,7 +66,7 @@ public interface BpdCitizenController {
     CitizenRankingResource findRanking(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable
-            @Valid @NotBlank
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
             @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = true)
             @RequestParam(value = "awardPeriodId")
