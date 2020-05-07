@@ -40,9 +40,8 @@ public class Citizen extends BaseEntity {
         return fiscalCode != null ? fiscalCode.toUpperCase() : null;
     }
 
-//    @Size(min = 16, max = 16)
-//    @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
-public void setFiscalCode(String fiscalCode) {
+
+    public void setFiscalCode(String fiscalCode) {
     this.fiscalCode = fiscalCode != null ? fiscalCode.toUpperCase() : null;
 }
 
