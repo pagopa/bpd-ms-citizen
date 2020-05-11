@@ -24,6 +24,7 @@ public class Citizen extends BaseEntity {
 
     @Id
     @Column(name = "fiscal_code_s")
+//    @Convert(converter = UpperCaseConverter.class)
     private String fiscalCode;
 
     @Column(name = "payoff_instr_s")
@@ -36,13 +37,13 @@ public class Citizen extends BaseEntity {
         IBAN
     }
 
-    public String getFiscalCode() {
-        return fiscalCode != null ? fiscalCode.toUpperCase() : null;
-    }
-
-
-    public void setFiscalCode(String fiscalCode) {
-    this.fiscalCode = fiscalCode != null ? fiscalCode.toUpperCase() : null;
-}
+//    public String getFiscalCode() {
+//        return fiscalCode != null ? fiscalCode.toUpperCase() : null;
+//    }
+//
+//
+//    public void setFiscalCode(String fiscalCode) {
+//    this.fiscalCode = fiscalCode != null ? fiscalCode.toUpperCase() : null;
+//}
 
 }
