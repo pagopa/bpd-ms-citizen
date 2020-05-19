@@ -40,8 +40,23 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public Citizen update(String fiscalCode, Citizen cz) {
-        cz.setUpdateUser(fiscalCode);
-        return citizenDAO.save(cz);
+        final Citizen result;
+        final Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
+        if (citizenFound.isPresent()) {
+            if (citizenFound.get().isEnabled()) {
+                result = citizenFound.get();
+            } else {
+                citizenFound.get().setEnabled(true);
+                citizenFound.get().setUpdateUser(fiscalCode);
+                citizenFound.get().setTimestampTC(cz.getTimestampTC());
+                result = citizenDAO.save(citizenFound.get());
+            }
+        } else {
+            cz.setFiscalCode(fiscalCode);
+            cz.setUpdateUser(fiscalCode);
+            result = citizenDAO.save(cz);
+        }
+        return result;
     }
 
 

@@ -4,7 +4,6 @@ import it.gov.pagopa.bpd.common.model.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -14,7 +13,6 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"fiscalCode"}, callSuper = false)
 @Table(name = "bpd_citizen")
-@Where(clause = "ENABLED_B = 'TRUE'")
 public class Citizen extends BaseEntity {
 
     @Column(name = "payoff_instr_type_c")
@@ -24,7 +22,6 @@ public class Citizen extends BaseEntity {
 
     @Id
     @Column(name = "fiscal_code_s")
-//    @Convert(converter = UpperCaseConverter.class)
     private String fiscalCode;
 
     @Column(name = "payoff_instr_s")
@@ -37,13 +34,5 @@ public class Citizen extends BaseEntity {
         IBAN
     }
 
-//    public String getFiscalCode() {
-//        return fiscalCode != null ? fiscalCode.toUpperCase() : null;
-//    }
-//
-//
-//    public void setFiscalCode(String fiscalCode) {
-//    this.fiscalCode = fiscalCode != null ? fiscalCode.toUpperCase() : null;
-//}
 
 }

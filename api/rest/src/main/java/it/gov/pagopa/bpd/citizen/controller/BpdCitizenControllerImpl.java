@@ -58,7 +58,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         }
 
         final Citizen entity = citizenFactory.createModel(citizen);
-        entity.setFiscalCode(fiscalCode);
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
         return citizenResourceAssembler.toResource(citizenEntity);
     }
@@ -75,9 +74,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         entity.setPayoffInstrType(citizen.getPayoffInstrType());
         Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
         return citizenResourceAssembler.toResource(citizenEntity);
-
     }
-
 
     @Override
     public void delete(String fiscalCode) {
@@ -85,7 +82,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("BpdCitizenControllerImpl.delete");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
-
         citizenService.delete(fiscalCode);
     }
 
