@@ -67,7 +67,7 @@ public interface BpdCitizenController {
     @ResponseStatus(HttpStatus.OK)
     CitizenRankingResource findRanking(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
-            @PathVariable //@UpperCase
+            @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
             @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = true)
