@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
 import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,9 @@ class CitizenServiceImpl implements CitizenService {
     public Citizen patch(String fiscalCode, Citizen cz) {
         Citizen citizen = citizenDAO.findById(fiscalCode)
                 .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
+        if (!citizen.isEnabled()) {
+            throw new CitizenNotEnabledException(fiscalCode);
+        }
         citizen.setPayoffInstr(cz.getPayoffInstr());
         citizen.setPayoffInstrType(cz.getPayoffInstrType());
         citizen.setUpdateUser(fiscalCode);

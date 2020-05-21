@@ -80,7 +80,7 @@ public class BpdCitizenControllerImplTest {
 
         BDDMockito.doReturn(citizen).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
 
-        BDDMockito.doReturn(new Citizen()).when(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.eq(citizen));
+        BDDMockito.doReturn(new Citizen()).when(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
 
         BDDMockito.doNothing().when(citizenServiceMock).delete(Mockito.eq("fiscalCode"));
 
