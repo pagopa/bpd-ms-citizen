@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.citizen.factory;
 
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
 import org.springframework.stereotype.Component;
 

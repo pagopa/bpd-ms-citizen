@@ -1,9 +1,9 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import it.gov.pagopa.bpd.citizen.dao.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.dao.CitizenRankingDAO;
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;

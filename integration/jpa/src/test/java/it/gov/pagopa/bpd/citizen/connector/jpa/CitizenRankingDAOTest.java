@@ -1,8 +1,8 @@
-package it.gov.pagopa.bpd.citizen.dao;
+package it.gov.pagopa.bpd.citizen.connector.jpa;
 
 import eu.sia.meda.layers.connector.query.CriteriaQuery;
-import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
-import it.gov.pagopa.bpd.common.BaseCrudJpaDAOTest;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.common.connector.jpa.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 

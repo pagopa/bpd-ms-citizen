@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd;
+package it.gov.pagopa.bpd.citizen;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

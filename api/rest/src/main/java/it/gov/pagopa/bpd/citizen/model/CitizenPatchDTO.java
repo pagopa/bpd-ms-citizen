@@ -2,7 +2,7 @@ package it.gov.pagopa.bpd.citizen.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

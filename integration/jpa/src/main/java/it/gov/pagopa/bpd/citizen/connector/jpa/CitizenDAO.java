@@ -1,7 +1,7 @@
-package it.gov.pagopa.bpd.citizen.dao;
+package it.gov.pagopa.bpd.citizen.connector.jpa;
 
-import eu.sia.meda.connector.jpa.CrudJpaDAO;
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.common.connector.jpa.CrudJpaDAO;
 import org.springframework.stereotype.Repository;
 
 /**

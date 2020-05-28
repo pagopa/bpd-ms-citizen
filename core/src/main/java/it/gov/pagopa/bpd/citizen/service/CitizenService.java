@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import it.gov.pagopa.bpd.citizen.dao.model.Citizen;
-import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 
 
 /**

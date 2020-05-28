@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.citizen.assembler;
 
-import it.gov.pagopa.bpd.citizen.dao.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import org.springframework.stereotype.Service;
 
