@@ -92,6 +92,8 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("fiscalCode = [" + fiscalCode + "]");
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
+
+
         CitizenRanking foundRanking = citizenService.findRanking(fiscalCode, awardPeriodId);
         Long attendeesNumber = citizenService.calculateAttendeesNumber();
 

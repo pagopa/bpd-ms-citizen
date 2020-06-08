@@ -5,25 +5,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Data
+@IdClass(CitizenRankingId.class)
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"}, callSuper = false)
+@EqualsAndHashCode(of = {"fiscalCode", "awardPeriodId"}, callSuper = false)
 @Table(name = "bpd_citizen_ranking")
 public class CitizenRanking extends BaseEntity {
 
-    @Id
-    @Column(name = "id_n")
-    private Long id;
+    //@Id
+    //@Column(name = "id_n")
+    //private Long id;
 
+    @Id
     @Column(name = "fiscal_code_c")
     private String fiscalCode;
 
+    @Id
     @Column(name = "award_period_id_n")
     private Long awardPeriodId;
 

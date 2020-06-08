@@ -4,8 +4,8 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
-import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -62,20 +63,20 @@ public class CitizenServiceImplTest {
                     return result;
                 });
 
-        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.anyLong()))
-                .thenAnswer((Answer<CitizenRanking>)
+        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId(EXISTING_FISCAL_CODE, 0L))))
+                .thenAnswer((Answer<Optional<CitizenRanking>>)
                         invocation -> {
                             CitizenRanking citizenRanking = new CitizenRanking();
-                            citizenRanking.setId(0L);
-                            citizenRanking.setFiscalCode("fiscalCode");
+                            citizenRanking.setAwardPeriodId(0L);
+                            citizenRanking.setFiscalCode(EXISTING_FISCAL_CODE);
                             citizenRanking.setRanking(rankingMock);
-                            return citizenRanking;
+                            return Optional.of(citizenRanking);
                         });
 
-        Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
+        Mockito.when(citizenDAOMock.count((Example<Citizen>) Mockito.any())).thenAnswer((Answer<Long>)
                 invocation -> attendeesNumberMock);
 
-        Mockito.when(citizenRankingDAOMock.findByFiscalCodeAndAwardPeriodId(Mockito.eq("wrongFiscalCode"), Mockito.anyLong()))
+        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId("wrongFiscalCode", 0L))))
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
 
@@ -146,12 +147,11 @@ public class CitizenServiceImplTest {
 
     @Test
     public void findRanking() {
-        CitizenRanking citizenRanking = citizenService.findRanking("fiscalCode", 0L);
-
+        CitizenRanking citizenRanking = citizenService.findRanking(EXISTING_FISCAL_CODE, 0L);
         Assert.assertNotNull(citizenRanking);
         Assert.assertEquals(rankingMock, citizenRanking.getRanking());
         BDDMockito.verify(citizenRankingDAOMock, Mockito.atLeastOnce())
-                .findByFiscalCodeAndAwardPeriodId(Mockito.eq("fiscalCode"), Mockito.eq(0L));
+                .findById(Mockito.eq(new CitizenRankingId(EXISTING_FISCAL_CODE, 0L)));
     }
 
     @Test
@@ -161,13 +161,12 @@ public class CitizenServiceImplTest {
         Assert.assertEquals(attendeesNumberMock, attendeesNumber);
     }
 
-    @Test(expected = CitizenRankingNotFoundException.class)
+    @Test(expected = CitizenNotFoundException.class)
     public void findRanking_KO() {
         try {
             CitizenRanking citizenRanking = citizenService.findRanking("wrongFiscalCode", 0L);
         } finally {
-            verify(citizenRankingDAOMock, only()).findByFiscalCodeAndAwardPeriodId(eq("wrongFiscalCode"), eq(0L));
-            verify(citizenRankingDAOMock, times(1)).findByFiscalCodeAndAwardPeriodId(eq("wrongFiscalCode"), eq(0L));
+            verifyNoMoreInteractions(citizenRankingDAOMock);
         }
     }
 

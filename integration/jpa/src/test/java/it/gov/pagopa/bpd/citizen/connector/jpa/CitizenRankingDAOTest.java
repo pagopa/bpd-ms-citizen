@@ -2,13 +2,14 @@ package it.gov.pagopa.bpd.citizen.connector.jpa;
 
 import eu.sia.meda.layers.connector.query.CriteriaQuery;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.common.connector.jpa.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Function;
 
-public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO, CitizenRanking, Long> {
+public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO, CitizenRanking, CitizenRankingId> {
 
     @Autowired
     private CitizenRankingDAO citizenRankingDAO;
@@ -16,7 +17,9 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
     @Override
     protected CriteriaQuery<? super CitizenRanking> getMatchAlreadySavedCriteria() {
         CitizenRankingDAOTest.CitizenRankingCriteria criteriaQuery = new CitizenRankingDAOTest.CitizenRankingCriteria();
-        criteriaQuery.setId(getStoredId());
+        criteriaQuery.setFiscalCode(getStoredId().getFiscalCode());
+        criteriaQuery.setAwardPeriodId(getStoredId().getAwardPeriodId());
+
 
         return criteriaQuery;
     }
@@ -27,32 +30,36 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
     }
 
     @Override
-    protected void setId(CitizenRanking entity, Long id) {
-        entity.setId(id);
+    protected void setId(CitizenRanking entity, CitizenRankingId id)
+    {
+        entity.setAwardPeriodId(id.getAwardPeriodId());
+        entity.setFiscalCode(id.getFiscalCode());
     }
 
     @Override
-    protected Long getId(CitizenRanking entity) {
-        return entity.getId();
+    protected CitizenRankingId getId(CitizenRanking entity) {
+        return new CitizenRankingId(entity.getFiscalCode(), entity.getAwardPeriodId());
     }
 
     @Override
     protected void alterEntityToUpdate(CitizenRanking entity) {
-        entity.setFiscalCode("changed");
+        entity.setRanking(1002L);
     }
 
     @Override
-    protected Function<Integer, Long> idBuilderFn() {
-        return (bias) -> bias.longValue();
+    protected Function<Integer, CitizenRankingId> idBuilderFn() {
+        return (bias) ->
+                new CitizenRankingId(String.valueOf(bias.longValue()), bias.longValue());
     }
 
     @Override
     protected String getIdName() {
-        return "id";
+        return "fiscalCode";
     }
 
     @Data
     private static class CitizenRankingCriteria implements CriteriaQuery<CitizenRanking> {
-        private Long id;
+        private String fiscalCode;
+        private Long awardPeriodId;
     }
 }
