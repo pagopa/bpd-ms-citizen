@@ -79,11 +79,12 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public void delete(String fiscalCode) {
-        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
-        if (citizen.isPresent()) {
-            citizen.get().setEnabled(false);
-            citizen.get().setUpdateUser(fiscalCode);
-            citizenDAO.save(citizen.get());
+        Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
+        if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
+            Citizen citizen = citizenFound.get();
+            citizen.setEnabled(false);
+            citizen.setUpdateUser(fiscalCode);
+            citizenDAO.save(citizen);
         }
     }
 

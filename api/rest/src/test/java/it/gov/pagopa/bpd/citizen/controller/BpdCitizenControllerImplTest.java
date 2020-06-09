@@ -74,7 +74,7 @@ public class BpdCitizenControllerImplTest {
         citizenPatch.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
         CitizenRanking citizenRanking = new CitizenRanking();
-        citizenRanking.setId(0L);
+        citizenRanking.setAwardPeriodId(0L);
         citizenRanking.setRanking(10L);
 
 
