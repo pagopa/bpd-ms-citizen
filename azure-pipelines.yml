@@ -5,13 +5,16 @@
 trigger:
   branches:
     include:
-    - master
-    - develop
-    - features/*
+      - master
+      - develop
+      - features/*
   paths:
     include:
-    - src/*
-    - pom.xml
+      - api/*
+      - app/*
+      - core/*
+      - integration/*
+      - pom.xml
 
 resources:
 - repo: self
@@ -61,7 +64,7 @@ stages:
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   jobs:
   - deployment: Deploy
