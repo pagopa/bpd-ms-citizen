@@ -51,8 +51,12 @@ stages:
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
+        goals: 'deploy'
         options: '-s $(settingsxml.secureFilePath)'
-        publishJUnitResults: false
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
+        codeCoverageClassFilter: '+:it.gov.pagopa.bpd.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         mavenVersionOption: 'Default'
