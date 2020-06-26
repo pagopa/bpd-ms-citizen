@@ -62,7 +62,7 @@ stages:
         sonarQubeRunAnalysis: false
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)\target'
+        targetPath: '$(Pipeline.Workspace)/target'
         artifact: 'target'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
@@ -72,7 +72,7 @@ stages:
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)\manifests'
+        targetPath: '$(Pipeline.Workspace)/manifests'
         artifact: 'manifests'
         publishLocation: 'pipeline'
 
