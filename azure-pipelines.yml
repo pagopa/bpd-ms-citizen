@@ -60,16 +60,21 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: true
         sonarQubeRunAnalysis: false
-    - task: Docker@2
-      displayName: Build and push an image to container registry
+    - task: PublishPipelineArtifact@1
       inputs:
-        containerRegistry: '$(dockerRegistryServiceConnection)'
-        repository: '$(imageRepository)'
-        command: 'buildAndPush'
-        Dockerfile: '$(dockerfilePath)'
-        tags: '$(tag)'
-    - publish: manifests
-      artifact: manifests
+        targetPath: '$(Pipeline.Workspace)\target'
+        artifact: 'target'
+        publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(dockerfilePath)'
+        artifact: 'dockerfile'
+        publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)\manifests'
+        artifact: 'manifests'
+        publishLocation: 'pipeline'
 
 - stage: Deploy
   displayName: Deploy stage
@@ -86,6 +91,14 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: Docker@2
+            displayName: Build and push an image to container registry
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(imageRepository)'
+              command: 'buildAndPush'
+              Dockerfile: '$(dockerfilePath)'
+              tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
