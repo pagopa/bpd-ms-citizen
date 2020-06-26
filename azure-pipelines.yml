@@ -34,7 +34,7 @@ variables:
   
 
 stages:
-- stage: Build and Deploy
+- stage: Build
   displayName: Build stage
   jobs:  
   - job: Build
