@@ -68,14 +68,14 @@ stages:
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   jobs:
   - deployment: Deploy
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'pagopabpdmscitizen.bdp-test'
+    environment: 'pagopabpdmscitizen.bdp-dev'
     strategy:
       runOnce:
         deploy:
