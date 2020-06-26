@@ -62,17 +62,17 @@ stages:
         sonarQubeRunAnalysis: false
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/target'
+        targetPath: '$(Build.Repository.LocalPath)/target'
         artifact: 'target'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(dockerfilePath)'
+        targetPath: '$(Build.Repository.LocalPath)/$(dockerfilePath)'
         artifact: 'dockerfile'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/manifests'
+        targetPath: '$(Build.Repository.LocalPath)/manifests'
         artifact: 'manifests'
         publishLocation: 'pipeline'
 
