@@ -17,15 +17,7 @@ trigger:
       - pom.xml
 
 resources:
-  pipelines:
-  - pipeline: bpdCommons
-    source: pagopa.bpd-commons
-    trigger: 
-      branches:
-        include: 
-        - master
-        - develop
-        - features/*
+- repo: self
 
 variables:
 
