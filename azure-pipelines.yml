@@ -52,7 +52,7 @@ stages:
       inputs:
         mavenPomFile: 'pom.xml'
         goals: 'deploy'
-        options: '-B -s $(settingsxml.secureFilePath)'
+        options: '-B -s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         codeCoverageToolOption: 'JaCoCo'
@@ -72,6 +72,8 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '$(dockerfilePath)'
         tags: '$(tag)'
+    - upload: manifests
+      artifact: manifests
 
 - stage: Deploy
   displayName: Deploy stage
