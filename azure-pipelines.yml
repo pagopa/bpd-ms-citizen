@@ -3,7 +3,18 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- develop
+  branches:
+    include:
+      - master
+      - develop
+      - features/*
+  paths:
+    include:
+      - api/*
+      - app/*
+      - core/*
+      - integration/*
+      - pom.xml
 
 resources:
 - repo: self
@@ -23,7 +34,7 @@ variables:
   
 
 stages:
-- stage: Build
+- stage: Build and Deploy
   displayName: Build stage
   jobs:  
   - job: Build
@@ -40,8 +51,8 @@ stages:
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
-        options: '-s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
-        publishJUnitResults: false
+        goals: 'deploy'
+        options: '-B -s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         mavenVersionOption: 'Default'
@@ -52,19 +63,18 @@ stages:
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-          
-    - upload: manifests
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '$(dockerfilePath)'
+        tags: '$(tag)'
+    - publish: manifests
       artifact: manifests
 
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   jobs:
   - deployment: Deploy
@@ -82,7 +92,6 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-              
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
