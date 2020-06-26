@@ -64,6 +64,14 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: true
         sonarQubeRunAnalysis: false
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '$(dockerfilePath)'
+        tags: '$(tag)'
 
 - stage: Deploy
   displayName: Deploy stage
@@ -80,14 +88,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: Docker@2
-            displayName: Build and push an image to container registry
-            inputs:
-              containerRegistry: '$(dockerRegistryServiceConnection)'
-              repository: '$(imageRepository)'
-              command: 'buildAndPush'
-              Dockerfile: '$(dockerfilePath)'
-              tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
