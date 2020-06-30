@@ -86,7 +86,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'pagopabpdmscitizen.bdp-test'
+    environment: 'pagopabpdmscitizen-7106.bdp-test'
     strategy:
       runOnce:
         deploy:
