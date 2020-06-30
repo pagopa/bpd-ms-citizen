@@ -51,7 +51,7 @@ stages:
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
-        goals: 'deploy'
+        goals: 'package'
         options: '-B -s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
