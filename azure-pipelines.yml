@@ -25,7 +25,7 @@ variables:
   dockerRegistryServiceConnection: '1b7900a3-6e8a-403a-b6ce-349854a5c6b8'
   imageRepository: 'bpdmscitizen'
   containerRegistry: 'cstarregistry.azurecr.io'
-  dockerfilePath: 'Dockerfile'
+  dockerfileRelativePath: 'Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'cstarregistry92872b72-auth'
 
@@ -67,7 +67,7 @@ stages:
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Build.Repository.LocalPath)/$(dockerfilePath)'
+        targetPath: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
         artifact: 'dockerfile'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
@@ -97,7 +97,7 @@ stages:
               containerRegistry: '$(dockerRegistryServiceConnection)'
               repository: '$(imageRepository)'
               command: 'buildAndPush'
-              Dockerfile: '$(dockerfilePath)'
+              Dockerfile: '$(Pipeline.Workspace)/$(dockerfileRelativePath)'
               tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
