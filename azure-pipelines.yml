@@ -101,6 +101,7 @@ stages:
               repository: '$(imageRepository)'
               command: 'buildAndPush'
               Dockerfile: '$(Pipeline.Workspace)/dockerfile/Dockerfile'
+              buildContext: '$(Pipeline.Workspace)'
               tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
