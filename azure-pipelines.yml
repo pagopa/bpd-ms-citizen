@@ -61,16 +61,19 @@ stages:
         effectivePomSkip: true
         sonarQubeRunAnalysis: false
     - task: PublishPipelineArtifact@1
+      displayName: 'Publish Atrifact target'
       inputs:
         targetPath: '$(Build.Repository.LocalPath)/target'
         artifact: 'target'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
+      displayName: 'Publish Atrifact Dockerfile'
       inputs:
         targetPath: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-        artifact: 'dockerfile'
+        artifact: 'Dockerfile'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
+      displayName: 'Publish Atrifact manifests'
       inputs:
         targetPath: '$(Build.Repository.LocalPath)/manifests'
         artifact: 'manifests'
