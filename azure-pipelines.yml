@@ -70,7 +70,7 @@ stages:
       displayName: 'Publish Atrifact Dockerfile'
       inputs:
         targetPath: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-        artifact: 'Dockerfile'
+        artifact: 'dockerfile'
         publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Atrifact manifests'
@@ -100,7 +100,7 @@ stages:
               containerRegistry: '$(dockerRegistryServiceConnection)'
               repository: '$(imageRepository)'
               command: 'buildAndPush'
-              Dockerfile: '$(Pipeline.Workspace)/$(dockerfileRelativePath)'
+              Dockerfile: '$(Pipeline.Workspace)/dockerfile/Dockerfile'
               tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
