@@ -32,8 +32,8 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  #isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/release')))]
-  isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  #isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
   
 
 stages:
@@ -73,18 +73,6 @@ stages:
         Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
         buildContext: '$(Build.Repository.LocalPath)'
         tags: '$(tag)'
-#    - task: PublishPipelineArtifact@1
-#      displayName: 'Publish Atrifact target'
-#      inputs:
-#        targetPath: '$(Build.Repository.LocalPath)/target'
-#        artifact: 'target'
-#        publishLocation: 'pipeline'
-#    - task: PublishPipelineArtifact@1
-#      displayName: 'Publish Atrifact Dockerfile'
-#      inputs:
-#        targetPath: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-#        artifact: 'dockerfile'
-#        publishLocation: 'pipeline'
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Atrifact manifests'
       inputs:
@@ -107,16 +95,6 @@ stages:
       runOnce:
         deploy:
           steps:
-#          - task: Docker@2
-#            displayName: Build and push an image to container registry
-#            condition: and(succeeded(), eq(variables.isToDeploy, true))
-#            inputs:
-#              containerRegistry: '$(dockerRegistryServiceConnection)'
-#              repository: '$(imageRepository)'
-#              command: 'buildAndPush'
-#              Dockerfile: '$(Pipeline.Workspace)/dockerfile/Dockerfile'
-#              buildContext: '$(Pipeline.Workspace)'
-#              tags: '$(tag)'
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
