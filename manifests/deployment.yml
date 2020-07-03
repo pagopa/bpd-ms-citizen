@@ -14,3 +14,8 @@ spec:
           image: cstarregistry.azurecr.io/bpdmscitizen
           ports:
           - containerPort: 8080
+          envFrom:
+          - secretRef:
+            name: postgres-credentials
+          - configMapRef:
+            name: eventhub-logging
