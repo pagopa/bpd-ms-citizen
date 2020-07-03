@@ -75,6 +75,7 @@ stages:
         tags: '$(tag)'
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Atrifact manifests'
+      condition: and(succeeded(), eq(variables.isToDeploy, true))
       inputs:
         targetPath: '$(Build.Repository.LocalPath)/manifests'
         artifact: 'manifests'
