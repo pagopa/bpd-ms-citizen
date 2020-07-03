@@ -32,7 +32,8 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  #isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
   
 
 stages:
@@ -101,7 +102,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'pagopa-bpd-ms-citizen-dev.bpd-dev'
+    environment: 'pagopa-bpd-ms-citizen-dev.bpd-test'
     strategy:
       runOnce:
         deploy:
