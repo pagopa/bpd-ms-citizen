@@ -22,11 +22,11 @@ import javax.validation.constraints.Size;
  * Controller to expose MicroService
  */
 @Api(tags = "Bonus Pagamenti Digitali Citizen Controller")
-@RequestMapping("/bpd")
+@RequestMapping("/bpd/citizens")
 @Validated
 public interface BpdCitizenController {
 
-    @GetMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenResource find(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -35,7 +35,7 @@ public interface BpdCitizenController {
                     String fiscalCode
     );
 
-    @PutMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenResource update(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -45,7 +45,7 @@ public interface BpdCitizenController {
                     String fiscalCode,
             @RequestBody CitizenDTO citizen);
 
-    @PatchMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenResource updatePaymentMethod(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -54,7 +54,7 @@ public interface BpdCitizenController {
                     String fiscalCode,
             @RequestBody @Valid CitizenPatchDTO citizen);
 
-    @DeleteMapping(value = "/citizens/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -63,7 +63,7 @@ public interface BpdCitizenController {
                     String fiscalCode
     );
 
-    @GetMapping(value = "/citizens/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenRankingResource findRanking(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
