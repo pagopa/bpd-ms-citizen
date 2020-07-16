@@ -28,6 +28,7 @@ variables:
   containerRegistry: 'cstarregistry.azurecr.io'
   dockerfileRelativePath: 'Dockerfile'
   tag: '$(Build.BuildId)'
+  imagePullSecret: 'cstarregistry-auth'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
