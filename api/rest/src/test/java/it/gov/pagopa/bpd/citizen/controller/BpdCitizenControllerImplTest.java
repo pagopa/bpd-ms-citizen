@@ -33,6 +33,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
+import java.time.OffsetDateTime;
 import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -114,6 +115,7 @@ public class BpdCitizenControllerImplTest {
     @Test
     public void update() throws Exception {
         CitizenDTO citizen = new CitizenDTO();
+        citizen.setTimestampTC(OffsetDateTime.now());
         MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -125,7 +127,7 @@ public class BpdCitizenControllerImplTest {
 
         Assert.assertNotNull(pageResult);
         BDDMockito.verify(citizenServiceMock).update(Mockito.eq("fiscalCode"), Mockito.any());
-        BDDMockito.verify(citizenFactoryMock).createModel(Mockito.eq(citizen));
+        BDDMockito.verify(citizenFactoryMock).createModel(Mockito.any());
         BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.any(Citizen.class));
     }
 
