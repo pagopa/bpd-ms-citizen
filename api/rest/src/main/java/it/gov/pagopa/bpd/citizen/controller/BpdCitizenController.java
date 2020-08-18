@@ -43,7 +43,7 @@ public interface BpdCitizenController {
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
 
                     String fiscalCode,
-            @RequestBody CitizenDTO citizen);
+            @RequestBody @Valid CitizenDTO citizen);
 
     @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
