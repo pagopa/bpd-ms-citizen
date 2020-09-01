@@ -24,7 +24,6 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '1b7900a3-6e8a-403a-b6ce-349854a5c6b8'
-  imageRepository: 'bpdmscitizen'
   containerRegistry: 'cstarregistry.azurecr.io'
   dockerfileRelativePath: 'Dockerfile'
   tag: '$(Build.BuildId)'
@@ -33,9 +32,17 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranchName'], 'release')))]
   #isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
 
+  ${{ if eq(variables['Build.SourceBranchName'], 'release/st') }}:
+    envResource: bpd-test
+    deployment: deployment-sit
+    imageRepository: 'bpdmscitizen-sit'
+  ${{ if eq(variables['Build.SourceBranchName'], 'release/uat') }}:
+    envResource: bpd-uat
+    deployment: deployment-uat
+    imageRepository: 'bpdmscitizen-uat'
 
 stages:
   - stage: Build
@@ -96,7 +103,7 @@ stages:
         displayName: Deploy
         pool:
           vmImage: $(vmImageName)
-        environment: 'pagopabpdmscitizen.bpd-test'
+        environment: 'pagopabpdmscitizen.$(envResource)'
         strategy:
           runOnce:
             deploy:
@@ -112,7 +119,7 @@ stages:
                   inputs:
                     action: deploy
                     manifests: |
-                      $(Pipeline.Workspace)/manifests/deployment.yml
+                      $(Pipeline.Workspace)/manifests/$(deployment).yml
                       $(Pipeline.Workspace)/manifests/service.yml
                     imagePullSecrets: |
                       $(imagePullSecret)
