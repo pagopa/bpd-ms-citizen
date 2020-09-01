@@ -15,10 +15,6 @@ import javax.persistence.*;
 @Table(name = "bpd_citizen_ranking")
 public class CitizenRanking extends BaseEntity {
 
-    //@Id
-    //@Column(name = "id_n")
-    //private Long id;
-
     @Id
     @Column(name = "fiscal_code_c")
     private String fiscalCode;
