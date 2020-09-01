@@ -32,7 +32,8 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranchName'], 'release')))]
+  #isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranchName'], 'release')))]
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
   #isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
 
   ${{ if eq(variables['Build.SourceBranchName'], 'release/st') }}:
