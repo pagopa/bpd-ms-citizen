@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: bpdmscitizen
+  name: bpdmscitizen
 spec:
-    type: ClusterIP
-    ports:
-    - port: 8080 
-    selector:
-        app: bpdmscitizen
+  type: ClusterIP
+  ports:
+    - port: 8080
+  selector:
+    app: bpdmscitizen

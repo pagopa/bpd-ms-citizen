@@ -32,15 +32,14 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranchName'], 'release')))]
-  #isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
 
-  ${{ if eq(variables['Build.SourceBranchName'], 'release/st') }}:
-    envResource: bpd-test
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/st') }}:
+    devOpsEnv: 'pagopabpdmscitizen.bpd-test'
     deployment: deployment-sit
     imageRepository: 'bpdmscitizen-sit'
-  ${{ if eq(variables['Build.SourceBranchName'], 'release/uat') }}:
-    envResource: bpd-uat
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/uat') }}:
+    devOpsEnv: 'pagopabpdmscitizen.bpd-uat'
     deployment: deployment-uat
     imageRepository: 'bpdmscitizen-uat'
 
@@ -103,7 +102,7 @@ stages:
         displayName: Deploy
         pool:
           vmImage: $(vmImageName)
-        environment: 'pagopabpdmscitizen.$(envResource)'
+        environment: '$(devOpsEnv)'
         strategy:
           runOnce:
             deploy:
