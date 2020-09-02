@@ -10,7 +10,6 @@ import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -90,21 +89,11 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public Long calculateAttendeesNumber() {
-        return citizenDAO.count((Example<Citizen>) null);
+        return citizenDAO.count();
     }
 
     @Override
     public CitizenRanking findRanking(String fiscalCode, Long awardPeriodId) {
-
-        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
-
-        if (!citizen.isPresent()) {
-            throw new CitizenNotFoundException(fiscalCode);
-        }
-
-        if (!citizen.get().isEnabled()) {
-            throw new CitizenNotEnabledException(fiscalCode);
-        }
 
         Optional<CitizenRanking> ranking = citizenRankingDAO.findById(
                 new CitizenRankingId(fiscalCode, awardPeriodId));

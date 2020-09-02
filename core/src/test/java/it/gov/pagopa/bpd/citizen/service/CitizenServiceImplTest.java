@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Example;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -73,7 +72,7 @@ public class CitizenServiceImplTest {
                             return Optional.of(citizenRanking);
                         });
 
-        Mockito.when(citizenDAOMock.count((Example<Citizen>) Mockito.any())).thenAnswer((Answer<Long>)
+        Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
                 invocation -> attendeesNumberMock);
 
         Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId("wrongFiscalCode", 0L))))
@@ -161,13 +160,5 @@ public class CitizenServiceImplTest {
         Assert.assertEquals(attendeesNumberMock, attendeesNumber);
     }
 
-    @Test(expected = CitizenNotFoundException.class)
-    public void findRanking_KO() {
-        try {
-            CitizenRanking citizenRanking = citizenService.findRanking("wrongFiscalCode", 0L);
-        } finally {
-            verifyNoMoreInteractions(citizenRankingDAOMock);
-        }
-    }
 
 }
