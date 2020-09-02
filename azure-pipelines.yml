@@ -35,11 +35,11 @@ variables:
   isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/st') }}:
-    devOpsEnvResource: 'bpd-test'
+    devOpsEnv: 'pagopabpdmscitizen.bpd-test'
     deployment: deployment-sit
     imageRepository: 'bpdmscitizen-sit'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/uat') }}:
-    devOpsEnvResource: 'bpd-uat'
+    devOpsEnv: 'pagopabpdmscitizen.bpd-uat'
     deployment: deployment-uat
     imageRepository: 'bpdmscitizen-uat'
 
@@ -102,7 +102,7 @@ stages:
         displayName: Deploy
         pool:
           vmImage: $(vmImageName)
-        environment: 'pagopabpdmscitizen.$(devOpsEnvResource)'
+        environment: '$(devOpsEnv)'
         strategy:
           runOnce:
             deploy:
