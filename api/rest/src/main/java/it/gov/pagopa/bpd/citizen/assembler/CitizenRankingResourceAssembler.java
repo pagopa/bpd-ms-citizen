@@ -16,7 +16,7 @@ public class CitizenRankingResourceAssembler {
         if (citizenRanking != null && attendeesNumber != null) {
             resource = new CitizenRankingResource();
             resource.setRanking(citizenRanking.getRanking());
-            resource.setAttendeesNumber(attendeesNumber);
+            resource.setTotalParticipants(attendeesNumber);
         }
 
         return resource;

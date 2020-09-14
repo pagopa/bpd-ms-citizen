@@ -193,7 +193,7 @@ public class BpdCitizenControllerImplTest {
                 CitizenRankingResource.class);
 
         Assert.assertNotNull(citizenRankingResult);
-        Assert.assertEquals(attendeesNumberMock, citizenRankingResult.getAttendeesNumber());
+        Assert.assertEquals(attendeesNumberMock, citizenRankingResult.getTotalParticipants());
         BDDMockito.verify(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
         BDDMockito.verify(citizenRankingResourceAssemblerMock).toResource(Mockito.any(), Mockito.anyLong());
     }
