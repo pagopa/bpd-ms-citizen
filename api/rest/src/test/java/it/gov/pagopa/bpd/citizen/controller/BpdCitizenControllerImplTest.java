@@ -146,10 +146,6 @@ public class BpdCitizenControllerImplTest {
         citizen.setPayoffInstr("Test");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        Citizen expCitizen = new Citizen();
-        expCitizen.setPayoffInstr("Test");
-        expCitizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -157,10 +153,7 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        BDDMockito.verify(citizenServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(expCitizen));
         BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.eq(citizen));
-        expCitizen.setUpdateUser("fiscalCode");
-        BDDMockito.verify(citizenResourceAssemblerMock).toResource(Mockito.eq(expCitizen));
     }
 
 

@@ -63,7 +63,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
+    public void updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.updatePaymentMethod");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
@@ -72,8 +72,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         final Citizen entity = citizenPatchFactory.createModel(citizen);
         entity.setPayoffInstr(citizen.getPayoffInstr());
         entity.setPayoffInstrType(citizen.getPayoffInstrType());
-        Citizen citizenEntity = citizenService.patch(fiscalCode, entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+        citizenService.patch(fiscalCode, entity);
     }
 
     @Override

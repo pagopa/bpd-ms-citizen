@@ -46,8 +46,8 @@ public interface BpdCitizenController {
             @RequestBody @Valid CitizenDTO citizen);
 
     @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    CitizenResource updatePaymentMethod(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void updatePaymentMethod(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
