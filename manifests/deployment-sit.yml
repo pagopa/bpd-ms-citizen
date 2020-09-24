@@ -1,17 +1,17 @@
-apiVersion : apps/v1beta1
+apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: bpdmscitizen 
+  name: bpdmscitizen
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: bpdmscitizen 
+        app: bpdmscitizen
     spec:
       containers:
         - name: bpdmscitizen
-          image: cstarregistry.azurecr.io/bpdmscitizen-sit
+          image: cstarregistry.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
           envFrom:
@@ -21,6 +21,8 @@ spec:
                 name: eventhub-logging
             - configMapRef:
                 name: bpdmscitizen
+            - configMapRef:
+                name: jvm
       hostAliases:
         - hostnames:
             - bpd-hub-dev.servicebus.windows.net
