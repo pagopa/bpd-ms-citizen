@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenPatchResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.common.annotation.UpperCase;
@@ -46,8 +47,8 @@ public interface BpdCitizenController {
             @RequestBody @Valid CitizenDTO citizen);
 
     @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updatePaymentMethod(
+    @ResponseStatus(HttpStatus.OK)
+    CitizenPatchResource updatePaymentMethod(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)

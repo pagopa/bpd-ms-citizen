@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestClient;
+
 import java.util.Optional;
 
 
@@ -26,11 +28,14 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
 
+    private final CheckIbanRestClient checkIbanRestClient;
+
 
     @Autowired
     public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO) {
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
+        this.checkIbanRestClient= new CheckIbanRestClient();
     }
 
 
@@ -63,16 +68,22 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
-    public Citizen patch(String fiscalCode, Citizen cz) {
+    public String patch(String fiscalCode, Citizen cz) {
+
         Citizen citizen = citizenDAO.findById(fiscalCode)
                 .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
         if (!citizen.isEnabled()) {
             throw new CitizenNotEnabledException(fiscalCode);
         }
+
+        String checkResult = checkIbanRestClient.checkIban(cz.getPayoffInstr(), fiscalCode);
+
         citizen.setPayoffInstr(cz.getPayoffInstr());
         citizen.setPayoffInstrType(cz.getPayoffInstrType());
         citizen.setUpdateUser(fiscalCode);
-        return citizenDAO.save(citizen);
+        citizenDAO.save(citizen);
+
+        return checkResult;
     }
 
 
