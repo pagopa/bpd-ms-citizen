@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import feign.FeignException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
@@ -9,6 +10,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
+import it.gov.pagopa.bpd.citizen.exception.InvalidIbanException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,8 +82,12 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setUpdateUser(fiscalCode);
             citizenDAO.save(citizen);
             return checkResult;
-        } catch (Exception e) {
-            throw new InternalError();
+        } catch (FeignException e) {
+            if (e.status() == 400) {
+                throw new InvalidIbanException(citizen.getPayoffInstr());
+            } else{
+                throw new InternalError();
+            }
         }
     }
 
