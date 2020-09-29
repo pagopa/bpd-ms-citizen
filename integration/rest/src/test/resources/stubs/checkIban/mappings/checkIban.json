@@ -1,0 +1,53 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/pagopa/banking/v4.0/utils/validate-account-holder",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "account": {
+            "value": "IT12A1234512345123456789012",
+            "valueType": "IBAN"
+          },
+          "accountHolder": {
+            "type": "PERSON_NATURAL",
+            "fiscalCode": "ABCDEF12L12A123K"
+          }
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": {
+      "status": "OK",
+      "errors": [],
+      "payload": {
+        "validationStatus": "OK",
+        "account": {
+          "value": "IT12A1234512345123456789012",
+          "valueType": "IBAN",
+          "type": "ACCOUNT",
+          "age": "MORE_THAN_3_MONTHS",
+          "hasMultipleHolders": false,
+          "hasRepresentatives": false
+        },
+        "accountHolder": {
+          "type": "PERSON_NATURAL",
+          "fiscalCode": "ABCDEF12L12A123K",
+          "role": "HOLDER"
+        },
+        "bankInfo": {
+          "businessName": "ACCOUNT HOLDER BANK",
+          "city": "ROMA",
+          "countryCode": "IT",
+          "bicCode": "ACCHLDMMXXX",
+          "branchName": "HEAD OFFICE"
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

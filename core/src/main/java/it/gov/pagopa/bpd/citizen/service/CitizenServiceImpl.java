@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -11,8 +12,6 @@ import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestClient;
 
 import java.util.Optional;
 
@@ -27,15 +26,13 @@ class CitizenServiceImpl implements CitizenService {
 
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
-
-    private final CheckIbanRestClient checkIbanRestClient;
-
+    private final CheckIbanRestConnector checkIbanRestConnector;
 
     @Autowired
-    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO) {
+    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO, CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
-        this.checkIbanRestClient= new CheckIbanRestClient();
+        this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
 
@@ -76,14 +73,16 @@ class CitizenServiceImpl implements CitizenService {
             throw new CitizenNotEnabledException(fiscalCode);
         }
 
-        String checkResult = checkIbanRestClient.checkIban(cz.getPayoffInstr(), fiscalCode);
-
-        citizen.setPayoffInstr(cz.getPayoffInstr());
-        citizen.setPayoffInstrType(cz.getPayoffInstrType());
-        citizen.setUpdateUser(fiscalCode);
-        citizenDAO.save(citizen);
-
-        return checkResult;
+        try {
+            String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            citizen.setPayoffInstr(cz.getPayoffInstr());
+            citizen.setPayoffInstrType(cz.getPayoffInstrType());
+            citizen.setUpdateUser(fiscalCode);
+            citizenDAO.save(citizen);
+            return checkResult;
+        } catch (Exception e) {
+            throw new InternalError();
+        }
     }
 
 

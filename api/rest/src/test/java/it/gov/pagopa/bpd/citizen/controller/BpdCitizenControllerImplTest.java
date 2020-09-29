@@ -85,7 +85,7 @@ public class BpdCitizenControllerImplTest {
 
         BDDMockito.doNothing().when(citizenServiceMock).delete(Mockito.eq("fiscalCode"));
 
-        BDDMockito.doReturn(citizenPatched).when(citizenServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(citizenPatch));
+        BDDMockito.doReturn("OK").when(citizenServiceMock).patch(Mockito.eq("fiscalCode"), Mockito.eq(citizenPatch));
 
         BDDMockito.doThrow(new EntityNotFoundException("Unable to find " + Citizen.class.getName() + " with id noFiscalCode"))
                 .when(citizenServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
@@ -143,7 +143,7 @@ public class BpdCitizenControllerImplTest {
     public void updatePaymentMethod() throws Exception {
 
         CitizenPatchDTO citizen = new CitizenPatchDTO();
-        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstr("IT12A1234512345123456789012");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
@@ -153,7 +153,7 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.eq(citizen));
+     BDDMockito.verify(citizenPatchFactoryMock).createModel(Mockito.eq(citizen));
     }
 
 
