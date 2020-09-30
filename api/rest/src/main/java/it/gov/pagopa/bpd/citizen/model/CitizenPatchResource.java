@@ -11,17 +11,11 @@ import javax.validation.constraints.Size;
 import javax.validation.constraints.Pattern;
 
 @Data
-public class CitizenPatchDTO {
+public class CitizenPatchResource {
 
     @ApiModelProperty(value = "${swagger.citizen.payoffInstr}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    @Size(max = 27)
-    @Pattern(regexp = Constants.IBAN_REGEX)
-    private String payoffInstr;
-    @ApiModelProperty(value = "${swagger.citizen.payoffInstrType}", required = true)
-    @JsonProperty(required = true)
-    @NotNull
-    private Citizen.PayoffInstrumentType payoffInstrType;
+    private String validationStatus;
 
 }

@@ -1,5 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import feign.FeignException;
+import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -8,6 +10,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
+import it.gov.pagopa.bpd.citizen.exception.InvalidIbanException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +28,13 @@ class CitizenServiceImpl implements CitizenService {
 
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
-
+    private final CheckIbanRestConnector checkIbanRestConnector;
 
     @Autowired
-    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO) {
+    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO, CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
+        this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
 
@@ -63,16 +67,28 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
-    public Citizen patch(String fiscalCode, Citizen cz) {
+    public String patch(String fiscalCode, Citizen cz) {
+
         Citizen citizen = citizenDAO.findById(fiscalCode)
                 .orElseThrow(() -> new CitizenNotFoundException(fiscalCode));
         if (!citizen.isEnabled()) {
             throw new CitizenNotEnabledException(fiscalCode);
         }
-        citizen.setPayoffInstr(cz.getPayoffInstr());
-        citizen.setPayoffInstrType(cz.getPayoffInstrType());
-        citizen.setUpdateUser(fiscalCode);
-        return citizenDAO.save(citizen);
+
+        try {
+            String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            citizen.setPayoffInstr(cz.getPayoffInstr());
+            citizen.setPayoffInstrType(cz.getPayoffInstrType());
+            citizen.setUpdateUser(fiscalCode);
+            citizenDAO.save(citizen);
+            return checkResult;
+        } catch (FeignException e) {
+            if (e.status() == 400) {
+                throw new InvalidIbanException(citizen.getPayoffInstr());
+            } else{
+                throw new InternalError();
+            }
+        }
     }
 
 

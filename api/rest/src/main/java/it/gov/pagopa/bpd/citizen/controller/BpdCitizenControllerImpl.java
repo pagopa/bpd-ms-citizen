@@ -8,6 +8,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
+import it.gov.pagopa.bpd.citizen.model.CitizenPatchResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
@@ -63,16 +64,21 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public void updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
+    public CitizenPatchResource updatePaymentMethod(String fiscalCode, CitizenPatchDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.updatePaymentMethod");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
         }
 
+        CitizenPatchResource response = new CitizenPatchResource();
+
         final Citizen entity = citizenPatchFactory.createModel(citizen);
         entity.setPayoffInstr(citizen.getPayoffInstr());
         entity.setPayoffInstrType(citizen.getPayoffInstrType());
-        citizenService.patch(fiscalCode, entity);
+
+        response.setValidationStatus(citizenService.patch(fiscalCode, entity));
+
+        return response;
     }
 
     @Override

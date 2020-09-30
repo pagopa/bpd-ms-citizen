@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -42,6 +43,8 @@ public class CitizenServiceImplTest {
     private CitizenDAO citizenDAOMock;
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
+    @MockBean
+    private CheckIbanRestConnector checkIbanRestConnectorMock;
     @Autowired
     private CitizenService citizenService;
 
@@ -130,6 +133,7 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
     }
 
     @Test(expected = CitizenNotFoundException.class)
