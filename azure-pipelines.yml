@@ -34,17 +34,15 @@ variables:
   isSIT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/st')]
   isUAT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/uat')]
 
-  ${{ if eq(variables.isSIT, true) }}:
+  $[ if eq(variables.isSIT, true) ]:
     dockerRegistryServiceConnection: 'cstarregistry-connection'
     containerRegistry: 'cstarregistry.azurecr.io'
-    deployment: deployment-sit
     imagePullSecret: 'cstarregistry-auth'
-  ${{ if eq(variables.isUAT, true) }}:
+  $[ if eq(variables.isUAT, true) ]:
     dockerRegistryServiceConnection: 'cstaruatregistry-connection'
     containerRegistry: 'cstaruatregistry.azurecr.io'
-    deployment: deployment-uat
     imagePullSecret: 'cstaruatregistry-auth'
-  ${{ if and(ne(variables.isSIT, true), ne(variables.isUAT, true)) }}:
+  $[ if and(ne(variables.isSIT, true), ne(variables.isUAT, true)) ]:
     dockerRegistryServiceConnection: 'cstarregistry-connection'
 
 stages:
