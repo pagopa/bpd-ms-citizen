@@ -82,7 +82,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                pippo=mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+                pippo=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
                 echo 'pippo'
                 echo $pippo
                 echo '##vso[task.setvariable variable=version]$pippo'
