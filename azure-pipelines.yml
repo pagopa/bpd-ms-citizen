@@ -54,28 +54,28 @@ stages:
         pool:
           vmImage: $(vmImageNameDefault)
         steps:
-          - task: DownloadSecureFile@1
-            displayName: 'download settings.xml for Maven'
-            name: settingsxml
-            inputs:
-              secureFile: 'settings.xml'
-              retryCount: '2'
-          - task: Maven@3
-            inputs:
-              mavenPomFile: 'pom.xml'
-              goals: 'deploy'
-              options: '-B -s $(settingsxml.secureFilePath)'
-              publishJUnitResults: true
-              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-              codeCoverageToolOption: 'JaCoCo'
-              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: '1.8'
-              mavenVersionOption: 'Default'
-              mavenOptions: '-Xmx3072m'
-              mavenAuthenticateFeed: false
-              effectivePomSkip: true
-              sonarQubeRunAnalysis: false
+#          - task: DownloadSecureFile@1
+#            displayName: 'download settings.xml for Maven'
+#            name: settingsxml
+#            inputs:
+#              secureFile: 'settings.xml'
+#              retryCount: '2'
+#          - task: Maven@3
+#            inputs:
+#              mavenPomFile: 'pom.xml'
+#              goals: 'deploy'
+#              options: '-B -s $(settingsxml.secureFilePath)'
+#              publishJUnitResults: true
+#              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#              codeCoverageToolOption: 'JaCoCo'
+#              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
+#              javaHomeOption: 'JDKVersion'
+#              jdkVersionOption: '1.8'
+#              mavenVersionOption: 'Default'
+#              mavenOptions: '-Xmx3072m'
+#              mavenAuthenticateFeed: false
+#              effectivePomSkip: true
+#              sonarQubeRunAnalysis: false
           - task: PowerShell@2
             inputs:
               targetType: 'inline'
@@ -84,27 +84,29 @@ stages:
                 [xml]$pomXml = Get-Content $pomFilePath
                 $version = $pomXml.project.version
               failOnStderr: true
-          - task: Docker@2
-            displayName: Build and push an image to container registry
-#            condition: and(succeeded(), eq(variables.isToDeploy, true))
+          - task: Bash@3
             inputs:
-              containerRegistry: '$(dockerRegistryServiceConnection)'
-              repository: '$(imageRepository)'
-              command: 'buildAndPush'
-              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-              buildContext: '$(Build.Repository.LocalPath)'
+              targetType: 'inline'
+              script: 'echo $version'
+#          - task: Docker@2
+#            displayName: Build and push an image to container registry
+#            condition: and(succeeded(), eq(variables.isToDeploy, true))
+#            inputs:
+#              containerRegistry: '$(dockerRegistryServiceConnection)'
+#              repository: '$(imageRepository)'
+#              command: 'buildAndPush'
+#              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+#              buildContext: '$(Build.Repository.LocalPath)'
 #              tags: |
 #                $(Build.BuildId)
 #                latest
-              tags: |
-                $(version)
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Atrifact manifests'
-            condition: and(succeeded(), eq(variables.isToDeploy, true))
-            inputs:
-              targetPath: '$(Build.Repository.LocalPath)/manifests'
-              artifact: 'manifests'
-              publishLocation: 'pipeline'
+#          - task: PublishPipelineArtifact@1
+#            displayName: 'Publish Atrifact manifests'
+#            condition: and(succeeded(), eq(variables.isToDeploy, true))
+#            inputs:
+#              targetPath: '$(Build.Repository.LocalPath)/manifests'
+#              artifact: 'manifests'
+#              publishLocation: 'pipeline'
 
   - stage: Deploy
     displayName: Deploy stage
