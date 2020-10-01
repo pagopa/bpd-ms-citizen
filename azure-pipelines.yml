@@ -78,6 +78,7 @@ stages:
 #              mavenAuthenticateFeed: false
 #              effectivePomSkip: true
 #              sonarQubeRunAnalysis: false
+          
           - task: Bash@3
             inputs:
               targetType: 'inline'
@@ -93,8 +94,8 @@ stages:
               script: |
                 echo 'pippo'
                 echo $pippo
-                echo 'version'
-                echo $version
+                echo 'VERSION'
+                echo $VERSION
               failOnStderr: true
 #          - task: Docker@2
 #            displayName: Build and push an image to container registry
