@@ -87,6 +87,15 @@ stages:
                 echo 'pippo'
                 echo $pippo
                 echo '##vso[task.setvariable variable=version]$pippo'
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo 'pippo'
+                echo $pippo
+                echo 'version'
+                echo $version
+              failOnStderr: true
 #          - task: Docker@2
 #            displayName: Build and push an image to container registry
 #            condition: and(succeeded(), eq(variables.isToDeploy, true))
