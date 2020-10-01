@@ -87,7 +87,10 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: 'echo $version'
+              script: |
+                echo $version
+                cat pom.xml
+                cat pom.xml | grep "^    <version>.*</version>$" | awk -F'[><]' '{print $3}'
 #          - task: Docker@2
 #            displayName: Build and push an image to container registry
 #            condition: and(succeeded(), eq(variables.isToDeploy, true))
