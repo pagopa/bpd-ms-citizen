@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 import javax.net.ssl.SSLSocketFactory;
-import java.net.Authenticator;
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 
 @Configuration
@@ -23,33 +21,33 @@ import java.net.Proxy;
 @PropertySource("classpath:config/BpdCitizenRestConnector.properties")
 @Slf4j
 public class CheckIbanRestConnectorConfig {
-
-    @Value("${rest-client.checkiban.proxy.enabled}")
-    private Boolean proxyEnabled;
-
-    @Value("${rest-client.checkiban.proxy.host}")
-    private String proxyHost;
-
-    @Value("${rest-client.checkiban.proxy.port}")
-    private Integer proxyPort;
-
-    @Bean
-    public Client getFeignClient() throws Exception {
-        try {
-            SSLSocketFactory sslSocketFactory = null;
-
-            if (proxyEnabled) {
-                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
-                    return new Proxied(sslSocketFactory,null, proxy);
-            } else {
-                return new Client.Default(sslSocketFactory, null);
-            }
-
-        } catch (Exception e) {
-            log.error(e.getMessage(),e);
-            throw new Exception("Error occured while initializing feign client", e);
-        }
-
-
-    }
+//
+//    @Value("${rest-client.checkiban.proxy.enabled}")
+//    private Boolean proxyEnabled;
+//
+//    @Value("${rest-client.checkiban.proxy.host}")
+//    private String proxyHost;
+//
+//    @Value("${rest-client.checkiban.proxy.port}")
+//    private Integer proxyPort;
+//
+//    @Bean
+//    public Client getFeignClient() throws Exception {
+//        try {
+//            SSLSocketFactory sslSocketFactory = null;
+//
+//            if (proxyEnabled) {
+//                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+//                    return new Client.Proxied(sslSocketFactory,null, proxy);
+//            } else {
+//                return new Client.Default(sslSocketFactory, null);
+//            }
+//
+//        } catch (Exception e) {
+//            log.error(e.getMessage(),e);
+//            throw new Exception("Error occured while initializing feign client", e);
+//        }
+//
+//
+//    }
 }
