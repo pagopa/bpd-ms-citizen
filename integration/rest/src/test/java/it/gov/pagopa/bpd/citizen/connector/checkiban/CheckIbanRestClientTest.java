@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.config.CheckIbanRestConnectorConfig;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
 import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ import static org.junit.Assert.assertNotNull;
         locations = "classpath:config/BpdCitizenRestConnector.properties",
         properties = "spring.application.name=bpd-ms-citizen-integration-rest")
 @ContextConfiguration(initializers = CheckIbanRestClientTest.RandomPortInitializer.class,
-        classes = {CheckIbanRestConnectorImpl.class, CheckIbanRestConnectorConfig.class})
+        classes = {CheckIbanRestConnectorImpl.class, CheckIbanRestConnectorConfig.class,
+                OkHttpClient.class, OkHttpClient.Builder.class})
 public class CheckIbanRestClientTest extends BaseFeignRestClientTest {
 
     @ClassRule
