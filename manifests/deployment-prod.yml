@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: bpdmscitizen
-          image: cstaruatregistry.azurecr.io/bpdmscitizen
+          image: cstarprodregistry.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
           envFrom:
@@ -28,5 +28,5 @@ spec:
                 name: jvm                
       hostAliases:
         - hostnames:
-            - bpd-event-uat.servicebus.windows.net
-          ip: 10.70.67.5
+            - u87cstarprod.servicebus.windows.net
+          ip: 10.70.132.4
