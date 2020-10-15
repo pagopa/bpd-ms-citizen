@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.factory;
 
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,8 +15,7 @@ public class CitizenPatchFactory implements ModelFactory<CitizenPatchDTO, Citize
     public Citizen createModel(CitizenPatchDTO dto) {
         final Citizen result = new Citizen();
 
-        result.setPayoffInstr(dto.getPayoffInstr());
-        result.setPayoffInstrType(dto.getPayoffInstrType());
+        BeanUtils.copyProperties(dto, result);
 
         return result;
     }

@@ -6,6 +6,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import lombok.Data;
 import it.gov.pagopa.bpd.common.util.Constants;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Pattern;
@@ -19,9 +20,26 @@ public class CitizenPatchDTO {
     @Size(max = 27)
     @Pattern(regexp = Constants.IBAN_REGEX)
     private String payoffInstr;
+
     @ApiModelProperty(value = "${swagger.citizen.payoffInstrType}", required = true)
     @JsonProperty(required = true)
     @NotNull
     private Citizen.PayoffInstrumentType payoffInstrType;
+
+    @ApiModelProperty(value = "${swagger.citizen.accountHolderCF}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
+    private String accountHolderCF;
+
+    @ApiModelProperty(value = "${swagger.citizen.accountHolderName}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    private String accountHolderName;
+
+    @ApiModelProperty(value = "${swagger.citizen.accountHolderSurname}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    private String accountHolderSurname;
 
 }

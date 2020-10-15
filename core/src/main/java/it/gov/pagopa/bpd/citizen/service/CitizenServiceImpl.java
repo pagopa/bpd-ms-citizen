@@ -77,10 +77,16 @@ class CitizenServiceImpl implements CitizenService {
 
         try {
             String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
-            citizen.setPayoffInstr(cz.getPayoffInstr());
-            citizen.setPayoffInstrType(cz.getPayoffInstrType());
-            citizen.setUpdateUser(fiscalCode);
-            citizenDAO.save(citizen);
+            if(!checkResult.equals("KO")){
+                citizen.setPayoffInstr(cz.getPayoffInstr());
+                citizen.setPayoffInstrType(cz.getPayoffInstrType());
+                citizen.setUpdateUser(fiscalCode);
+                citizen.setCheckInstrStatus(checkResult);
+                citizen.setAccountHolderName(cz.getAccountHolderName());
+                citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
+                citizen.setAccountHolderCF(cz.getAccountHolderCF());
+                citizenDAO.save(citizen);
+            }
             return checkResult;
         } catch (FeignException e) {
             if (e.status() == 400) {

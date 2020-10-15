@@ -82,6 +82,8 @@ public class CitizenServiceImplTest {
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
 
+        Mockito.when(checkIbanRestConnectorMock.checkIban(Mockito.anyString(),Mockito.anyString())).thenAnswer(
+                (Answer<String>) invocation -> "OK");
     }
 
 
@@ -127,6 +129,9 @@ public class CitizenServiceImplTest {
         Citizen citizen = new Citizen();
         citizen.setPayoffInstr("Test");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
         citizen.setFiscalCode(EXISTING_FISCAL_CODE);
         citizenService.patch(EXISTING_FISCAL_CODE, citizen);
         citizen.setUpdateUser(EXISTING_FISCAL_CODE);

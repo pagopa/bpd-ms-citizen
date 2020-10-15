@@ -145,6 +145,9 @@ public class BpdCitizenControllerImplTest {
         CitizenPatchDTO citizen = new CitizenPatchDTO();
         citizen.setPayoffInstr("IT12A1234512345123456789012");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)

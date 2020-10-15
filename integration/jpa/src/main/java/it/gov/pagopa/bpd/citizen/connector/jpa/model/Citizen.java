@@ -34,5 +34,16 @@ public class Citizen extends BaseEntity {
         IBAN
     }
 
+    @Column(name = "check_instr_status_s")
+    private String checkInstrStatus;
+
+    @Column(name = "account_holder_cf_s")
+    private String accountHolderCF;
+
+    @Column(name = "account_holder_name_s")
+    private String accountHolderName;
+
+    @Column(name = "account_holder_surname_s")
+    private String accountHolderSurname;
 
 }

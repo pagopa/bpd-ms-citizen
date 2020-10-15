@@ -5,6 +5,7 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
@@ -24,7 +25,8 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenService citizenService;
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
-    private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
+    private final CitizenPatchFactory citizenPatchFactory;
+//    private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
     private final CitizenRankingResourceAssembler citizenRankingResourceAssembler;
 
 
@@ -32,11 +34,11 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory,
-                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory, CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
+                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory, CitizenPatchFactory citizenPatchFactory1, CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
-        this.citizenPatchFactory = citizenPatchFactory;
+        this.citizenPatchFactory = citizenPatchFactory1;
         this.citizenRankingResourceAssembler = citizenRankingResourceAssembler;
     }
 
@@ -73,8 +75,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         CitizenPatchResource response = new CitizenPatchResource();
 
         final Citizen entity = citizenPatchFactory.createModel(citizen);
-        entity.setPayoffInstr(citizen.getPayoffInstr());
-        entity.setPayoffInstrType(citizen.getPayoffInstrType());
 
         response.setValidationStatus(citizenService.patch(fiscalCode, entity));
 
