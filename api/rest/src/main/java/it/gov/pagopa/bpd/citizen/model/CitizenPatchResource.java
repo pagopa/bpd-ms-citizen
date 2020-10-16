@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Data
 public class CitizenPatchResource {
 
-    @ApiModelProperty(value = "${swagger.citizen.payoffInstr}", required = true)
+    @ApiModelProperty(value = "${swagger.citizen.validationStatus}", required = true)
     @JsonProperty(required = true)
     @NotNull
     private String validationStatus;
