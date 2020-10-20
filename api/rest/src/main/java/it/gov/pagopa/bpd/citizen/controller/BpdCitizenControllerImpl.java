@@ -5,13 +5,10 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
-import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenResource;
+import it.gov.pagopa.bpd.citizen.model.*;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -100,9 +97,10 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
 
         CitizenRanking foundRanking = citizenService.findRanking(fiscalCode, awardPeriodId);
+        CitizenTransaction trxDetails = citizenService.getTransactionDetails(fiscalCode, awardPeriodId);
         Long attendeesNumber = citizenService.calculateAttendeesNumber();
 
-        return citizenRankingResourceAssembler.toResource(foundRanking, attendeesNumber);
+        return citizenRankingResourceAssembler.toResource(foundRanking, trxDetails, attendeesNumber);
     }
 
 }

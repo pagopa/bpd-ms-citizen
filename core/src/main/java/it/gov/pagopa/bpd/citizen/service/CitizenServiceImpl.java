@@ -4,9 +4,11 @@ import feign.FeignException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
@@ -26,12 +28,18 @@ import java.util.Optional;
 class CitizenServiceImpl implements CitizenService {
 
 
+    private final CitizenTransactionDAO citizenTransactionDAO;
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
 
     @Autowired
-    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO, CheckIbanRestConnector checkIbanRestConnector) {
+    public CitizenServiceImpl(
+            CitizenTransactionDAO citizenTransactionDAO,
+            CitizenDAO citizenDAO,
+            CitizenRankingDAO citizenRankingDAO,
+            CheckIbanRestConnector checkIbanRestConnector) {
+        this.citizenTransactionDAO = citizenTransactionDAO;
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
         this.checkIbanRestConnector = checkIbanRestConnector;
@@ -113,6 +121,13 @@ class CitizenServiceImpl implements CitizenService {
     public Long calculateAttendeesNumber() {
         return citizenDAO.count();
     }
+
+
+    @Override
+    public CitizenTransaction getTransactionDetails(String fiscalCode, Long awardPeriodId) {
+        return citizenTransactionDAO.getTransactionDetails(fiscalCode, awardPeriodId);
+    }
+
 
     @Override
     public CitizenRanking findRanking(String fiscalCode, Long awardPeriodId) {

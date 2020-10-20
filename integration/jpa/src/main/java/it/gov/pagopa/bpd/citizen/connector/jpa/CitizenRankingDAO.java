@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  * Data Access Object to manage all CRUD operations to the database
  */
 @Repository
-public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRankingId> {}
+public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRankingId> {
+
+}

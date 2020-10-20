@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 
 
 /**
@@ -18,6 +19,8 @@ public interface CitizenService {
     void delete(String fiscalCode);
 
     Long calculateAttendeesNumber();
+
+    CitizenTransaction getTransactionDetails(String fiscalCode, Long awardPeriodId);
 
     CitizenRanking findRanking(String fiscalCode, Long awardPeriodId);
 

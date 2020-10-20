@@ -14,5 +14,17 @@ public class CitizenRankingResource {
     @ApiModelProperty(value = "${swagger.citizen.totalParticipants}", required = true)
     @JsonProperty(required = true)
     private Long totalParticipants;
+    @ApiModelProperty(value = "${swagger.citizen.maxTransactionNumber}", required = true)
+    @JsonProperty(required = true)
+    private Long maxTransactionNumber;
+    @ApiModelProperty(value = "${swagger.citizen.minTransactionNumber}", required = true)
+    @JsonProperty(required = true)
+    private Long minTransactionNumber;
+    @ApiModelProperty(value = "${swagger.citizen.transactionNumber}", required = true)
+    @JsonProperty(required = true)
+    private Long transactionNumber;
+    @ApiModelProperty(value = "${swagger.citizen.awardPeriodId}", required = true)
+    @JsonProperty(required = true)
+    private Long awardPeriodId;
 
 }

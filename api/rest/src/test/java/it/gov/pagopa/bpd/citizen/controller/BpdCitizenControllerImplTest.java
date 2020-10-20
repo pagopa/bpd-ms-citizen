@@ -93,6 +93,7 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doReturn(citizenRanking).when(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
 
         BDDMockito.doReturn(attendeesNumberMock).when(citizenServiceMock).calculateAttendeesNumber();
+
     }
 
 
@@ -216,7 +217,8 @@ public class BpdCitizenControllerImplTest {
         Assert.assertNotNull(citizenRankingResult);
         Assert.assertEquals(attendeesNumberMock, citizenRankingResult.getTotalParticipants());
         BDDMockito.verify(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
-        BDDMockito.verify(citizenRankingResourceAssemblerMock).toResource(Mockito.any(), Mockito.anyLong());
+        BDDMockito.verify(citizenRankingResourceAssemblerMock).toResource(Mockito.any(),
+                Mockito.any(), Mockito.anyLong());
     }
 
 }
