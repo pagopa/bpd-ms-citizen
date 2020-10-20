@@ -82,8 +82,11 @@ public class CitizenServiceImplTest {
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
 
-        Mockito.when(checkIbanRestConnectorMock.checkIban(Mockito.anyString(),Mockito.anyString())).thenAnswer(
+        Mockito.when(checkIbanRestConnectorMock.checkIban("testOK", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "OK");
+
+        Mockito.when(checkIbanRestConnectorMock.checkIban("testKO",EXISTING_FISCAL_CODE)).thenAnswer(
+                (Answer<String>) invocation -> "KO");
     }
 
 
@@ -127,7 +130,7 @@ public class CitizenServiceImplTest {
     @Test
     public void patch() {
         Citizen citizen = new Citizen();
-        citizen.setPayoffInstr("Test");
+        citizen.setPayoffInstr("testOK");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
         citizen.setAccountHolderCF("DTUMTO13I14I814Z");
         citizen.setAccountHolderName("accountHolderName");
@@ -141,8 +144,25 @@ public class CitizenServiceImplTest {
         BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
     }
 
-    @Test(expected = CitizenNotFoundException.class)
+    @Test
     public void patch_KO() {
+        Citizen citizen = new Citizen();
+        citizen.setPayoffInstr("testKO");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
+        citizen.setFiscalCode(EXISTING_FISCAL_CODE);
+        citizenService.patch(EXISTING_FISCAL_CODE, citizen);
+        citizen.setUpdateUser(EXISTING_FISCAL_CODE);
+
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
+        BDDMockito.verifyZeroInteractions(citizenDAOMock);
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
+    }
+
+    @Test(expected = CitizenNotFoundException.class)
+    public void patch_NotFound() {
         Citizen citizen = new Citizen();
         citizen.setPayoffInstr("Test");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);

@@ -26,7 +26,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenResourceAssembler citizenResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
     private final CitizenPatchFactory citizenPatchFactory;
-//    private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
     private final CitizenRankingResourceAssembler citizenRankingResourceAssembler;
 
 
@@ -34,11 +33,12 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory,
-                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory, CitizenPatchFactory citizenPatchFactory1, CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
+                                    CitizenPatchFactory citizenPatchFactory,
+                                    CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
-        this.citizenPatchFactory = citizenPatchFactory1;
+        this.citizenPatchFactory = citizenPatchFactory;
         this.citizenRankingResourceAssembler = citizenRankingResourceAssembler;
     }
 

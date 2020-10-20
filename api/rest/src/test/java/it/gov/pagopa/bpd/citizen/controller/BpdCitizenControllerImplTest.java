@@ -149,6 +149,8 @@ public class BpdCitizenControllerImplTest {
         citizen.setAccountHolderName("accountHolderName");
         citizen.setAccountHolderSurname("accountHolderSurname");
 
+
+
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -167,6 +169,29 @@ public class BpdCitizenControllerImplTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(new CitizenPatchDTO())))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+
+        BDDMockito.verifyZeroInteractions(citizenServiceMock);
+        BDDMockito.verifyZeroInteractions(citizenPatchFactoryMock);
+        BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
+    }
+
+    @Test
+    public void updatePaymentMethodKoIbanValidation() throws Exception {
+
+        CitizenPatchDTO citizen = new CitizenPatchDTO();
+        citizen.setPayoffInstr("IT12A123451234");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
+
+
+        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(citizen)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
 
