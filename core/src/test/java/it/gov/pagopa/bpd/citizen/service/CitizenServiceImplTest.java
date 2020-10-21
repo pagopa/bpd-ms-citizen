@@ -3,9 +3,11 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +46,8 @@ public class CitizenServiceImplTest {
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
     @MockBean
+    private CitizenTransactionDAO citizenTransactionDAOMock;
+    @MockBean
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @Autowired
     private CitizenService citizenService;
@@ -78,6 +82,17 @@ public class CitizenServiceImplTest {
         Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
                 invocation -> attendeesNumberMock);
 
+        Mockito.when(citizenTransactionDAOMock.getTransactionDetails(EXISTING_FISCAL_CODE, 1L))
+                .thenAnswer(
+                        invocation -> {
+                            CitizenTransaction trx = new CitizenTransaction();
+                            trx.setMaxTrx(2L);
+                            trx.setMinTrx(1L);
+                            trx.setTotalTrx(1L);
+                            return trx;
+
+                        });
+
         Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId("wrongFiscalCode", 0L))))
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
@@ -85,7 +100,7 @@ public class CitizenServiceImplTest {
         Mockito.when(checkIbanRestConnectorMock.checkIban("testOK", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "OK");
 
-        Mockito.when(checkIbanRestConnectorMock.checkIban("testKO",EXISTING_FISCAL_CODE)).thenAnswer(
+        Mockito.when(checkIbanRestConnectorMock.checkIban("testKO", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "KO");
     }
 
@@ -187,6 +202,16 @@ public class CitizenServiceImplTest {
         Long attendeesNumber = citizenService.calculateAttendeesNumber();
 
         Assert.assertEquals(attendeesNumberMock, attendeesNumber);
+    }
+
+    @Test
+    public void getTransactionDetails() {
+        CitizenTransaction citizenTransaction = citizenTransactionDAOMock.getTransactionDetails(EXISTING_FISCAL_CODE, 1L);
+
+        Assert.assertNotNull(citizenTransaction);
+        Assert.assertSame(citizenTransaction.getMaxTrx(), 2L);
+        Assert.assertSame(citizenTransaction.getMinTrx(), 1L);
+        Assert.assertSame(citizenTransaction.getTotalTrx(), 1L);
     }
 
 

@@ -6,6 +6,7 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
@@ -78,6 +79,11 @@ public class BpdCitizenControllerImplTest {
         citizenRanking.setAwardPeriodId(0L);
         citizenRanking.setRanking(10L);
 
+        CitizenTransaction trx = new CitizenTransaction();
+        trx.setMaxTrx(2L);
+        trx.setMinTrx(1L);
+        trx.setTotalTrx(1L);
+
 
         BDDMockito.doReturn(citizen).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
 
@@ -93,6 +99,8 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doReturn(citizenRanking).when(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
 
         BDDMockito.doReturn(attendeesNumberMock).when(citizenServiceMock).calculateAttendeesNumber();
+
+        BDDMockito.doReturn(trx).when(citizenServiceMock).getTransactionDetails(Mockito.anyString(), Mockito.anyLong());
 
     }
 
