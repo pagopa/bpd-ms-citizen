@@ -29,6 +29,7 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
+    private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
 
     @Autowired
     public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO, CheckIbanRestConnector checkIbanRestConnector) {
@@ -77,7 +78,7 @@ class CitizenServiceImpl implements CitizenService {
 
         try {
             String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
-            if(!checkResult.equals("KO")){
+            if (!checkResult.equals("KO")) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
@@ -89,9 +90,19 @@ class CitizenServiceImpl implements CitizenService {
             }
             return checkResult;
         } catch (FeignException e) {
-            if (e.status() == 400) {
+            if (e.status() == 501) {
+                citizen.setPayoffInstr(cz.getPayoffInstr());
+                citizen.setPayoffInstrType(cz.getPayoffInstrType());
+                citizen.setUpdateUser(fiscalCode);
+                citizen.setCheckInstrStatus(UNKNOWN_PSP);
+                citizen.setAccountHolderName(cz.getAccountHolderName());
+                citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
+                citizen.setAccountHolderCF(cz.getAccountHolderCF());
+                citizenDAO.save(citizen);
+                return UNKNOWN_PSP;
+            } else if (e.status() == 400) {
                 throw new InvalidIbanException(citizen.getPayoffInstr());
-            } else{
+            } else {
                 throw new InternalError();
             }
         }
