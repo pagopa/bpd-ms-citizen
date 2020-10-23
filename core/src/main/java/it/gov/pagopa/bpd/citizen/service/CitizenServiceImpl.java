@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import feign.FeignException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
+import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionDAO;
@@ -12,7 +13,6 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
-import it.gov.pagopa.bpd.citizen.exception.InvalidIbanException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,22 +97,16 @@ class CitizenServiceImpl implements CitizenService {
                 citizenDAO.save(citizen);
             }
             return checkResult;
-        } catch (FeignException e) {
-            if (e.status() == 501) {
-                citizen.setPayoffInstr(cz.getPayoffInstr());
-                citizen.setPayoffInstrType(cz.getPayoffInstrType());
-                citizen.setUpdateUser(fiscalCode);
-                citizen.setCheckInstrStatus(UNKNOWN_PSP);
-                citizen.setAccountHolderName(cz.getAccountHolderName());
-                citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
-                citizen.setAccountHolderCF(cz.getAccountHolderCF());
-                citizenDAO.save(citizen);
-                return UNKNOWN_PSP;
-            } else if (e.status() == 400) {
-                throw new InvalidIbanException(citizen.getPayoffInstr());
-            } else {
-                throw new InternalError();
-            }
+        } catch (UnknowPSPException e) {
+            citizen.setPayoffInstr(cz.getPayoffInstr());
+            citizen.setPayoffInstrType(cz.getPayoffInstrType());
+            citizen.setUpdateUser(fiscalCode);
+            citizen.setCheckInstrStatus(UNKNOWN_PSP);
+            citizen.setAccountHolderName(cz.getAccountHolderName());
+            citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
+            citizen.setAccountHolderCF(cz.getAccountHolderCF());
+            citizenDAO.save(citizen);
+            return UNKNOWN_PSP;
         }
     }
 
