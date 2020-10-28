@@ -11,10 +11,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Builder
-public class CitizenRankingId implements Serializable {
+public class CitizenCashbackCompositeKey implements Serializable {
 
-    private String hpan;
     private String fiscalCode;
+    private String hpan;
     private Long awardPeriodId;
-
 }

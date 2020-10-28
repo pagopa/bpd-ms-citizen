@@ -17,6 +17,7 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
     @Override
     protected CriteriaQuery<? super CitizenRanking> getMatchAlreadySavedCriteria() {
         CitizenRankingDAOTest.CitizenRankingCriteria criteriaQuery = new CitizenRankingDAOTest.CitizenRankingCriteria();
+        criteriaQuery.setHpan(getStoredId().getHpan());
         criteriaQuery.setFiscalCode(getStoredId().getFiscalCode());
         criteriaQuery.setAwardPeriodId(getStoredId().getAwardPeriodId());
 
@@ -32,24 +33,31 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
     @Override
     protected void setId(CitizenRanking entity, CitizenRankingId id)
     {
+        entity.setHpan(id.getHpan());
         entity.setAwardPeriodId(id.getAwardPeriodId());
         entity.setFiscalCode(id.getFiscalCode());
     }
 
     @Override
     protected CitizenRankingId getId(CitizenRanking entity) {
-        return new CitizenRankingId(entity.getFiscalCode(), entity.getAwardPeriodId());
+        return new CitizenRankingId(
+                entity.getHpan(),
+                entity.getFiscalCode(),
+                entity.getAwardPeriodId());
     }
 
     @Override
     protected void alterEntityToUpdate(CitizenRanking entity) {
-        entity.setRanking(1002L);
+        entity.setCashback(1002L);
     }
 
     @Override
     protected Function<Integer, CitizenRankingId> idBuilderFn() {
         return (bias) ->
-                new CitizenRankingId(String.valueOf(bias.longValue()), bias.longValue());
+                new CitizenRankingId(
+                        String.valueOf(bias),
+                        String.valueOf(bias),
+                        bias.longValue());
     }
 
     @Override
@@ -59,6 +67,7 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
 
     @Data
     private static class CitizenRankingCriteria implements CriteriaQuery<CitizenRanking> {
+        private String hpan;
         private String fiscalCode;
         private Long awardPeriodId;
     }

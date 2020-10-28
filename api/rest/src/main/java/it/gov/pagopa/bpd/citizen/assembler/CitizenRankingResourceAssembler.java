@@ -19,7 +19,7 @@ public class CitizenRankingResourceAssembler {
 
         if (citizenRanking != null && attendeesNumber != null) {
             resource = new CitizenRankingResource();
-            resource.setRanking(citizenRanking.getRanking());
+            resource.setRanking(citizenRanking.getCashback());
             resource.setMaxTransactionNumber(citizenTransaction.getMaxTrx());
             resource.setMinTransactionNumber(citizenTransaction.getMinTrx());
             resource.setTotalParticipants(attendeesNumber);

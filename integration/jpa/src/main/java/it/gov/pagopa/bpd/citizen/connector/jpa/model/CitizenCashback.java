@@ -6,18 +6,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
-@IdClass(CitizenRankingId.class)
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"hpan", "fiscalCode", "awardPeriodId"}, callSuper = false)
+@IdClass(CitizenCashbackCompositeKey.class)
+@EqualsAndHashCode(of = {"fiscalCode", "awardPeriodId", "hpan"}, callSuper = false)
 @Table(name = "bpd_citizen_ranking")
-public class CitizenRanking extends BaseEntity {
-
-    @Id
-    @Column(name = "hpan_s")
-    private String hpan;
+public class CitizenCashback extends BaseEntity {
 
     @Id
     @Column(name = "fiscal_code_c")
@@ -27,8 +24,12 @@ public class CitizenRanking extends BaseEntity {
     @Column(name = "award_period_id_n")
     private Long awardPeriodId;
 
+    @Id
+    @Column(name = "hpan_s")
+    private String hpan;
+
     @Column(name = "cashback_n")
-    private Long cashback;
+    private BigDecimal totalCashback;
 
     @Column(name = "transaction_n")
     private Long transactionNumber;
