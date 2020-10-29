@@ -7,6 +7,7 @@ import it.gov.pagopa.bpd.common.connector.jpa.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.function.Function;
 
 public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO, CitizenRanking, CitizenRankingId> {
@@ -48,7 +49,7 @@ public class CitizenRankingDAOTest extends BaseCrudJpaDAOTest<CitizenRankingDAO,
 
     @Override
     protected void alterEntityToUpdate(CitizenRanking entity) {
-        entity.setCashback(1002L);
+        entity.setTotalCashback(entity.getTotalCashback().add(new BigDecimal(1)));
     }
 
     @Override

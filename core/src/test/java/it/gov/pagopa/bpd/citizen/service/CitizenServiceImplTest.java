@@ -39,7 +39,7 @@ public class CitizenServiceImplTest {
 
     private final OffsetDateTime DATE = OffsetDateTime.now();
     private final Long attendeesNumberMock = new Random().nextLong();
-    private final Long rankingMock = new Random().nextLong();
+    private final BigDecimal rankingMock = new BigDecimal(100);
     private static final String HASH_PAN = "hpan";
     private static final String EXISTING_FISCAL_CODE = "existing-fiscalCode";
     private static final String NOT_EXISTING_FISCAL_CODE = "not-existing-fiscalCode";
@@ -80,7 +80,7 @@ public class CitizenServiceImplTest {
                             CitizenRanking citizenRanking = new CitizenRanking();
                             citizenRanking.setAwardPeriodId(0L);
                             citizenRanking.setFiscalCode(EXISTING_FISCAL_CODE);
-                            citizenRanking.setCashback(rankingMock);
+                            citizenRanking.setTotalCashback(rankingMock);
                             return Optional.of(citizenRanking);
                         });
 
@@ -207,7 +207,7 @@ public class CitizenServiceImplTest {
     public void findRanking() {
         CitizenRanking citizenRanking = citizenService.findRanking(HASH_PAN, EXISTING_FISCAL_CODE, 0L);
         Assert.assertNotNull(citizenRanking);
-        Assert.assertEquals(rankingMock, citizenRanking.getCashback());
+        Assert.assertEquals(rankingMock, citizenRanking.getTotalCashback());
         BDDMockito.verify(citizenRankingDAOMock, Mockito.atLeastOnce())
                 .findById(Mockito.eq(new CitizenRankingId(HASH_PAN, EXISTING_FISCAL_CODE, 0L)));
     }

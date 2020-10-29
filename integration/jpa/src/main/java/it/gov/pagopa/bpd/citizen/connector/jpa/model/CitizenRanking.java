@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -28,7 +29,7 @@ public class CitizenRanking extends BaseEntity {
     private Long awardPeriodId;
 
     @Column(name = "cashback_n")
-    private Long cashback;
+    private BigDecimal totalCashback;
 
     @Column(name = "transaction_n")
     private Long transactionNumber;

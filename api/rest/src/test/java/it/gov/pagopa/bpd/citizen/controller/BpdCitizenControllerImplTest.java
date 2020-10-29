@@ -82,7 +82,7 @@ public class BpdCitizenControllerImplTest {
 
         CitizenRanking citizenRanking = new CitizenRanking();
         citizenRanking.setAwardPeriodId(0L);
-        citizenRanking.setCashback(10L);
+        citizenRanking.setTotalCashback(new BigDecimal(100));
 
         CitizenTransaction trx = new CitizenTransaction();
         trx.setMaxTrx(2L);
