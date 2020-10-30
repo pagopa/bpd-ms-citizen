@@ -2,11 +2,7 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
-import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenResource;
+import it.gov.pagopa.bpd.citizen.model.*;
 import it.gov.pagopa.bpd.common.annotation.UpperCase;
 import it.gov.pagopa.bpd.common.util.Constants;
 import org.springframework.http.HttpStatus;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -67,6 +64,9 @@ public interface BpdCitizenController {
     @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenRankingResource findRanking(
+            @ApiParam(value = "${swagger.citizen.hpan}")
+            @RequestParam(value = "hpan", required = false)
+                    String hpan,
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
@@ -76,6 +76,22 @@ public interface BpdCitizenController {
                     Long awardPeriodId
     );
 
+    @GetMapping(value = "/total-cashback", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    CitizenCashbackResource getTotalCashback(
+            @ApiParam(value = "${swagger.citizen.hpan}")
+            @RequestParam(value = "hpan", required = false)
+                    String hpan,
+            @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
+            @NotBlank
+            @RequestParam
+                    String fiscalCode,
+            @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = true)
+            @NotNull
+            @RequestParam
+                    Long awardPeriodId
+
+    );
 
 }
 

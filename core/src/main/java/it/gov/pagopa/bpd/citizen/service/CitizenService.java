@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
 
 
 /**
@@ -22,6 +23,8 @@ public interface CitizenService {
 
     CitizenTransaction getTransactionDetails(String fiscalCode, Long awardPeriodId);
 
-    CitizenRanking findRanking(String fiscalCode, Long awardPeriodId);
+    CitizenRanking findRanking(String hpan, String fiscalCode, Long awardPeriodId);
+
+    CashbackResource getCashback(String hpan, String fiscalCode, Long awardPeriodId);
 
 }
