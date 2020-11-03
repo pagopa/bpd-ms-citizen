@@ -12,13 +12,10 @@ import java.math.BigDecimal;
 @Data
 @IdClass(CitizenRankingId.class)
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"hpan", "fiscalCode", "awardPeriodId"}, callSuper = false)
+@EqualsAndHashCode(of = {"fiscalCode", "awardPeriodId"}, callSuper = false)
 @Table(name = "bpd_citizen_ranking")
 public class CitizenRanking extends BaseEntity {
 
-    @Id
-    @Column(name = "hpan_s")
-    private String hpan;
 
     @Id
     @Column(name = "fiscal_code_c")
@@ -33,5 +30,11 @@ public class CitizenRanking extends BaseEntity {
 
     @Column(name = "transaction_n")
     private Long transactionNumber;
+
+    @Column(name = "ranking_n")
+    private Long ranking;
+
+    @Column(name = "ranking_min_n")
+    private Long rankingMinRequired;
 
 }

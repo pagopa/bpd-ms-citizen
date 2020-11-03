@@ -64,9 +64,6 @@ public interface BpdCitizenController {
     @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenRankingResource findRanking(
-            @ApiParam(value = "${swagger.citizen.hpan}")
-            @RequestParam(value = "hpan", required = false)
-                    String hpan,
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
@@ -79,9 +76,6 @@ public interface BpdCitizenController {
     @GetMapping(value = "/total-cashback", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenCashbackResource getTotalCashback(
-            @ApiParam(value = "${swagger.citizen.hpan}")
-            @RequestParam(value = "hpan", required = false)
-                    String hpan,
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @NotBlank
             @RequestParam

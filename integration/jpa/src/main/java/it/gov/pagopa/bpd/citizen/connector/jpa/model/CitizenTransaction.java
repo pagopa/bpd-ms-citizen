@@ -1,25 +1,39 @@
 package it.gov.pagopa.bpd.citizen.connector.jpa.model;
 
-import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.io.Serializable;
+public class CitizenTransaction {
 
-@Entity
-@Data
-public class CitizenTransaction implements Serializable {
+    Long ranking;
+    Long totalParticipants;
+    Long maxTrxNumber;
+    Long minTrxNumber;
+    Long trxNumber;
+    Long awardPeriodId;
 
-    @Id
-    @Column(name = "max_trx")
-    Long maxTrx;
 
-    @Id
-    @Column(name = "min_trx")
-    Long minTrx;
+    public Long getRanking() {
+        return ranking;
+    }
 
-    @Id
-    @Column(name = "total_trx")
-    Long totalTrx;
+    public Long getTotalParticipants() {
+        return totalParticipants;
+    }
+
+    public Long getMaxTrxNumber() {
+        return maxTrxNumber;
+    }
+
+    public Long getMinTrxNumber() {
+        return minTrxNumber;
+    }
+
+    public Long getTrxNumber() {
+        return trxNumber;
+    }
+
+    public Long getAwardPeriodId() {
+        return awardPeriodId;
+    }
+
+
 }

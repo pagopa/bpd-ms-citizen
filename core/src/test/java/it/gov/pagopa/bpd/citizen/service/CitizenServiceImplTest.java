@@ -1,12 +1,12 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenCashbackDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.*;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,8 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -40,7 +38,6 @@ public class CitizenServiceImplTest {
     private final OffsetDateTime DATE = OffsetDateTime.now();
     private final Long attendeesNumberMock = new Random().nextLong();
     private final BigDecimal rankingMock = new BigDecimal(100);
-    private static final String HASH_PAN = "hpan";
     private static final String EXISTING_FISCAL_CODE = "existing-fiscalCode";
     private static final String NOT_EXISTING_FISCAL_CODE = "not-existing-fiscalCode";
 
@@ -48,10 +45,6 @@ public class CitizenServiceImplTest {
     private CitizenDAO citizenDAOMock;
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
-    @MockBean
-    private CitizenTransactionDAO citizenTransactionDAOMock;
-    @MockBean
-    private CitizenCashbackDAO citizenCashbackDAOMock;
     @MockBean
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @Autowired
@@ -74,31 +67,17 @@ public class CitizenServiceImplTest {
                     return result;
                 });
 
-        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId(HASH_PAN, EXISTING_FISCAL_CODE, 0L))))
+        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId(EXISTING_FISCAL_CODE, 1L))))
                 .thenAnswer((Answer<Optional<CitizenRanking>>)
                         invocation -> {
                             CitizenRanking citizenRanking = new CitizenRanking();
-                            citizenRanking.setAwardPeriodId(0L);
+                            citizenRanking.setAwardPeriodId(1L);
                             citizenRanking.setFiscalCode(EXISTING_FISCAL_CODE);
                             citizenRanking.setTotalCashback(rankingMock);
                             return Optional.of(citizenRanking);
                         });
 
-        Mockito.when(citizenDAOMock.count()).thenAnswer((Answer<Long>)
-                invocation -> attendeesNumberMock);
-
-        Mockito.when(citizenTransactionDAOMock.getTransactionDetails(EXISTING_FISCAL_CODE, 1L))
-                .thenAnswer(
-                        invocation -> {
-                            CitizenTransaction trx = new CitizenTransaction();
-                            trx.setMaxTrx(2L);
-                            trx.setMinTrx(1L);
-                            trx.setTotalTrx(1L);
-                            return trx;
-
-                        });
-
-        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId("hpan", "wrongFiscalCode", 0L))))
+        Mockito.when(citizenRankingDAOMock.findById(Mockito.eq(new CitizenRankingId("wrongFiscalCode", 0L))))
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
 
@@ -108,17 +87,47 @@ public class CitizenServiceImplTest {
         Mockito.when(checkIbanRestConnectorMock.checkIban("testKO", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "KO");
 
-        Mockito.when(citizenCashbackDAOMock.getTotalCashback(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.eq(1L)))
-                .thenAnswer(invocation -> {
-                    List<CitizenCashback> list = new ArrayList<>();
-                    CitizenCashback cashback = new CitizenCashback();
-                    cashback.setTotalCashback(new BigDecimal(100));
-                    cashback.setTransactionNumber(10L);
-                    list.add(cashback);
-                    return list;
-                });
-    }
+        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
+                .thenAnswer((Answer<Optional<CitizenTransactionConverter>>)
+                        invocation -> {
+                            CitizenTransactionConverter converter = new CitizenTransactionConverter() {
+                                @Override
+                                public Long getRanking() {
+                                    return 1L;
+                                }
 
+                                @Override
+                                public Long getTotalParticipants() {
+                                    return 10L;
+                                }
+
+                                @Override
+                                public Long getMaxTrxNumber() {
+                                    return 11L;
+                                }
+
+                                @Override
+                                public Long getMinTrxNumber() {
+                                    return 1L;
+                                }
+
+                                @Override
+                                public Long getTrxNumber() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getAwardPeriodId() {
+                                    return 1L;
+                                }
+                            };
+                            return Optional.of(converter);
+                        });
+
+        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
+                .thenAnswer((Answer<Optional<CitizenTransactionConverter>>)
+                        invocation -> Optional.empty());
+    }
 
     @Test
     public void find() {
@@ -202,47 +211,47 @@ public class CitizenServiceImplTest {
         BDDMockito.verifyNoMoreInteractions(citizenDAOMock);
     }
 
-
     @Test
-    public void findRanking() {
-        CitizenRanking citizenRanking = citizenService.findRanking(HASH_PAN, EXISTING_FISCAL_CODE, 0L);
+    public void getTotalCashback() {
+        CitizenRankingId id = new CitizenRankingId();
+        id.setFiscalCode(EXISTING_FISCAL_CODE);
+        id.setAwardPeriodId(1L);
+        Optional<CitizenRanking> citizenRanking = citizenRankingDAOMock.findById(id);
+
         Assert.assertNotNull(citizenRanking);
-        Assert.assertEquals(rankingMock, citizenRanking.getTotalCashback());
-        BDDMockito.verify(citizenRankingDAOMock, Mockito.atLeastOnce())
-                .findById(Mockito.eq(new CitizenRankingId(HASH_PAN, EXISTING_FISCAL_CODE, 0L)));
+        BDDMockito.verify(citizenRankingDAOMock).findById(id);
+        BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
     }
 
     @Test
-    public void calculateAttendeesNumber() {
-        Long attendeesNumber = citizenService.calculateAttendeesNumber();
+    public void getTotalCashback_KO() {
+        CitizenRankingId id = new CitizenRankingId();
+        id.setFiscalCode("wrongFiscalCode");
+        id.setAwardPeriodId(0L);
+        Optional<CitizenRanking> citizenRanking = citizenRankingDAOMock.findById(id);
 
-        Assert.assertEquals(attendeesNumberMock, attendeesNumber);
+        Assert.assertNull(citizenRanking);
+        BDDMockito.verify(citizenRankingDAOMock).findById(id);
+        BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
     }
 
     @Test
-    public void getTransactionDetails() {
-        CitizenTransaction citizenTransaction = citizenTransactionDAOMock.getTransactionDetails(EXISTING_FISCAL_CODE, 1L);
+    public void findRankingDetails() {
+        Optional<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+                EXISTING_FISCAL_CODE, 1L);
 
-        Assert.assertNotNull(citizenTransaction);
-        Assert.assertSame(citizenTransaction.getMaxTrx(), 2L);
-        Assert.assertSame(citizenTransaction.getMinTrx(), 1L);
-        Assert.assertSame(citizenTransaction.getTotalTrx(), 1L);
+        Assert.assertNotNull(converter);
+        BDDMockito.verify(citizenRankingDAOMock).getRanking(EXISTING_FISCAL_CODE, 1L);
+        BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
     }
 
     @Test
-    public void getCashback() {
-        List<CitizenCashback> citizenCashback = citizenCashbackDAOMock.getTotalCashback(EXISTING_FISCAL_CODE, 1L);
-        CashbackResource resource = new CashbackResource();
+    public void findRankingDetails_KO() {
+        Optional<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+                "wrongFiscalCode", 0L);
 
-        resource.setTotalCashback(citizenCashback.stream()
-                .map(CitizenCashback::getTotalCashback).reduce(BigDecimal.ZERO, BigDecimal::add));
-        resource.setTransactionNumber(citizenCashback.stream()
-                .mapToLong(CitizenCashback::getTransactionNumber).sum());
-
-        Assert.assertNotNull(resource);
-        Assert.assertEquals(resource.getTotalCashback(), new BigDecimal(100));
-
-
+        BDDMockito.verify(citizenRankingDAOMock).getRanking("wrongFiscalCode", 0L);
+        BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
     }
 
 

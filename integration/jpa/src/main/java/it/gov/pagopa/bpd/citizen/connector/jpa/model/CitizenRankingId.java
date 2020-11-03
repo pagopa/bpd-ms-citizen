@@ -13,7 +13,6 @@ import java.io.Serializable;
 @Builder
 public class CitizenRankingId implements Serializable {
 
-    private String hpan;
     private String fiscalCode;
     private Long awardPeriodId;
 

@@ -4,10 +4,10 @@ import eu.sia.meda.core.controller.StatelessController;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
@@ -93,34 +93,36 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         citizenService.delete(fiscalCode);
     }
 
-    //todo findRanking method is going to be updated in the next release
     @Override
-    public CitizenRankingResource findRanking(String hpan, String fiscalCode, Long awardPeriodId) {
+    public CitizenRankingResource findRanking(String fiscalCode, Long awardPeriodId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.findRanking");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
+        CitizenTransactionConverter foundRanking = citizenService.findRankingDetails(fiscalCode, awardPeriodId);
 
-        CitizenRanking foundRanking = citizenService.findRanking(hpan, fiscalCode, awardPeriodId);
-        CitizenTransaction trxDetails = citizenService.getTransactionDetails(fiscalCode, awardPeriodId);
-        Long attendeesNumber = citizenService.calculateAttendeesNumber();
-
-        return citizenRankingResourceAssembler.toResource(foundRanking, trxDetails, attendeesNumber);
+        return citizenRankingResourceAssembler.toResource(foundRanking);
     }
 
     @Override
-    public CitizenCashbackResource getTotalCashback(String hpan, String fiscalCode, Long awardPeriodId) {
+    public CitizenCashbackResource getTotalCashback(String fiscalCode, Long awardPeriodId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.getTotalCashback");
-            logger.debug("hpan = [" + hpan + "]");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
-        CashbackResource cashback = citizenService.getCashback(hpan, fiscalCode, awardPeriodId);
-        return citizenCashbackResourceAssembler.toResource(cashback);
+        CitizenRanking ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
+        return citizenCashbackResourceAssembler.toResource(ranking);
+    }
+
+    private CitizenRankingId getId(String fiscalCode, Long awardPeriodId) {
+        CitizenRankingId id = new CitizenRankingId();
+        id.setFiscalCode(fiscalCode);
+        id.setAwardPeriodId(awardPeriodId);
+        return id;
     }
 
 }

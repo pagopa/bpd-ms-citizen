@@ -1,7 +1,6 @@
 package it.gov.pagopa.bpd.citizen.assembler;
 
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenTransaction;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +10,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class CitizenRankingResourceAssembler {
 
-    public CitizenRankingResource toResource(
-            CitizenRanking citizenRanking,
-            CitizenTransaction citizenTransaction,
-            Long attendeesNumber) {
+    public CitizenRankingResource toResource(CitizenTransactionConverter citizenTransaction) {
         CitizenRankingResource resource = null;
 
-        if (citizenRanking != null && attendeesNumber != null) {
+        if (citizenTransaction != null) {
             resource = new CitizenRankingResource();
-            resource.setTotalCashback(citizenRanking.getTotalCashback());
-            resource.setMaxTransactionNumber(citizenTransaction.getMaxTrx());
-            resource.setMinTransactionNumber(citizenTransaction.getMinTrx());
-            resource.setTotalParticipants(attendeesNumber);
-            resource.setTransactionNumber(citizenTransaction.getTotalTrx());
-            resource.setAwardPeriodId(citizenRanking.getAwardPeriodId());
+            resource.setRanking(citizenTransaction.getRanking());
+            resource.setTotalParticipants(citizenTransaction.getTotalParticipants());
+            resource.setMaxTransactionNumber(citizenTransaction.getMaxTrxNumber());
+            resource.setMinTransactionNumber(citizenTransaction.getMinTrxNumber());
+            resource.setTransactionNumber(citizenTransaction.getTrxNumber());
+            resource.setAwardPeriodId(citizenTransaction.getAwardPeriodId());
         }
 
         return resource;

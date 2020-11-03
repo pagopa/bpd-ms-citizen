@@ -2,12 +2,12 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenCashbackDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.*;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
@@ -15,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -29,24 +26,18 @@ import java.util.Optional;
 class CitizenServiceImpl implements CitizenService {
 
 
-    private final CitizenTransactionDAO citizenTransactionDAO;
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
-    private final CitizenCashbackDAO citizenCashbackDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
 
     @Autowired
     public CitizenServiceImpl(
-            CitizenTransactionDAO citizenTransactionDAO,
             CitizenDAO citizenDAO,
             CitizenRankingDAO citizenRankingDAO,
-            CitizenCashbackDAO citizenCashbackDAO,
             CheckIbanRestConnector checkIbanRestConnector) {
-        this.citizenTransactionDAO = citizenTransactionDAO;
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
-        this.citizenCashbackDAO = citizenCashbackDAO;
         this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
@@ -127,22 +118,20 @@ class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public Long calculateAttendeesNumber() {
-        return citizenDAO.count();
+    public CitizenRanking getTotalCashback(CitizenRankingId id) {
+        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.findById(id);
+
+        if (!citizenRanking.isPresent()) {
+            throw new CitizenRankingNotFoundException(id.getFiscalCode());
+        }
+
+        return citizenRanking.get();
     }
 
-
     @Override
-    public CitizenTransaction getTransactionDetails(String fiscalCode, Long awardPeriodId) {
-        return citizenTransactionDAO.getTransactionDetails(fiscalCode, awardPeriodId);
-    }
+    public CitizenTransactionConverter findRankingDetails(String fiscalCode, Long awardPeriodId) {
 
-
-    @Override
-    public CitizenRanking findRanking(String hpan, String fiscalCode, Long awardPeriodId) {
-
-        Optional<CitizenRanking> ranking = citizenRankingDAO.findById(
-                new CitizenRankingId(hpan, fiscalCode, awardPeriodId));
+        Optional<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, awardPeriodId);
 
         if (!ranking.isPresent()) {
             throw new CitizenRankingNotFoundException(fiscalCode);
@@ -151,20 +140,4 @@ class CitizenServiceImpl implements CitizenService {
         return ranking.get();
     }
 
-    @Override
-    public CashbackResource getCashback(String hpan, String fiscalCode, Long awardPeriodId) {
-        List<CitizenCashback> cashback = new ArrayList<>();
-        CashbackResource cz = new CashbackResource();
-
-        if (hpan != null) {
-            cashback = citizenCashbackDAO.getPaymentInstrumentCashback(hpan, fiscalCode, awardPeriodId);
-        } else cashback = citizenCashbackDAO.getTotalCashback(fiscalCode, awardPeriodId);
-
-        cz.setTotalCashback(cashback.stream()
-                .map(CitizenCashback::getTotalCashback).reduce(BigDecimal.ZERO, BigDecimal::add));
-        cz.setTransactionNumber(cashback.stream()
-                .mapToLong(CitizenCashback::getTransactionNumber).sum());
-
-        return cz;
-    }
 }
