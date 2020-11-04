@@ -121,11 +121,11 @@ class CitizenServiceImpl implements CitizenService {
     public CitizenRanking getTotalCashback(CitizenRankingId id) {
         Optional<CitizenRanking> citizenRanking = citizenRankingDAO.findById(id);
 
-        if (!citizenRanking.isPresent()) {
-            throw new CitizenRankingNotFoundException(id.getFiscalCode());
+        if (citizenRanking!=null && citizenRanking.isPresent()) {
+            return citizenRanking.get();
         }
 
-        return citizenRanking.get();
+        return null;
     }
 
     @Override
