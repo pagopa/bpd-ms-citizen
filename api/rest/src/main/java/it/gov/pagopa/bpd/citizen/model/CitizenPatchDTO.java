@@ -18,7 +18,7 @@ public class CitizenPatchDTO {
     @JsonProperty(required = true)
     @NotNull
     @Size(max = 27)
-    @Pattern(regexp = Constants.IBAN_REGEX)
+//    @Pattern(regexp = Constants.IBAN_REGEX)
     private String payoffInstr;
 
     @ApiModelProperty(value = "${swagger.citizen.payoffInstrType}", required = true)
