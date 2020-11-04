@@ -46,4 +46,7 @@ public class Citizen extends BaseEntity {
     @Column(name = "account_holder_surname_s")
     private String accountHolderSurname;
 
+    @Column(name = "cancellation_t")
+    private OffsetDateTime cancellation;
+
 }
