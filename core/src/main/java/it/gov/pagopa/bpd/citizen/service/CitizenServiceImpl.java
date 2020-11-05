@@ -135,11 +135,11 @@ class CitizenServiceImpl implements CitizenService {
 
         Optional<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, awardPeriodId);
 
-        if (!ranking.isPresent()) {
-            throw new CitizenRankingNotFoundException(fiscalCode);
+        if (ranking!=null && ranking.isPresent()) {
+            return ranking.get();
         }
 
-        return ranking.get();
+        return null;
     }
 
 }
