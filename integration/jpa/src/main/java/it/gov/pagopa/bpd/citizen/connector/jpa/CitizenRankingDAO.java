@@ -18,9 +18,9 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
     @Query(nativeQuery = true,
             value = "select " +
                     "ranking_n as ranking" +
-                    ",count(1) as totalParticipants" +
-                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = 1) as maxTrxNumber " +
-                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = ranking_min_n) as minTrxNumber " +
+                    ",(select count(1) from bpd_citizen_ranking where award_period_id_n = ?2) as totalParticipants " +
+                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = 1 and award_period_id_n = ?2) as maxTrxNumber " +
+                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = ranking_min_n and award_period_id_n = ?2) as minTrxNumber " +
                     ",transaction_n as trxNumber " +
                     ",award_period_id_n as awardPeriodId " +
                     "from bpd_citizen_ranking " +
