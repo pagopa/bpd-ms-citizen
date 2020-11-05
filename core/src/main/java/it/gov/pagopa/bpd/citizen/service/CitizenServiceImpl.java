@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 
@@ -113,6 +114,7 @@ class CitizenServiceImpl implements CitizenService {
             Citizen citizen = citizenFound.get();
             citizen.setEnabled(false);
             citizen.setUpdateUser(fiscalCode);
+            citizen.setCancellation(OffsetDateTime.now());
             citizenDAO.save(citizen);
         }
     }
