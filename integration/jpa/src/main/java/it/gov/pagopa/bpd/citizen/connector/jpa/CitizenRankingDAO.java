@@ -17,16 +17,30 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
 
     @Query(nativeQuery = true,
             value = "select " +
-                    "ranking_n as ranking" +
-                    ",(select count(1) from bpd_citizen_ranking where award_period_id_n = ?2) as totalParticipants " +
-                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = 1 and award_period_id_n = ?2) as maxTrxNumber " +
-                    ",(select transaction_n from bpd_citizen_ranking where ranking_n = ranking_min_n and award_period_id_n = ?2) as minTrxNumber " +
-                    ",transaction_n as trxNumber " +
-                    ",award_period_id_n as awardPeriodId " +
-                    "from bpd_citizen_ranking " +
-                    "where fiscal_code_c = ?1 " +
-                    "and award_period_id_n = ?2 " +
-                    "group by ranking_n, transaction_n, award_period_id_n")
+                    "cit.cit_fiscal_code as fiscalCode, " +
+                    "cit.cit_ranking as ranking, " +
+                    "count(1) as totalParticipants, " +
+                    "max(bcr_out.transaction_n) as maxTrxNumber, " +
+                    "min(bcr_out.transaction_n) filter (where bcr_out.ranking_n = cit.cit_ranking_min) as minTrxNumber, " +
+                    "cit.cit_transaction as trxNumber, " +
+                    "cit.cit_award_period_id as awardPeriodId " +
+                    "from bpd_citizen_ranking bcr_out " +
+                    "inner join ( " +
+                    "select  " +
+                    "bcr.fiscal_code_c as cit_fiscal_code, " +
+                    "bcr.award_period_id_n as cit_award_period_id, " +
+                    "bcr.cashback_n as cit_cashback, " +
+                    "bcr.transaction_n as cit_transaction, " +
+                    "bcr.ranking_n as cit_ranking, " +
+                    "bcr.ranking_min_n as cit_ranking_min " +
+                    "from bpd_citizen_ranking bcr " +
+                    "where " +
+                    "bcr.fiscal_code_c = ?1 " +
+                    "and bcr.award_period_id_n = ?2 " +
+                    "and bcr.enabled_b = true) cit on bcr_out.award_period_id_n = cit.cit_award_period_id " +
+                    "and bcr_out.enabled_b = true " +
+                    "group by " +
+                    "cit.cit_fiscal_code, cit.cit_ranking, cit.cit_transaction, cit.cit_award_period_id")
     Optional<CitizenTransactionConverter> getRanking(
             String fiscalCode, Long awardPeriod);
 
