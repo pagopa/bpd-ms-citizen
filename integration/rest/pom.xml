@@ -5,12 +5,12 @@
     <parent>
         <artifactId>bpd-ms-citizen-integration</artifactId>
         <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
     <artifactId>bpd-ms-citizen-integration-rest</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -20,12 +20,10 @@
         <dependency>
             <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
             <artifactId>bpd-commons-integration-rest</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
             <artifactId>bpd-commons-integration-rest</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

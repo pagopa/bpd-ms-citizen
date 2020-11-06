@@ -1,19 +1,20 @@
 package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
+import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
-import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
-import it.gov.pagopa.bpd.citizen.model.CitizenPatchResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenRankingResource;
-import it.gov.pagopa.bpd.citizen.model.CitizenResource;
+import it.gov.pagopa.bpd.citizen.model.*;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * @see BpdCitizenController
@@ -23,8 +24,9 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
     private final CitizenService citizenService;
     private final CitizenResourceAssembler citizenResourceAssembler;
+    private final CitizenCashbackResourceAssembler citizenCashbackResourceAssembler;
     private final ModelFactory<CitizenDTO, Citizen> citizenFactory;
-    private final ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory;
+    private final CitizenPatchFactory citizenPatchFactory;
     private final CitizenRankingResourceAssembler citizenRankingResourceAssembler;
 
 
@@ -32,12 +34,15 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     public BpdCitizenControllerImpl(CitizenService citizenService,
                                     CitizenResourceAssembler citizenResourceAssembler,
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory,
-                                    ModelFactory<CitizenPatchDTO, Citizen> citizenPatchFactory, CitizenRankingResourceAssembler citizenRankingResourceAssembler) {
+                                    CitizenPatchFactory citizenPatchFactory,
+                                    CitizenRankingResourceAssembler citizenRankingResourceAssembler,
+                                    CitizenCashbackResourceAssembler citizenCashbackResourceAssembler) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
         this.citizenPatchFactory = citizenPatchFactory;
         this.citizenRankingResourceAssembler = citizenRankingResourceAssembler;
+        this.citizenCashbackResourceAssembler = citizenCashbackResourceAssembler;
     }
 
     @Override
@@ -73,8 +78,6 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         CitizenPatchResource response = new CitizenPatchResource();
 
         final Citizen entity = citizenPatchFactory.createModel(citizen);
-        entity.setPayoffInstr(citizen.getPayoffInstr());
-        entity.setPayoffInstrType(citizen.getPayoffInstrType());
 
         response.setValidationStatus(citizenService.patch(fiscalCode, entity));
 
@@ -98,11 +101,28 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
+        CitizenTransactionConverter foundRanking = citizenService.findRankingDetails(fiscalCode, awardPeriodId);
 
-        CitizenRanking foundRanking = citizenService.findRanking(fiscalCode, awardPeriodId);
-        Long attendeesNumber = citizenService.calculateAttendeesNumber();
+        return citizenRankingResourceAssembler.toResource(foundRanking);
+    }
 
-        return citizenRankingResourceAssembler.toResource(foundRanking, attendeesNumber);
+    @Override
+    public CitizenCashbackResource getTotalCashback(String fiscalCode, Long awardPeriodId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.getTotalCashback");
+            logger.debug("fiscalCode = [" + fiscalCode + "]");
+            logger.debug("awardPeriodId = [" + awardPeriodId + "]");
+        }
+
+        CitizenRanking ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
+        return citizenCashbackResourceAssembler.toResource(ranking);
+    }
+
+    private CitizenRankingId getId(String fiscalCode, Long awardPeriodId) {
+        CitizenRankingId id = new CitizenRankingId();
+        id.setFiscalCode(fiscalCode);
+        id.setAwardPeriodId(awardPeriodId);
+        return id;
     }
 
 }

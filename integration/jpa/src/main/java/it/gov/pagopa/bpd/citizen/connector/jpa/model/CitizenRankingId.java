@@ -14,7 +14,6 @@ import java.io.Serializable;
 public class CitizenRankingId implements Serializable {
 
     private String fiscalCode;
-
     private Long awardPeriodId;
 
 }

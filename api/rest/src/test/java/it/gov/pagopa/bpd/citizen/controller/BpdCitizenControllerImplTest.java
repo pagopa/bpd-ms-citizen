@@ -2,10 +2,14 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.config.ArchConfiguration;
+import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.CitizenDTO;
@@ -33,8 +37,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Random;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BpdCitizenControllerImpl.class)
@@ -51,10 +55,11 @@ public class BpdCitizenControllerImplTest {
     @SpyBean
     private CitizenResourceAssembler citizenResourceAssemblerMock;
     @SpyBean
+    private CitizenCashbackResourceAssembler citizenCashbackResourceAssemblerMock;
+    @SpyBean
     private CitizenFactory citizenFactoryMock;
     @SpyBean
     private CitizenPatchFactory citizenPatchFactoryMock;
-    private final Long attendeesNumberMock = new Random().nextLong();
     @SpyBean
     private CitizenRankingResourceAssembler citizenRankingResourceAssemblerMock;
 
@@ -74,9 +79,53 @@ public class BpdCitizenControllerImplTest {
         citizenPatch.setPayoffInstr("Test");
         citizenPatch.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        CitizenRanking citizenRanking = new CitizenRanking();
-        citizenRanking.setAwardPeriodId(0L);
-        citizenRanking.setRanking(10L);
+        CitizenTransactionConverter citizenRanking = new CitizenTransactionConverter() {
+            @Override
+            public Long getRanking() {
+                return 1L;
+            }
+
+            @Override
+            public Long getTotalParticipants() {
+                return 100L;
+            }
+
+            @Override
+            public Long getMaxTrxNumber() {
+                return 15L;
+            }
+
+            @Override
+            public Long getMinTrxNumber() {
+                return 2L;
+            }
+
+            @Override
+            public Long getTrxNumber() {
+                return 5L;
+            }
+
+            @Override
+            public Long getAwardPeriodId() {
+                return 1L;
+            }
+        };
+
+        CitizenRankingResource citizenRankingResource = new CitizenRankingResource();
+        citizenRankingResource.setRanking(2L);
+        citizenRankingResource.setTotalParticipants(100L);
+        citizenRankingResource.setMaxTransactionNumber(10L);
+        citizenRankingResource.setMinTransactionNumber(1L);
+        citizenRankingResource.setTransactionNumber(3L);
+        citizenRankingResource.setAwardPeriodId(1L);
+
+        CitizenRanking cashback = new CitizenRanking();
+        cashback.setTotalCashback(new BigDecimal(100));
+        cashback.setTransactionNumber(10L);
+
+        CitizenRankingId id = new CitizenRankingId();
+        id.setFiscalCode("fiscalCode");
+        id.setAwardPeriodId(1L);
 
 
         BDDMockito.doReturn(citizen).when(citizenServiceMock).find(Mockito.eq("fiscalCode"));
@@ -90,9 +139,9 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doThrow(new EntityNotFoundException("Unable to find " + Citizen.class.getName() + " with id noFiscalCode"))
                 .when(citizenServiceMock).patch(Mockito.eq("noFiscalCode"), Mockito.any());
 
-        BDDMockito.doReturn(citizenRanking).when(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
+        BDDMockito.doReturn(citizenRanking).when(citizenServiceMock).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
 
-        BDDMockito.doReturn(attendeesNumberMock).when(citizenServiceMock).calculateAttendeesNumber();
+        BDDMockito.doReturn(cashback).when(citizenServiceMock).getTotalCashback(Mockito.eq(id));
     }
 
 
@@ -145,6 +194,11 @@ public class BpdCitizenControllerImplTest {
         CitizenPatchDTO citizen = new CitizenPatchDTO();
         citizen.setPayoffInstr("IT12A1234512345123456789012");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
+
+
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -172,9 +226,32 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
     }
 
+//    @Test
+//    public void updatePaymentMethodKoIbanValidation() throws Exception {
+//
+//        CitizenPatchDTO citizen = new CitizenPatchDTO();
+//        citizen.setPayoffInstr("IT12A123451234");
+//        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+//        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+//        citizen.setAccountHolderName("accountHolderName");
+//        citizen.setAccountHolderSurname("accountHolderSurname");
+//
+//
+//        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
+//                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//                .content(objectMapper.writeValueAsString(citizen)))
+//                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+//                .andReturn();
+//
+//        BDDMockito.verifyZeroInteractions(citizenServiceMock);
+//        BDDMockito.verifyZeroInteractions(citizenPatchFactoryMock);
+//        BDDMockito.verifyZeroInteractions(citizenResourceAssemblerMock);
+//    }
+
     @Test
     public void findRanking() throws Exception {
-        Long awardPeriodId = new Random().nextLong();
+        Long awardPeriodId = 1L;
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get("/bpd/citizens/fiscalCode/ranking")
                 .param("awardPeriodId", String.valueOf(awardPeriodId))
@@ -186,9 +263,31 @@ public class BpdCitizenControllerImplTest {
                 CitizenRankingResource.class);
 
         Assert.assertNotNull(citizenRankingResult);
-        Assert.assertEquals(attendeesNumberMock, citizenRankingResult.getTotalParticipants());
-        BDDMockito.verify(citizenServiceMock).findRanking(Mockito.eq("fiscalCode"), Mockito.anyLong());
-        BDDMockito.verify(citizenRankingResourceAssemblerMock).toResource(Mockito.any(), Mockito.anyLong());
+        BDDMockito.verify(citizenServiceMock).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
+    }
+
+    @Test
+    public void getTotalCashback() throws Exception {
+        CitizenRankingId id = new CitizenRankingId();
+        Long awardPeriodId = 1L;
+        String fiscalCode = "fiscalCode";
+        id.setFiscalCode(fiscalCode);
+        id.setAwardPeriodId(awardPeriodId);
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get("/bpd/citizens/total-cashback")
+                .param("fiscalCode", fiscalCode)
+                .param("awardPeriodId", String.valueOf(awardPeriodId))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        CashbackResource resource = objectMapper.readValue(result.getResponse().getContentAsString(),
+                CashbackResource.class);
+
+
+        Assert.assertNotNull(resource);
+        Assert.assertEquals(resource.getTotalCashback(), new BigDecimal(100));
+        BDDMockito.verify(citizenServiceMock).getTotalCashback(Mockito.eq(id));
     }
 
 }

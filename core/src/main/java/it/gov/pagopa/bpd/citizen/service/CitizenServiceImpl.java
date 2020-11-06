@@ -1,20 +1,21 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import feign.FeignException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
+import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
-import it.gov.pagopa.bpd.citizen.exception.InvalidIbanException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 
@@ -29,9 +30,13 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
+    private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
 
     @Autowired
-    public CitizenServiceImpl(CitizenDAO citizenDAO, CitizenRankingDAO citizenRankingDAO, CheckIbanRestConnector checkIbanRestConnector) {
+    public CitizenServiceImpl(
+            CitizenDAO citizenDAO,
+            CitizenRankingDAO citizenRankingDAO,
+            CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
         this.checkIbanRestConnector = checkIbanRestConnector;
@@ -54,12 +59,14 @@ class CitizenServiceImpl implements CitizenService {
             } else {
                 citizenFound.get().setEnabled(true);
                 citizenFound.get().setUpdateUser(fiscalCode);
+                citizenFound.get().setUpdateDate(OffsetDateTime.now());
                 citizenFound.get().setTimestampTC(cz.getTimestampTC());
                 result = citizenDAO.save(citizenFound.get());
             }
         } else {
             cz.setFiscalCode(fiscalCode);
-            cz.setUpdateUser(fiscalCode);
+            cz.setInsertUser(fiscalCode);
+            cz.setInsertDate(OffsetDateTime.now());
             result = citizenDAO.save(cz);
         }
         return result;
@@ -77,17 +84,29 @@ class CitizenServiceImpl implements CitizenService {
 
         try {
             String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            if (!checkResult.equals("KO")) {
+                citizen.setPayoffInstr(cz.getPayoffInstr());
+                citizen.setPayoffInstrType(cz.getPayoffInstrType());
+                citizen.setUpdateUser(fiscalCode);
+                citizen.setUpdateDate(OffsetDateTime.now());
+                citizen.setCheckInstrStatus(checkResult);
+                citizen.setAccountHolderName(cz.getAccountHolderName());
+                citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
+                citizen.setAccountHolderCF(cz.getAccountHolderCF());
+                citizenDAO.save(citizen);
+            }
+            return checkResult;
+        } catch (UnknowPSPException e) {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
             citizen.setUpdateUser(fiscalCode);
+            citizen.setUpdateDate(OffsetDateTime.now());
+            citizen.setCheckInstrStatus(UNKNOWN_PSP);
+            citizen.setAccountHolderName(cz.getAccountHolderName());
+            citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
+            citizen.setAccountHolderCF(cz.getAccountHolderCF());
             citizenDAO.save(citizen);
-            return checkResult;
-        } catch (FeignException e) {
-            if (e.status() == 400) {
-                throw new InvalidIbanException(citizen.getPayoffInstr());
-            } else{
-                throw new InternalError();
-            }
+            return UNKNOWN_PSP;
         }
     }
 
@@ -99,25 +118,33 @@ class CitizenServiceImpl implements CitizenService {
             Citizen citizen = citizenFound.get();
             citizen.setEnabled(false);
             citizen.setUpdateUser(fiscalCode);
+            citizen.setUpdateDate(OffsetDateTime.now());
+            citizen.setCancellation(OffsetDateTime.now());
             citizenDAO.save(citizen);
         }
     }
 
     @Override
-    public Long calculateAttendeesNumber() {
-        return citizenDAO.count();
+    public CitizenRanking getTotalCashback(CitizenRankingId id) {
+        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.findById(id);
+
+        if (citizenRanking!=null && citizenRanking.isPresent()) {
+            return citizenRanking.get();
+        }
+
+        return null;
     }
 
     @Override
-    public CitizenRanking findRanking(String fiscalCode, Long awardPeriodId) {
+    public CitizenTransactionConverter findRankingDetails(String fiscalCode, Long awardPeriodId) {
 
-        Optional<CitizenRanking> ranking = citizenRankingDAO.findById(
-                new CitizenRankingId(fiscalCode, awardPeriodId));
+        Optional<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, awardPeriodId);
 
-        if (!ranking.isPresent()) {
-            throw new CitizenRankingNotFoundException(fiscalCode);
+        if (ranking!=null && ranking.isPresent()) {
+            return ranking.get();
         }
 
-        return ranking.get();
+        return null;
     }
+
 }

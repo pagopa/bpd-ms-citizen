@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 
 
 /**
@@ -17,8 +19,8 @@ public interface CitizenService {
 
     void delete(String fiscalCode);
 
-    Long calculateAttendeesNumber();
+    CitizenRanking getTotalCashback(CitizenRankingId id);
 
-    CitizenRanking findRanking(String fiscalCode, Long awardPeriodId);
+    CitizenTransactionConverter findRankingDetails(String fiscalCode, Long awardPeriodId);
 
 }
