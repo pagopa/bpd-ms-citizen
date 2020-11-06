@@ -59,12 +59,14 @@ class CitizenServiceImpl implements CitizenService {
             } else {
                 citizenFound.get().setEnabled(true);
                 citizenFound.get().setUpdateUser(fiscalCode);
+                citizenFound.get().setUpdateDate(OffsetDateTime.now());
                 citizenFound.get().setTimestampTC(cz.getTimestampTC());
                 result = citizenDAO.save(citizenFound.get());
             }
         } else {
             cz.setFiscalCode(fiscalCode);
-            cz.setUpdateUser(fiscalCode);
+            cz.setInsertUser(fiscalCode);
+            cz.setInsertDate(OffsetDateTime.now());
             result = citizenDAO.save(cz);
         }
         return result;
@@ -86,6 +88,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
+                citizen.setUpdateDate(OffsetDateTime.now());
                 citizen.setCheckInstrStatus(checkResult);
                 citizen.setAccountHolderName(cz.getAccountHolderName());
                 citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
@@ -97,6 +100,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
             citizen.setUpdateUser(fiscalCode);
+            citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCheckInstrStatus(UNKNOWN_PSP);
             citizen.setAccountHolderName(cz.getAccountHolderName());
             citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
@@ -114,6 +118,7 @@ class CitizenServiceImpl implements CitizenService {
             Citizen citizen = citizenFound.get();
             citizen.setEnabled(false);
             citizen.setUpdateUser(fiscalCode);
+            citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCancellation(OffsetDateTime.now());
             citizenDAO.save(citizen);
         }
