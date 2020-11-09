@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -128,7 +129,7 @@ class CitizenServiceImpl implements CitizenService {
     public CitizenRanking getTotalCashback(CitizenRankingId id) {
         Optional<CitizenRanking> citizenRanking = citizenRankingDAO.findById(id);
 
-        if (citizenRanking!=null && citizenRanking.isPresent()) {
+        if (citizenRanking != null && citizenRanking.isPresent()) {
             return citizenRanking.get();
         }
 
@@ -136,12 +137,12 @@ class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public CitizenTransactionConverter findRankingDetails(String fiscalCode, Long awardPeriodId) {
+    public List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId) {
 
-        Optional<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, awardPeriodId);
+        List<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
 
-        if (ranking!=null && ranking.isPresent()) {
-            return ranking.get();
+        if (ranking != null && !ranking.isEmpty()) {
+            return ranking;
         }
 
         return null;

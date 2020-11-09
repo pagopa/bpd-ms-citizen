@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Controller to expose MicroService
@@ -63,13 +64,13 @@ public interface BpdCitizenController {
 
     @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenRankingResource findRanking(
+    List<CitizenRankingResource> findRanking(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
-            @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = true)
-            @RequestParam(value = "awardPeriodId")
+            @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = false)
+            @RequestParam(value = "awardPeriodId", required = false)
                     Long awardPeriodId
     );
 

@@ -5,6 +5,8 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 
+import java.util.List;
+
 
 /**
  * A service to manage the Business Logic related to Citizen
@@ -21,6 +23,6 @@ public interface CitizenService {
 
     CitizenRanking getTotalCashback(CitizenRankingId id);
 
-    CitizenTransactionConverter findRankingDetails(String fiscalCode, Long awardPeriodId);
+    List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId);
 
 }

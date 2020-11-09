@@ -39,6 +39,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BpdCitizenControllerImpl.class)
@@ -79,7 +81,9 @@ public class BpdCitizenControllerImplTest {
         citizenPatch.setPayoffInstr("Test");
         citizenPatch.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        CitizenTransactionConverter citizenRanking = new CitizenTransactionConverter() {
+
+        List<CitizenTransactionConverter> citizenRanking = new ArrayList<>();
+        CitizenTransactionConverter item = new CitizenTransactionConverter() {
             @Override
             public Long getRanking() {
                 return 1L;
@@ -110,6 +114,7 @@ public class BpdCitizenControllerImplTest {
                 return 1L;
             }
         };
+        citizenRanking.add(item);
 
         CitizenRankingResource citizenRankingResource = new CitizenRankingResource();
         citizenRankingResource.setRanking(2L);
@@ -259,8 +264,8 @@ public class BpdCitizenControllerImplTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
-        CitizenRankingResource citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
-                CitizenRankingResource.class);
+        List<CitizenRankingResource> citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
+                List.class);
 
         Assert.assertNotNull(citizenRankingResult);
         BDDMockito.verify(citizenServiceMock).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
