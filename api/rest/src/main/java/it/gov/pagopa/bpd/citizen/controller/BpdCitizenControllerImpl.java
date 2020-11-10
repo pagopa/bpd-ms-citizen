@@ -15,6 +15,8 @@ import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 /**
  * @see BpdCitizenController
@@ -94,14 +96,14 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenRankingResource findRanking(String fiscalCode, Long awardPeriodId) {
+    public List<CitizenRankingResource> findRanking(String fiscalCode, Long awardPeriodId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.findRanking");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
-        CitizenTransactionConverter foundRanking = citizenService.findRankingDetails(fiscalCode, awardPeriodId);
+        List<CitizenTransactionConverter> foundRanking = citizenService.findRankingDetails(fiscalCode, awardPeriodId);
 
         return citizenRankingResourceAssembler.toResource(foundRanking);
     }

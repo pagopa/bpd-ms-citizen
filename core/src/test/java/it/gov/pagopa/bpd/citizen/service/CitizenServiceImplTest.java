@@ -24,6 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -88,9 +90,10 @@ public class CitizenServiceImplTest {
                 (Answer<String>) invocation -> "KO");
 
         Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
-                .thenAnswer((Answer<Optional<CitizenTransactionConverter>>)
+                .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> {
-                            CitizenTransactionConverter converter = new CitizenTransactionConverter() {
+                            List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
+                            CitizenTransactionConverter item = new CitizenTransactionConverter() {
                                 @Override
                                 public Long getRanking() {
                                     return 1L;
@@ -121,12 +124,14 @@ public class CitizenServiceImplTest {
                                     return 1L;
                                 }
                             };
-                            return Optional.of(converter);
+                            converter.add(item);
+
+                            return converter;
                         });
 
         Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
-                .thenAnswer((Answer<Optional<CitizenTransactionConverter>>)
-                        invocation -> Optional.empty());
+                .thenAnswer((Answer<List<CitizenTransactionConverter>>)
+                        invocation -> new ArrayList());
     }
 
     @Test
@@ -237,7 +242,7 @@ public class CitizenServiceImplTest {
 
     @Test
     public void findRankingDetails() {
-        Optional<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
                 EXISTING_FISCAL_CODE, 1L);
 
         Assert.assertNotNull(converter);
@@ -247,7 +252,7 @@ public class CitizenServiceImplTest {
 
     @Test
     public void findRankingDetails_KO() {
-        Optional<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
                 "wrongFiscalCode", 0L);
 
         BDDMockito.verify(citizenRankingDAOMock).getRanking("wrongFiscalCode", 0L);

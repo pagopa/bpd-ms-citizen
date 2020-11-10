@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -37,7 +38,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     "           from " +
                     "           bpd_citizen_ranking casecit " +
                     "           where " +
-                    "           casecit.award_period_id_n = :awardPeriod)) " +
+                    "           casecit.award_period_id_n = bcr_out.award_period_id_n)) " +
                     "   else min(bcr_out.transaction_n) filter ( " +
                     "       where bcr_out.ranking_n = cit.cit_ranking_min) " +
                     " end as minTrxNumber, " +
@@ -60,10 +61,10 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " bpd_citizen_ranking bcr " +
                     " where " +
                     " bcr.fiscal_code_c = :fiscalCode " +
-                    " and bcr.award_period_id_n = :awardPeriod " +
+                    " and (:awardPeriod = -1 or bcr.award_period_id_n = :awardPeriod) " +
                     " and bcr.enabled_b = true) cit on " +
                     " bcr_out.award_period_id_n = cit.cit_award_period_id " +
-                    " where bcr_out.award_period_id_n = :awardPeriod " +
+                    " where (:awardPeriod = -1 or bcr_out.award_period_id_n = :awardPeriod) " +
                     " and bcr_out.enabled_b = true " +
                     " group by " +
                     " cit.cit_fiscal_code, " +
@@ -71,7 +72,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " cit.cit_transaction, " +
                     " bcr_out.award_period_id_n, " +
                     " cit.cit_ranking_min ")
-    Optional<CitizenTransactionConverter> getRanking(
+    List<CitizenTransactionConverter> getRanking(
             @Param("fiscalCode") String fiscalCode, @Param("awardPeriod") Long awardPeriod);
 
 
