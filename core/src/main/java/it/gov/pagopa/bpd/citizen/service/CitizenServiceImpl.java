@@ -10,7 +10,6 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
-import it.gov.pagopa.bpd.citizen.exception.CitizenRankingNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -138,11 +137,13 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId) {
+        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
+        if (citizen.isPresent()) {
+            List<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
 
-        List<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
-
-        if (ranking != null && !ranking.isEmpty()) {
-            return ranking;
+            if (ranking != null && !ranking.isEmpty()) {
+                return ranking;
+            }
         }
 
         return null;
