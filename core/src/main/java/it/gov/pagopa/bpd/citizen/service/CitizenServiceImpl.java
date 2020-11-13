@@ -83,7 +83,13 @@ class CitizenServiceImpl implements CitizenService {
         }
 
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("Calling CheckIbanRestClient");
+            }
             String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            if (log.isDebugEnabled()) {
+                log.debug("End CheckIbanRestClient");
+            }
             if (!checkResult.equals("KO")) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
