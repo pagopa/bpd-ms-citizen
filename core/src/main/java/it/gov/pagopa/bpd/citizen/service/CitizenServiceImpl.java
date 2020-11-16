@@ -132,8 +132,7 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenRanking getTotalCashback(CitizenRankingId id) {
-        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.findById(id);
-
+        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
         if (citizenRanking != null && citizenRanking.isPresent()) {
             return citizenRanking.get();
         }

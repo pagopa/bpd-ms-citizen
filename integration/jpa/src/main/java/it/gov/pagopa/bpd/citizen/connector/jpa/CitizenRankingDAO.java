@@ -49,6 +49,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " bcr_out.award_period_id_n as awardPeriodId " +
                     " from " +
                     " bpd_citizen_ranking bcr_out " +
+                    " inner join bpd_citizen bc_out on bcr_out.fiscal_code_c = bc_out.fiscal_code_s" +
                     " left outer join ( " +
                     " select " +
                     " bcr.fiscal_code_c as cit_fiscal_code,  " +
@@ -58,14 +59,15 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " bcr.ranking_n as cit_ranking,  " +
                     " bcr.ranking_min_n as cit_ranking_min " +
                     " from " +
-                    " bpd_citizen_ranking bcr " +
+                    " bpd_citizen_ranking bcr" +
+                    " inner join bpd_citizen bc on bcr.fiscal_code_c = bc.fiscal_code_s " +
                     " where " +
                     " bcr.fiscal_code_c = :fiscalCode " +
                     " and (:awardPeriod = -1 or bcr.award_period_id_n = :awardPeriod) " +
-                    " and bcr.enabled_b = true) cit on " +
+                    " and bc.enabled_b = true) cit on " +
                     " bcr_out.award_period_id_n = cit.cit_award_period_id " +
                     " where (:awardPeriod = -1 or bcr_out.award_period_id_n = :awardPeriod) " +
-                    " and bcr_out.enabled_b = true " +
+                    " and bc_out.enabled_b = true " +
                     " group by " +
                     " cit.cit_fiscal_code, " +
                     " cit.cit_ranking, " +
@@ -74,6 +76,15 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " cit.cit_ranking_min ")
     List<CitizenTransactionConverter> getRanking(
             @Param("fiscalCode") String fiscalCode, @Param("awardPeriod") Long awardPeriod);
+
+    @Query(nativeQuery = true, value = "select * " +
+            "from bpd_citizen_ranking bcr " +
+            "inner join bpd_citizen bc on bc.fiscal_code_s = bcr.fiscal_code_c " +
+            "where bcr.fiscal_code_c = :fiscalCode " +
+            "and bcr.award_period_id_n = :awardPeriod " +
+            "and bc.enabled_b = true")
+    Optional<CitizenRanking> getByIdIfCitizenIsEnabled(@Param("fiscalCode") String fiscalCode,
+                                                   @Param("awardPeriod") Long awardPeriod);
 
 
 }
