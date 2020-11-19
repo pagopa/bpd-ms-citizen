@@ -14,7 +14,11 @@ public class CitizenCashbackResourceAssembler {
         CitizenCashbackResource resource = new CitizenCashbackResource();
 
         if (citizenCashback != null) {
-            resource.setTotalCashback(citizenCashback.getTotalCashback());
+            resource.setTotalCashback(
+                (citizenCashback.getTotalCashback()!=null
+                        && citizenCashback.getMaxTotalCashback()!=null
+                        && citizenCashback.getTotalCashback().compareTo(citizenCashback.getMaxTotalCashback()) == 1) ?
+                            citizenCashback.getMaxTotalCashback() : citizenCashback.getTotalCashback());
             resource.setTransactionNumber(citizenCashback.getTransactionNumber());
 
         }else{

@@ -37,4 +37,7 @@ public class CitizenRanking extends BaseEntity {
     @Column(name = "ranking_min_n")
     private Long rankingMinRequired;
 
+    @Column(name = "max_cashback_n")
+    private BigDecimal maxTotalCashback;
+
 }

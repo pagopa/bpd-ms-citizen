@@ -54,7 +54,10 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " select " +
                     " bcr.fiscal_code_c as cit_fiscal_code,  " +
                     " bcr.award_period_id_n as cit_award_period_id,  " +
-                    " bcr.cashback_n as cit_cashback,  " +
+                    " case " +
+                    "   when bcr.cashback_n > bcr.max_cashback_n then bcr.max_cashback_n " +
+                    "   else bcr.cashback_n " +
+                    " end as cit_cashback,  " +
                     " bcr.transaction_n as cit_transaction,  " +
                     " bcr.ranking_n as cit_ranking,  " +
                     " bcr.ranking_min_n as cit_ranking_min " +
