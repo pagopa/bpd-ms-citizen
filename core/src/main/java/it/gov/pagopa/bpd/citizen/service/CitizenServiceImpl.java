@@ -123,6 +123,10 @@ class CitizenServiceImpl implements CitizenService {
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
             Citizen citizen = citizenFound.get();
             citizen.setEnabled(false);
+            citizen.setAccountHolderCF(null);
+            citizen.setAccountHolderName(null);
+            citizen.setAccountHolderSurname(null);
+            citizen.setPayoffInstr(null);
             citizen.setUpdateUser(fiscalCode);
             citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCancellation(OffsetDateTime.now());
