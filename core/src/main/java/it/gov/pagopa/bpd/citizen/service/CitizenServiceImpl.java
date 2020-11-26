@@ -90,7 +90,7 @@ class CitizenServiceImpl implements CitizenService {
             if (log.isDebugEnabled()) {
                 log.debug("End CheckIbanRestClient");
             }
-            if (!checkResult.equals("KO")) {
+            if (!"KO".equals(checkResult)) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
@@ -101,7 +101,8 @@ class CitizenServiceImpl implements CitizenService {
                 citizen.setAccountHolderCF(cz.getAccountHolderCF());
                 citizenDAO.save(citizen);
             }
-            return checkResult;
+
+            return checkResult!=null ? checkResult : "KO";
         } catch (UnknowPSPException e) {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
