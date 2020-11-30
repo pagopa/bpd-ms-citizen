@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
+import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
@@ -103,7 +104,7 @@ class CitizenServiceImpl implements CitizenService {
             }
 
             return checkResult!=null ? checkResult : "KO";
-        } catch (UnknowPSPException e) {
+        } catch (UnknowPSPException | UnknowPSPTimeoutException e) {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
             citizen.setUpdateUser(fiscalCode);
