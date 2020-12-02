@@ -20,7 +20,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
 
 
     @Query(nativeQuery = true,
-            value = " select tmp.fiscalCode, " +
+            value = " select coalesce(tmp.fiscalCode, :fiscalCode) as fiscalCode, " +
                     "   coalesce(tmp.ranking, tmp.totalParticipants+1) as ranking, " +
                     "   tmp.totalParticipants, " +
                     "   tmp.maxTrxNumber, " +
@@ -29,7 +29,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     "   tmp.awardPeriodId " +
                     " from ( " +
                     "   select " +
-                    " coalesce(cit.cit_fiscal_code, :fiscalCode) as fiscalCode, " +
+                    " cit.cit_fiscal_code as fiscalCode, " +
                     " cit.cit_transaction as trxNumber, " +
                     " cit.cit_ranking as ranking, " +
                     " count(1) as totalParticipants, " +
@@ -55,7 +55,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " ) as cit on bcr_out.award_period_id_n=cit.cit_award_period_id " +
                     " where (:awardPeriod = -1 or bcr_out.award_period_id_n= :awardPeriod) " +
                     " group by bcr_out.award_period_id_n, " +
-                    " coalesce(cit.cit_fiscal_code, :fiscalCode), " +
+                    " cit.cit_fiscal_code, " +
                     " cit.cit_transaction, " +
                     " cit.cit_ranking " +
                     " ) tmp")
