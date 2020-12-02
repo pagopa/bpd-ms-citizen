@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <bpd-commons.version>1.0.4</bpd-commons.version>
+        <bpd-commons.version>1.0.5</bpd-commons.version>
     </properties>
 
     <modules>
@@ -125,4 +125,10 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/pagopa/bpd-ms-citizen.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
 </project>
