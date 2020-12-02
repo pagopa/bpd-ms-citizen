@@ -34,7 +34,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " count(1) as totalParticipants, " +
                     " bcr_out.award_period_id_n as awardPeriodId, " +
                     " max(bcr_out.transaction_n) as maxTrxNumber, " +
-                    " min(bcr_out.transaction_n) filter(where bcr_out.ranking_n=bcr_out.ranking_min_n) as minTrxNumber" +
+                    " coalesce(min(bcr_out.transaction_n) filter(where bcr_out.ranking_n=bcr_out.ranking_min_n), min(bcr_out.transaction_n)) as minTrxNumber" +
                     " from bpd_citizen.bpd_citizen_ranking bcr_out" +
                     " left outer join ( " +
                     " select " +
