@@ -27,7 +27,14 @@ spec:
             - configMapRef:
                 name: bpdmscitizen
             - configMapRef:
-                name: jvm                
+                name: jvm
+          resources:
+            limits:
+              cpu: 800m
+              memory: 4Gi
+            requests:
+              cpu: 10m
+              memory: 256Mi
       hostAliases:
         - hostnames:
             - u87cstarprod.servicebus.windows.net

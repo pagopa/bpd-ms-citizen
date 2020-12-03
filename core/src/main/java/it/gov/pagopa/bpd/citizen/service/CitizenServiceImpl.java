@@ -129,10 +129,13 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderName(null);
             citizen.setAccountHolderSurname(null);
             citizen.setPayoffInstr(null);
+            citizen.setPayoffInstrType(null);
+            citizen.setCheckInstrStatus(null);
             citizen.setUpdateUser(fiscalCode);
             citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCancellation(OffsetDateTime.now());
             citizenDAO.save(citizen);
+            citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
         }
     }
 
