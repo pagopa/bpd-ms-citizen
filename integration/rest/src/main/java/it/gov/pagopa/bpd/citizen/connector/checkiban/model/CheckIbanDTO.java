@@ -22,4 +22,10 @@ public class CheckIbanDTO{
         private String vatCode;
         private String taxCode;
     }
+
+    @Override
+    public String toString(){
+        return "{'fiscalCode': '" + accountHolder.getFiscalCode()
+                + "', 'IBAN': '" + account.getValue() + "'}";
+    }
 }

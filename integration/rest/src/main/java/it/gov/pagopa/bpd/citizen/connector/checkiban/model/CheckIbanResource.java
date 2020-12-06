@@ -16,4 +16,11 @@ public class CheckIbanResource{
         private String validationStatus;
 
     }
+
+    @Override
+    public String toString(){
+        return "{'status': '" + status
+                +"', 'errors': " + ((errors!=null && !errors.isEmpty()) ? errors.toString() : "null")
+                +", 'validationStatus': '" + ((payload!=null) ? payload.getValidationStatus() : "null") +"'}";
+    }
 }

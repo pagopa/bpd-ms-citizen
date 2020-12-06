@@ -2,10 +2,12 @@ package it.gov.pagopa.bpd.citizen.connector.checkiban;
 
 import it.gov.pagopa.bpd.citizen.connector.checkiban.model.CheckIbanDTO;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.model.CheckIbanResource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class CheckIbanRestConnectorImpl implements CheckIbanRestConnector{
 
     private final String apikey;
@@ -32,7 +34,15 @@ public class CheckIbanRestConnectorImpl implements CheckIbanRestConnector{
         request.getAccountHolder().setFiscalCode(fiscalCode);
         request.getAccountHolder().setType(PERSON_NATURAL);
 
+        if(log.isInfoEnabled()){
+            log.info("CHECKIBAN_TO: " + request.toString());
+        }
         CheckIbanResource response = checkIbanRestClient.checkIban(request, apikey, authSchema);
+
+        if(log.isInfoEnabled()){
+            log.info("CHECKIBAN_FROM: " + (response!=null ? response.toString() : "[null]"));
+        }
+
         if(response!=null && "OK".equals(response.getStatus()) && response.getPayload()!=null){
             return response.getPayload().getValidationStatus();
         }
