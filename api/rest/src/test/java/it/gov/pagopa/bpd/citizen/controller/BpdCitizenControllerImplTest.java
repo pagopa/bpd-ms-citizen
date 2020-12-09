@@ -199,13 +199,12 @@ public class BpdCitizenControllerImplTest {
         CitizenPatchDTO citizen = new CitizenPatchDTO();
         citizen.setPayoffInstr("IT12A1234512345123456789012");
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderCF("DTUMTO13B14I814Z");
         citizen.setAccountHolderName("accountHolderName");
         citizen.setAccountHolderSurname("accountHolderSurname");
 
 
-
-        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
+        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/DTUMTO13B14I814Z")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
