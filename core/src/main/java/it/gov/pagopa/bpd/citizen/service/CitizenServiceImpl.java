@@ -87,7 +87,12 @@ class CitizenServiceImpl implements CitizenService {
             if (log.isDebugEnabled()) {
                 log.debug("Calling CheckIbanRestClient");
             }
-            String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            String checkResult = null;
+            if (cz.getTechnicalAccountHolder() == null) {
+                checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            } else {
+                checkResult = "OK";
+            }
             if (log.isDebugEnabled()) {
                 log.debug("End CheckIbanRestClient");
             }
@@ -100,6 +105,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizen.setAccountHolderName(cz.getAccountHolderName());
                 citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
                 citizen.setAccountHolderCF(cz.getAccountHolderCF());
+                citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
                 citizenDAO.save(citizen);
             }
 
@@ -113,6 +119,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderName(cz.getAccountHolderName());
             citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
             citizen.setAccountHolderCF(cz.getAccountHolderCF());
+            citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
             citizenDAO.save(citizen);
             return UNKNOWN_PSP;
         }
@@ -128,6 +135,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderCF(null);
             citizen.setAccountHolderName(null);
             citizen.setAccountHolderSurname(null);
+            citizen.setTechnicalAccountHolder(null);
             citizen.setPayoffInstr(null);
             citizen.setPayoffInstrType(null);
             citizen.setCheckInstrStatus(null);
