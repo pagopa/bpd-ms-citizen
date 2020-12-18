@@ -89,14 +89,14 @@ class CitizenServiceImpl implements CitizenService {
             }
             String checkResult = null;
             if (cz.getTechnicalAccountHolder() == null) {
-                checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+                checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
             } else {
                 checkResult = "OK";
             }
             if (log.isDebugEnabled()) {
                 log.debug("End CheckIbanRestClient");
             }
-            if (!"KO".equals(checkResult)) {
+            if (!"KO".equals(checkResult) && checkResult != null) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
