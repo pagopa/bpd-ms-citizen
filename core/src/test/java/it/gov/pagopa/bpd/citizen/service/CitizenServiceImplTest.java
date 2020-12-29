@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingReplicaDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
@@ -48,6 +49,8 @@ public class CitizenServiceImplTest {
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
     @MockBean
+    private CitizenRankingReplicaDAO citizenRankingReplicaDAOMock;
+    @MockBean
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @Autowired
     private CitizenService citizenService;
@@ -89,7 +92,7 @@ public class CitizenServiceImplTest {
         Mockito.when(checkIbanRestConnectorMock.checkIban("testKO", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "KO");
 
-        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
+        Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> {
                             List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
@@ -129,7 +132,7 @@ public class CitizenServiceImplTest {
                             return converter;
                         });
 
-        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
+        Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> new ArrayList());
     }
@@ -241,20 +244,20 @@ public class CitizenServiceImplTest {
 
     @Test
     public void findRankingDetails() {
-        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingReplicaDAOMock.getRanking(
                 EXISTING_FISCAL_CODE, 1L);
 
         Assert.assertNotNull(converter);
-        BDDMockito.verify(citizenRankingDAOMock).getRanking(EXISTING_FISCAL_CODE, 1L);
+        BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking(EXISTING_FISCAL_CODE, 1L);
         BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
     }
 
     @Test
     public void findRankingDetails_KO() {
-        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingReplicaDAOMock.getRanking(
                 "wrongFiscalCode", 0L);
 
-        BDDMockito.verify(citizenRankingDAOMock).getRanking("wrongFiscalCode", 0L);
+        BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking("wrongFiscalCode", 0L);
         BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
     }
 
