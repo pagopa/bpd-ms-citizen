@@ -5,6 +5,7 @@ import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPExceptio
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingReplicaDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
@@ -30,6 +31,7 @@ class CitizenServiceImpl implements CitizenService {
 
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
+    private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
 
@@ -37,9 +39,11 @@ class CitizenServiceImpl implements CitizenService {
     public CitizenServiceImpl(
             CitizenDAO citizenDAO,
             CitizenRankingDAO citizenRankingDAO,
+            CitizenRankingReplicaDAO citizenRankingReplicaDAO,
             CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO;
         this.citizenRankingDAO = citizenRankingDAO;
+        this.citizenRankingReplicaDAO = citizenRankingReplicaDAO;
         this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
@@ -161,7 +165,7 @@ class CitizenServiceImpl implements CitizenService {
     public List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId) {
         Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
         if (citizen.isPresent()) {
-            List<CitizenTransactionConverter> ranking = citizenRankingDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
+            List<CitizenTransactionConverter> ranking = citizenRankingReplicaDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
 
             if (ranking != null && !ranking.isEmpty()) {
                 return ranking;
