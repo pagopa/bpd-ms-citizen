@@ -32,11 +32,12 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " cit.cit_fiscal_code as fiscalCode, " +
                     " cit.cit_transaction as trxNumber, " +
                     " cit.cit_ranking as ranking, " +
-                    " count(1) as totalParticipants, " +
+                    " const.total_participants as totalParticipants, " +
                     " bcr_out.award_period_id_n as awardPeriodId, " +
-                    " max(bcr_out.transaction_n) as maxTrxNumber, " +
-                    " coalesce(min(bcr_out.transaction_n) filter(where bcr_out.ranking_n=bcr_out.ranking_min_n), min(bcr_out.transaction_n)) as minTrxNumber" +
-                    " from bpd_citizen.bpd_citizen_ranking bcr_out" +
+                    " const.max_value as maxTrxNumber, " +
+                    " const.min_value as minTrxNumber" +
+                    " from bpd_citizen.bpd_const_ranking const, " +
+                    " bpd_citizen.bpd_citizen_ranking bcr_out" +
                     " left outer join ( " +
                     " select " +
                     "  bcr.fiscal_code_c as cit_fiscal_code," +
@@ -57,7 +58,10 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
                     " group by bcr_out.award_period_id_n, " +
                     " cit.cit_fiscal_code, " +
                     " cit.cit_transaction, " +
-                    " cit.cit_ranking " +
+                    " cit.cit_ranking ," +
+                    " const.max_value, " +
+                    " const.min_value, " +
+                    " const.total_participants " +
                     " ) tmp")
     List<CitizenTransactionConverter> getRanking(
             @Param("fiscalCode") String fiscalCode, @Param("awardPeriod") Long awardPeriod);
@@ -69,7 +73,7 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
             "and bcr.award_period_id_n = :awardPeriod " +
             "and bc.enabled_b = true")
     Optional<CitizenRanking> getByIdIfCitizenIsEnabled(@Param("fiscalCode") String fiscalCode,
-                                                   @Param("awardPeriod") Long awardPeriod);
+                                                       @Param("awardPeriod") Long awardPeriod);
 
 
     @Modifying
