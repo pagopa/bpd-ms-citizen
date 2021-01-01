@@ -3,12 +3,10 @@ package it.gov.pagopa.bpd.citizen.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
-import lombok.Data;
 import it.gov.pagopa.bpd.common.util.Constants;
+import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -41,5 +39,9 @@ public class CitizenPatchDTO {
     @JsonProperty(required = true)
     @NotNull
     private String accountHolderSurname;
+
+    @ApiModelProperty(value = "${swagger.citizen.technicalAccountHolder}", required = false)
+    @JsonProperty(required = false)
+    private String technicalAccountHolder;
 
 }

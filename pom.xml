@@ -128,7 +128,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/pagopa/bpd-ms-citizen.git</developerConnection>
-      <tag>1.0.1-rc2</tag>
+      <tag>1.0.4-rc1</tag>
   </scm>
 
 </project>

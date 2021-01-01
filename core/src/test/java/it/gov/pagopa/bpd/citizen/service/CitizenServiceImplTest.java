@@ -201,7 +201,6 @@ public class CitizenServiceImplTest {
         citizen.setUpdateUser(EXISTING_FISCAL_CODE);
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
-        BDDMockito.verifyZeroInteractions(citizenDAOMock);
         BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
     }
 
