@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: bpdmscitizen
 spec:
-  replicas: 1  
+  replicas: 16
   selector:
     matchLabels:
       app: bpdmscitizen

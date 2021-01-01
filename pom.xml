@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bpd-ms-citizen</artifactId>
-    <version>1.0.5-rc4</version>
+    <version>1.0.10-Hotfix1</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-rest</artifactId>
-                <version>1.0.5-rc4</version>
+                <version>1.0.10-Hotfix1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
@@ -45,17 +45,17 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-jpa</artifactId>
-                <version>1.0.5-rc4</version>
+                <version>1.0.10-Hotfix1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
                 <artifactId>bpd-ms-citizen-core</artifactId>
-                <version>1.0.5-rc4</version>
+                <version>1.0.10-Hotfix1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.api</groupId>
                 <artifactId>bpd-ms-citizen-api-rest</artifactId>
-                <version>1.0.5-rc4</version>
+                <version>1.0.10-Hotfix1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons</groupId>

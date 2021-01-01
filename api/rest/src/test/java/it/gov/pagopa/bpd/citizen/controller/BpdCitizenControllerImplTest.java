@@ -204,7 +204,6 @@ public class BpdCitizenControllerImplTest {
         citizen.setAccountHolderSurname("accountHolderSurname");
 
 
-
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/DTUMTO13B14I814Z")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
