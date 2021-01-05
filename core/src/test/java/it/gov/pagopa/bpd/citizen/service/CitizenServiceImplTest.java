@@ -95,6 +95,11 @@ public class CitizenServiceImplTest {
                             List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
                             CitizenTransactionConverter item = new CitizenTransactionConverter() {
                                 @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
+                                @Override
                                 public Long getRanking() {
                                     return 1L;
                                 }
@@ -125,6 +130,88 @@ public class CitizenServiceImplTest {
                                 }
                             };
                             converter.add(item);
+
+                            return converter;
+                        });
+
+        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE)))
+                .thenAnswer((Answer<List<CitizenTransactionConverter>>)
+                        invocation -> {
+                            List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
+                            CitizenTransactionConverter item1 = new CitizenTransactionConverter() {
+                                @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
+                                @Override
+                                public Long getRanking() {
+                                    return 1L;
+                                }
+
+                                @Override
+                                public Long getTotalParticipants() {
+                                    return 10L;
+                                }
+
+                                @Override
+                                public Long getMaxTrxNumber() {
+                                    return 11L;
+                                }
+
+                                @Override
+                                public Long getMinTrxNumber() {
+                                    return 1L;
+                                }
+
+                                @Override
+                                public Long getTrxNumber() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getAwardPeriodId() {
+                                    return 1L;
+                                }
+                            };
+                            CitizenTransactionConverter item2 = new CitizenTransactionConverter() {
+                                @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
+                                @Override
+                                public Long getRanking() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getTotalParticipants() {
+                                    return 20L;
+                                }
+
+                                @Override
+                                public Long getMaxTrxNumber() {
+                                    return 22L;
+                                }
+
+                                @Override
+                                public Long getMinTrxNumber() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getTrxNumber() {
+                                    return 4L;
+                                }
+
+                                @Override
+                                public Long getAwardPeriodId() {
+                                    return 2L;
+                                }
+                            };
+                            converter.add(item1);
+                            converter.add(item2);
 
                             return converter;
                         });
@@ -185,7 +272,7 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
-        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(), citizen.getFiscalCode());
     }
 
     @Test
@@ -202,7 +289,7 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
         BDDMockito.verifyZeroInteractions(citizenDAOMock);
-        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(), citizen.getFiscalCode());
     }
 
     @Test(expected = CitizenNotFoundException.class)
@@ -259,5 +346,14 @@ public class CitizenServiceImplTest {
         BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
     }
 
+    @Test
+    public void findRankingDetailsForAllPeriods() {
+        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(EXISTING_FISCAL_CODE);
+
+        Assert.assertNotNull(converter);
+        Assert.assertTrue(converter.size() > 1);
+        BDDMockito.verify(citizenRankingDAOMock).getRanking(EXISTING_FISCAL_CODE);
+        BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
+    }
 
 }
