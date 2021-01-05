@@ -20,11 +20,15 @@ public class CitizenRankingResourceAssembler {
             resource = new ArrayList<CitizenRankingResource>();
             for (CitizenTransactionConverter citizenTransactionConverter : citizenTransaction) {
                 CitizenRankingResource item = new CitizenRankingResource();
-                item.setRanking(citizenTransactionConverter.getRanking());
+                item.setRanking(citizenTransactionConverter.getRanking() == null ?
+                        citizenTransactionConverter.getTotalParticipants() + 1 :
+                        citizenTransactionConverter.getRanking());
                 item.setTotalParticipants(citizenTransactionConverter.getTotalParticipants());
                 item.setMaxTransactionNumber(citizenTransactionConverter.getMaxTrxNumber());
                 item.setMinTransactionNumber(citizenTransactionConverter.getMinTrxNumber());
-                item.setTransactionNumber(citizenTransactionConverter.getTrxNumber());
+                item.setTransactionNumber(citizenTransactionConverter.getTrxNumber() == null ?
+                        0 :
+                        citizenTransactionConverter.getTrxNumber());
                 item.setAwardPeriodId(citizenTransactionConverter.getAwardPeriodId());
 
                 resource.add(item);
@@ -33,4 +37,5 @@ public class CitizenRankingResourceAssembler {
 
         return resource;
     }
+
 }
