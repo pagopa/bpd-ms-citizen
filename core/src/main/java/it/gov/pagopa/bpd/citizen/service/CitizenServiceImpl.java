@@ -113,7 +113,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizenDAO.save(citizen);
             }
 
-            return checkResult!=null ? checkResult : "KO";
+            return checkResult != null ? checkResult : "KO";
         } catch (UnknowPSPException | UnknowPSPTimeoutException e) {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
@@ -153,7 +153,7 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenRanking getTotalCashback(CitizenRankingId id) {
-        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
+        Optional<CitizenRanking> citizenRanking = citizenRankingReplicaDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
         if (citizenRanking != null && citizenRanking.isPresent()) {
             return citizenRanking.get();
         }
@@ -163,16 +163,23 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId) {
+        List<CitizenTransactionConverter> ranking;
+
         Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
         if (citizen.isPresent()) {
-            List<CitizenTransactionConverter> ranking = citizenRankingReplicaDAO.getRanking(fiscalCode, (awardPeriodId != null) ? awardPeriodId : -1L);
-
-            if (ranking != null && !ranking.isEmpty()) {
-                return ranking;
+            if (citizen.get().isEnabled()) {
+                ranking = awardPeriodId == null ?
+                        citizenRankingReplicaDAO.getRanking(fiscalCode) :
+                        citizenRankingReplicaDAO.getRanking(fiscalCode, awardPeriodId);
+            } else {
+                throw new CitizenNotFoundException(fiscalCode);
             }
+
+        } else {
+            throw new CitizenNotFoundException(fiscalCode);
         }
 
-        return null;
+        return ranking;
     }
 
 }
