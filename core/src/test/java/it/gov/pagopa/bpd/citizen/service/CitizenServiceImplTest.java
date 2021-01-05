@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingReplicaDAO;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
@@ -48,6 +49,8 @@ public class CitizenServiceImplTest {
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
     @MockBean
+    private CitizenRankingReplicaDAO citizenRankingReplicaDAOMock;
+    @MockBean
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @Autowired
     private CitizenService citizenService;
@@ -89,11 +92,16 @@ public class CitizenServiceImplTest {
         Mockito.when(checkIbanRestConnectorMock.checkIban("testKO", EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "KO");
 
-        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
+        Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> {
                             List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
                             CitizenTransactionConverter item = new CitizenTransactionConverter() {
+                                @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
                                 @Override
                                 public Long getRanking() {
                                     return 1L;
@@ -129,7 +137,89 @@ public class CitizenServiceImplTest {
                             return converter;
                         });
 
-        Mockito.when(citizenRankingDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
+        Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE)))
+                .thenAnswer((Answer<List<CitizenTransactionConverter>>)
+                        invocation -> {
+                            List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
+                            CitizenTransactionConverter item1 = new CitizenTransactionConverter() {
+                                @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
+                                @Override
+                                public Long getRanking() {
+                                    return 1L;
+                                }
+
+                                @Override
+                                public Long getTotalParticipants() {
+                                    return 10L;
+                                }
+
+                                @Override
+                                public Long getMaxTrxNumber() {
+                                    return 11L;
+                                }
+
+                                @Override
+                                public Long getMinTrxNumber() {
+                                    return 1L;
+                                }
+
+                                @Override
+                                public Long getTrxNumber() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getAwardPeriodId() {
+                                    return 1L;
+                                }
+                            };
+                            CitizenTransactionConverter item2 = new CitizenTransactionConverter() {
+                                @Override
+                                public String getFiscalCode() {
+                                    return EXISTING_FISCAL_CODE;
+                                }
+
+                                @Override
+                                public Long getRanking() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getTotalParticipants() {
+                                    return 20L;
+                                }
+
+                                @Override
+                                public Long getMaxTrxNumber() {
+                                    return 22L;
+                                }
+
+                                @Override
+                                public Long getMinTrxNumber() {
+                                    return 2L;
+                                }
+
+                                @Override
+                                public Long getTrxNumber() {
+                                    return 4L;
+                                }
+
+                                @Override
+                                public Long getAwardPeriodId() {
+                                    return 2L;
+                                }
+                            };
+                            converter.add(item1);
+                            converter.add(item2);
+
+                            return converter;
+                        });
+
+        Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> new ArrayList());
     }
@@ -185,7 +275,7 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
         BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
-        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(), citizen.getFiscalCode());
     }
 
     @Test
@@ -201,7 +291,7 @@ public class CitizenServiceImplTest {
         citizen.setUpdateUser(EXISTING_FISCAL_CODE);
 
         BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
-        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(),citizen.getFiscalCode());
+        BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(), citizen.getFiscalCode());
     }
 
     @Test(expected = CitizenNotFoundException.class)
@@ -241,22 +331,31 @@ public class CitizenServiceImplTest {
 
     @Test
     public void findRankingDetails() {
-        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingReplicaDAOMock.getRanking(
                 EXISTING_FISCAL_CODE, 1L);
 
         Assert.assertNotNull(converter);
-        BDDMockito.verify(citizenRankingDAOMock).getRanking(EXISTING_FISCAL_CODE, 1L);
+        BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking(EXISTING_FISCAL_CODE, 1L);
         BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
     }
 
     @Test
     public void findRankingDetails_KO() {
-        List<CitizenTransactionConverter> converter = citizenRankingDAOMock.getRanking(
+        List<CitizenTransactionConverter> converter = citizenRankingReplicaDAOMock.getRanking(
                 "wrongFiscalCode", 0L);
 
-        BDDMockito.verify(citizenRankingDAOMock).getRanking("wrongFiscalCode", 0L);
+        BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking("wrongFiscalCode", 0L);
         BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
     }
 
+    @Test
+    public void findRankingDetailsForAllPeriods() {
+        List<CitizenTransactionConverter> converter = citizenRankingReplicaDAOMock.getRanking(EXISTING_FISCAL_CODE);
+
+        Assert.assertNotNull(converter);
+        Assert.assertTrue(converter.size() > 1);
+        BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking(EXISTING_FISCAL_CODE);
+        BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
+    }
 
 }
