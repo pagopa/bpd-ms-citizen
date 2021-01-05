@@ -85,6 +85,11 @@ public class BpdCitizenControllerImplTest {
         List<CitizenTransactionConverter> citizenRanking = new ArrayList<>();
         CitizenTransactionConverter item = new CitizenTransactionConverter() {
             @Override
+            public String getFiscalCode() {
+                return "fiscalCode";
+            }
+
+            @Override
             public Long getRanking() {
                 return 1L;
             }
