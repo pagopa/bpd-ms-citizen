@@ -19,6 +19,11 @@
             <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
             <artifactId>bpd-ms-citizen-integration-rest</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nl.garvelink.oss</groupId>
+            <artifactId>iban</artifactId>
+            <version>1.7.0</version>
+        </dependency>
     </dependencies>
 
 </project>
