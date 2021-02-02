@@ -10,9 +10,11 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.exception.CitizenInvalidIbanException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import nl.garvelink.iban.IBAN;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ import java.util.Optional;
 class CitizenServiceImpl implements CitizenService {
 
 
+    public static final String KO = "KO";
+    public static final String OK = "OK";
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
     private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
@@ -91,16 +95,26 @@ class CitizenServiceImpl implements CitizenService {
             if (log.isDebugEnabled()) {
                 log.debug("Calling CheckIbanRestClient");
             }
-            String checkResult = null;
+            String checkResult;
+            IBAN iban;
+            try{
+                iban = IBAN.parse(cz.getPayoffInstr());
+            } catch (IllegalArgumentException i){
+                return KO;
+            }
+            if (!iban.isSEPA()){
+                throw new CitizenInvalidIbanException(cz.getPayoffInstr());
+            }
+
             if (cz.getTechnicalAccountHolder() == null) {
                 checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
             } else {
-                checkResult = "OK";
+                checkResult = OK;
             }
             if (log.isDebugEnabled()) {
                 log.debug("End CheckIbanRestClient");
             }
-            if (!"KO".equals(checkResult) && checkResult != null) {
+            if (!KO.equals(checkResult) && checkResult != null) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
@@ -113,7 +127,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizenDAO.save(citizen);
             }
 
-            return checkResult != null ? checkResult : "KO";
+            return checkResult != null ? checkResult : KO;
         } catch (UnknowPSPException | UnknowPSPTimeoutException e) {
             citizen.setPayoffInstr(cz.getPayoffInstr());
             citizen.setPayoffInstrType(cz.getPayoffInstrType());
