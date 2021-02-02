@@ -8,6 +8,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.exception.CitizenInvalidIbanException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = CitizenServiceImpl.class)
 public class CitizenServiceImplTest {
 
+    public static final String IBAN_OK = "IT60X0542811101000000123456";
+    public static final String IBAN_NON_SEPA = "SA4420000001234567891234";
+    public static final String IBAN_KO = "FR1420041010050500013M02606";
     private final OffsetDateTime DATE = OffsetDateTime.now();
     private final Long attendeesNumberMock = new Random().nextLong();
     private final BigDecimal rankingMock = new BigDecimal(100);
@@ -86,10 +90,10 @@ public class CitizenServiceImplTest {
                 .thenAnswer((Answer<CitizenRanking>)
                         invocation -> null);
 
-        Mockito.when(checkIbanRestConnectorMock.checkIban("testOK", EXISTING_FISCAL_CODE)).thenAnswer(
+        Mockito.when(checkIbanRestConnectorMock.checkIban(IBAN_OK, EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "OK");
 
-        Mockito.when(checkIbanRestConnectorMock.checkIban("testKO", EXISTING_FISCAL_CODE)).thenAnswer(
+        Mockito.when(checkIbanRestConnectorMock.checkIban(IBAN_KO, EXISTING_FISCAL_CODE)).thenAnswer(
                 (Answer<String>) invocation -> "KO");
 
         Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
@@ -264,7 +268,7 @@ public class CitizenServiceImplTest {
     @Test
     public void patch() {
         Citizen citizen = new Citizen();
-        citizen.setPayoffInstr("testOK");
+        citizen.setPayoffInstr(IBAN_OK);
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
         citizen.setAccountHolderCF("DTUMTO13I14I814Z");
         citizen.setAccountHolderName("accountHolderName");
@@ -278,10 +282,28 @@ public class CitizenServiceImplTest {
         BDDMockito.verify(checkIbanRestConnectorMock).checkIban(citizen.getPayoffInstr(), citizen.getFiscalCode());
     }
 
+    @Test(expected = CitizenInvalidIbanException.class)
+    public void patch_iban_non_sepa_KO() {
+        Citizen citizen = new Citizen();
+        citizen.setPayoffInstr(IBAN_NON_SEPA);
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
+        citizen.setFiscalCode(EXISTING_FISCAL_CODE);
+        citizen.setUpdateUser(EXISTING_FISCAL_CODE);
+
+        citizenService.patch(EXISTING_FISCAL_CODE, citizen);
+
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
+        BDDMockito.verify(citizenDAOMock, Mockito.never()).save(Mockito.any());
+        BDDMockito.verify(checkIbanRestConnectorMock, Mockito.never()).checkIban(Mockito.any(), Mockito.any());
+    }
+
     @Test
     public void patch_KO() {
         Citizen citizen = new Citizen();
-        citizen.setPayoffInstr("testKO");
+        citizen.setPayoffInstr(IBAN_KO);
         citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
         citizen.setAccountHolderCF("DTUMTO13I14I814Z");
         citizen.setAccountHolderName("accountHolderName");
