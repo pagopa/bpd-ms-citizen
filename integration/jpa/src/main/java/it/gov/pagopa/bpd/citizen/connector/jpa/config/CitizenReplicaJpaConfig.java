@@ -25,9 +25,6 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:config/CitizenReplicaJpaConnectionConfig.properties")
-@EntityScan(
-        basePackages = {"it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingReplicaDAO"}
-)
 @EnableJpaRepositories(
         repositoryBaseClass = CustomJpaRepository.class,
         basePackages = {"it.gov.pagopa.bpd.citizen.connector.jpa"},
@@ -62,6 +59,9 @@ public class CitizenReplicaJpaConfig /* extends BaseJpaConfig */{
     @Value("${spring.replica.datasource.hikari.readOnly}")
     private boolean readOnly;
 
+    @Value("${spring.replica.datasource.hikari.pool-name}")
+    private String poolName;
+
     @Value("${spring.replica.jpa.database-platform}")
     private String hibernateDialect;
 
@@ -82,6 +82,7 @@ public class CitizenReplicaJpaConfig /* extends BaseJpaConfig */{
         ds.setJdbcUrl(this.url);
         ds.setUsername(this.username);
         ds.setPassword(this.password);
+        ds.setPoolName(this.poolName);
         if(StringUtils.isNotBlank(this.schema)) {
             ds.setSchema(this.schema);
         }
