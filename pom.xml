@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bpd-ms-citizen</artifactId>
-    <version>1.1.0-rc6</version>
+    <version>1.1.0-rc7</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-rest</artifactId>
-                <version>1.1.0-rc6</version>
+                <version>1.1.0-rc7</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
@@ -45,17 +45,17 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-jpa</artifactId>
-                <version>1.1.0-rc6</version>
+                <version>1.1.0-rc7</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
                 <artifactId>bpd-ms-citizen-core</artifactId>
-                <version>1.1.0-rc6</version>
+                <version>1.1.0-rc7</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.api</groupId>
                 <artifactId>bpd-ms-citizen-api-rest</artifactId>
-                <version>1.1.0-rc6</version>
+                <version>1.1.0-rc7</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons</groupId>
@@ -128,7 +128,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/pagopa/bpd-ms-citizen.git</developerConnection>
-      <tag>1.1.0-rc6</tag>
+      <tag>1.1.0-rc7</tag>
   </scm>
 
 </project>
