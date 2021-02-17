@@ -95,7 +95,7 @@ public class CitizenServiceImplTest {
         Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE), Mockito.anyLong()))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> {
-                            List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
+                            List<CitizenTransactionConverter> converter = new ArrayList<>();
                             CitizenTransactionConverter item = new CitizenTransactionConverter() {
                                 @Override
                                 public String getFiscalCode() {
@@ -140,7 +140,7 @@ public class CitizenServiceImplTest {
         Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq(EXISTING_FISCAL_CODE)))
                 .thenAnswer((Answer<List<CitizenTransactionConverter>>)
                         invocation -> {
-                            List<CitizenTransactionConverter> converter = new ArrayList<CitizenTransactionConverter>();
+                            List<CitizenTransactionConverter> converter = new ArrayList<>();
                             CitizenTransactionConverter item1 = new CitizenTransactionConverter() {
                                 @Override
                                 public String getFiscalCode() {
@@ -220,8 +220,7 @@ public class CitizenServiceImplTest {
                         });
 
         Mockito.when(citizenRankingReplicaDAOMock.getRanking(Mockito.eq("wrongFiscalCode"), Mockito.eq(0L)))
-                .thenAnswer((Answer<List<CitizenTransactionConverter>>)
-                        invocation -> new ArrayList());
+                .thenReturn(new ArrayList<>());
     }
 
     @Test
@@ -346,6 +345,16 @@ public class CitizenServiceImplTest {
 
         BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking("wrongFiscalCode", 0L);
         BDDMockito.verifyZeroInteractions(citizenRankingDAOMock);
+    }
+
+    @Test
+    public void findRankingMilestoneDetails() {
+        //TODO
+    }
+
+    @Test
+    public void findRankingMilestoneDetails_KO() {
+        //TODO
     }
 
     @Test
