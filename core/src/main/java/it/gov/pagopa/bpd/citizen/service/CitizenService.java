@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
+import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
@@ -24,5 +25,7 @@ public interface CitizenService {
     CitizenRanking getTotalCashback(CitizenRankingId id);
 
     List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId);
+
+    List<CitizenTransactionMilestoneConverter> findRankingMilestoneDetails(String fiscalCode, Long awardPeriodId);
 
 }
