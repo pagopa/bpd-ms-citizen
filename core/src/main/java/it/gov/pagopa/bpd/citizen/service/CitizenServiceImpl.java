@@ -181,8 +181,23 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public List<CitizenTransactionMilestoneConverter> findRankingMilestoneDetails(String fiscalCode, Long awardPeriodId) {
-        //TODO:
-        return null;
+        List<CitizenTransactionMilestoneConverter> rankingWithMilestone;
+
+        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
+        if (citizen.isPresent()) {
+            if (citizen.get().isEnabled()) {
+                rankingWithMilestone = awardPeriodId == null ?
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode) :
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode, awardPeriodId);
+            } else {
+                throw new CitizenNotFoundException(fiscalCode);
+            }
+
+        } else {
+            throw new CitizenNotFoundException(fiscalCode);
+        }
+
+        return rankingWithMilestone;
     }
 
 }
