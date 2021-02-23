@@ -3,10 +3,7 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingReplicaDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
+import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
@@ -180,6 +177,27 @@ class CitizenServiceImpl implements CitizenService {
         }
 
         return ranking;
+    }
+
+    @Override
+    public List<CitizenTransactionMilestoneConverter> findRankingMilestoneDetails(String fiscalCode, Long awardPeriodId) {
+        List<CitizenTransactionMilestoneConverter> rankingWithMilestone;
+
+        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
+        if (citizen.isPresent()) {
+            if (citizen.get().isEnabled()) {
+                rankingWithMilestone = awardPeriodId == null ?
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode) :
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode, awardPeriodId);
+            } else {
+                throw new CitizenNotFoundException(fiscalCode);
+            }
+
+        } else {
+            throw new CitizenNotFoundException(fiscalCode);
+        }
+
+        return rankingWithMilestone;
     }
 
 }
