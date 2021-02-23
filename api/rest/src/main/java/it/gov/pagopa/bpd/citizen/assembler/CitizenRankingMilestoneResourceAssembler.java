@@ -36,7 +36,7 @@ public class CitizenRankingMilestoneResourceAssembler {
                 item.setAwardPeriodId(citizenTransactionConverter.getAwardPeriodId());
 
                 MilestoneResource milestoneResource = new MilestoneResource();
-                BeanUtils.copyProperties(resource, citizenTransactionConverter);
+                BeanUtils.copyProperties(milestoneResource, citizenTransactionConverter);
                 item.setMilestoneResource(milestoneResource);
 
                 resource.add(item);
