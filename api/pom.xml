@@ -13,6 +13,7 @@
 
     <modules>
         <module>rest</module>
+        <module>event</module>
     </modules>
 
     <dependencies>

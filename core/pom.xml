@@ -19,6 +19,14 @@
             <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
             <artifactId>bpd-ms-citizen-integration-rest</artifactId>
         </dependency>
+        <dependency>
+            <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
+            <artifactId>bpd-ms-citizen-integration-event</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.sia.meda</groupId>
+            <artifactId>meda-arch-event</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
