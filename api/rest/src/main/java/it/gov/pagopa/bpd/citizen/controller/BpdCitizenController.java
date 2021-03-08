@@ -33,7 +33,8 @@ public interface BpdCitizenController {
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
-            @RequestParam(value = "${swagger.citizen.flagTechnicalAccountId}", required = false)
+            @ApiParam(value = "${swagger.citizen.flagTechnicalAccountId}")
+            @RequestParam(value = "flagTechnicalAccountId", required = false)
                 Boolean flagTechnicalAccountId
     );
 
