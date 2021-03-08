@@ -52,4 +52,7 @@ public class Citizen extends BaseEntity {
     @Column(name = "technical_account_holder_s")
     private String technicalAccountHolder;
 
+    @Column(name = "issuer_card_id_s")
+    private String issuerCardId;
+
 }
