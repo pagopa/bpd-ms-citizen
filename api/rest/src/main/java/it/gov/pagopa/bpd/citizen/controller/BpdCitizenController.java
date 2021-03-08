@@ -32,12 +32,14 @@ public interface BpdCitizenController {
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
-                    String fiscalCode
+                    String fiscalCode,
+            @RequestParam(value = "${swagger.citizen.flagTechnicalAccountId}", required = false)
+                Boolean flagTechnicalAccountId
     );
 
     @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CitizenResource update(
+    CitizenUpdateResource update(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
