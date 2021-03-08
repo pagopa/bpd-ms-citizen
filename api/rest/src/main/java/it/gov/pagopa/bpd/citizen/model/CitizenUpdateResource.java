@@ -7,9 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 
+
 @Data
 @EqualsAndHashCode(of = "fiscalCode", callSuper = false)
-public class CitizenResource {
+public class CitizenUpdateResource {
 
     @ApiModelProperty(value = "${swagger.citizen.fiscalCode}", required = true)
     @JsonProperty(required = true)
@@ -26,8 +27,5 @@ public class CitizenResource {
     @ApiModelProperty(value = "${swagger.citizen.enabled}", required = true)
     @JsonProperty(required = true)
     private boolean enabled;
-    @ApiModelProperty(value = "${swagger.citizen.technicalAccountHolder}")
-    private String technicalAccountHolder;
-    @ApiModelProperty(value = "${swagger.citizen.issuerCardId}")
-    private String issuerCardId;
+
 }
