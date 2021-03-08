@@ -188,7 +188,8 @@ public class BpdCitizenControllerImplTest {
         citizen.setAccountHolderCF("DTUMTO13B14I814Z");
         citizen.setAccountHolderName("accountHolderName");
         citizen.setAccountHolderSurname("accountHolderSurname");
-
+        citizen.setTechnicalAccountHolder("technicalAccountHolder");
+        citizen.setIssuerCardId("issuerCardId");
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/DTUMTO13B14I814Z")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
