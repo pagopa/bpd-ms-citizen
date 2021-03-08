@@ -53,18 +53,18 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource find(String fiscalCode) {
+    public CitizenResource find(String fiscalCode, Boolean flagTechnicalAccountId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.find");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
 
         final Citizen citizen = citizenService.find(fiscalCode);
-        return citizenResourceAssembler.toResource(citizen);
+        return citizenResourceAssembler.toCitizenResource(citizen, flagTechnicalAccountId);
     }
 
     @Override
-    public CitizenResource update(String fiscalCode, CitizenDTO citizen) {
+    public CitizenUpdateResource update(String fiscalCode, CitizenDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.update");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
@@ -72,7 +72,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
         final Citizen entity = citizenFactory.createModel(citizen);
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+        return citizenResourceAssembler.toCitizenUpdateResource(citizenEntity);
     }
 
     @Override
