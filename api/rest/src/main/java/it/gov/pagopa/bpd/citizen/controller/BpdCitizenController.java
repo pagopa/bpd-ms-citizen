@@ -33,9 +33,9 @@ public interface BpdCitizenController {
             @PathVariable @UpperCase
             @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
                     String fiscalCode,
-            @ApiParam(value = "${swagger.citizen.flagTechnicalAccountId}")
-            @RequestParam(value = "flagTechnicalAccountId", required = false)
-                Boolean flagTechnicalAccountId
+            @ApiParam(value = "${swagger.citizen.flagTechnicalAccount}")
+            @RequestParam(value = "flagTechnicalAccount", required = false)
+                Boolean flagTechnicalAccount
     );
 
     @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

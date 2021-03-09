@@ -14,15 +14,15 @@ public class CitizenResourceAssembler {
 
     private final String TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER = "CONTO TECNICO";
 
-    public CitizenResource toCitizenResource(Citizen citizen, Boolean flagTechnicalAccountId) {
+    public CitizenResource toCitizenResource(Citizen citizen, Boolean flagTechnicalAccount) {
         CitizenResource resource = null;
 
         if (citizen != null) {
             resource = new CitizenResource();
             BeanUtils.copyProperties(citizen, resource);
 
-            if (citizen.getTechnicalAccountHolder() != null && flagTechnicalAccountId != null) {
-                if(flagTechnicalAccountId) {
+            if (citizen.getTechnicalAccountHolder() != null && flagTechnicalAccount != null) {
+                if(flagTechnicalAccount) {
                     resource.setPayoffInstr(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
                 } else{
                     resource.setTechnicalAccountHolder(null);
