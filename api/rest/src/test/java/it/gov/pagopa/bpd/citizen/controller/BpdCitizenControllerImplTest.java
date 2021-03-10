@@ -149,7 +149,7 @@ public class BpdCitizenControllerImplTest {
 
         Assert.assertNotNull(pageResult);
         BDDMockito.verify(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
-        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null));
+        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(null));
     }
 
     @Test
