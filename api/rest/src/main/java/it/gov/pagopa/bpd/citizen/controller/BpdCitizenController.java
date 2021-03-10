@@ -35,7 +35,9 @@ public interface BpdCitizenController {
                     String fiscalCode,
             @ApiParam(value = "${swagger.citizen.flagTechnicalAccount}")
             @RequestParam(value = "flagTechnicalAccount", required = false)
-                Boolean flagTechnicalAccount
+                Boolean flagTechnicalAccount,
+            @RequestParam(value = "isIssuer", required = false)
+                    Boolean isIssuer
     );
 
     @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

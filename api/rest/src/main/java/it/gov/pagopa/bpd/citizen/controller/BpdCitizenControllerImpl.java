@@ -53,14 +53,14 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource find(String fiscalCode, Boolean flagTechnicalAccount) {
+    public CitizenResource find(String fiscalCode, Boolean flagTechnicalAccount, Boolean isIssuer) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.find");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
 
         final Citizen citizen = citizenService.find(fiscalCode);
-        return citizenResourceAssembler.toCitizenResource(citizen, flagTechnicalAccount);
+        return citizenResourceAssembler.toCitizenResource(citizen, flagTechnicalAccount, isIssuer);
     }
 
     @Override
