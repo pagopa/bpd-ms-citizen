@@ -140,6 +140,7 @@ public class BpdCitizenControllerImplTest {
     public void find() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get("/bpd/citizens/fiscalCode")
+                .param("isIssuer","false")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
@@ -148,8 +149,38 @@ public class BpdCitizenControllerImplTest {
                 CitizenUpdateResource.class);
 
         Assert.assertNotNull(pageResult);
-        BDDMockito.verify(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
-        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(null));
+        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(false));
+
+        result = mvc.perform(MockMvcRequestBuilders
+                .get("/bpd/citizens/fiscalCode")
+                .param("flagTechnicalAccount", "true")
+                .param("isIssuer","true")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
+                CitizenUpdateResource.class);
+
+        Assert.assertNotNull(pageResult);
+        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(true), Mockito.eq(true));
+
+        result = mvc.perform(MockMvcRequestBuilders
+                .get("/bpd/citizens/fiscalCode")
+                .param("flagTechnicalAccount", "false")
+                .param("isIssuer","true")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
+                CitizenUpdateResource.class);
+
+        Assert.assertNotNull(pageResult);
+        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(false), Mockito.eq(true));
+
+        BDDMockito.verify(citizenServiceSpy, Mockito.times(3)).find(Mockito.eq("fiscalCode"));
+
     }
 
     @Test

@@ -36,7 +36,7 @@ public interface BpdCitizenController {
             @ApiParam(value = "${swagger.citizen.flagTechnicalAccount}")
             @RequestParam(value = "flagTechnicalAccount", required = false)
                 Boolean flagTechnicalAccount,
-            @RequestParam(value = "isIssuer", required = false)
+            @RequestParam(value = "isIssuer")
                     Boolean isIssuer
     );
 
