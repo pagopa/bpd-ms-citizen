@@ -21,15 +21,15 @@ public class CitizenResourceAssembler {
             resource = new CitizenResource();
             BeanUtils.copyProperties(citizen, resource);
 
-            if (isIssuer && citizen.getTechnicalAccountHolder() != null) {
-                    resource.setTechnicalAccount(null);
+            if (isIssuer != null && isIssuer && citizen.getTechnicalAccountHolder() != null) {
+                resource.setTechnicalAccount(null);
                 if (flagTechnicalAccount == null || !flagTechnicalAccount) {
                     resource.setTechnicalAccountHolder(null);
                     resource.setIssuerCardId(null);
                 }  else {
                     resource.setPayoffInstr(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
                 }
-            } else if(!isIssuer && citizen.getTechnicalAccountHolder() != null){
+            } else if((isIssuer == null || !isIssuer) && citizen.getTechnicalAccountHolder() != null){
                 resource.setTechnicalAccount(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
             }
         }
