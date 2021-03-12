@@ -179,7 +179,19 @@ public class BpdCitizenControllerImplTest {
         Assert.assertNotNull(pageResult);
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(false), Mockito.eq(true));
 
-        BDDMockito.verify(citizenServiceSpy, Mockito.times(3)).find(Mockito.eq("fiscalCode"));
+        result = mvc.perform(MockMvcRequestBuilders
+                .get("/bpd/citizens/fiscalCode")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
+                CitizenUpdateResource.class);
+
+        Assert.assertNotNull(pageResult);
+        BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(null));
+
+        BDDMockito.verify(citizenServiceSpy, Mockito.times(4)).find(Mockito.eq("fiscalCode"));
 
     }
 
