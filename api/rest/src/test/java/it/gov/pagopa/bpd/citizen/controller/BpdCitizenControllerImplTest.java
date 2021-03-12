@@ -241,7 +241,7 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-     BDDMockito.verify(citizenPatchFactorySpy).createModel(Mockito.eq(citizen));
+        BDDMockito.verify(citizenPatchFactorySpy).createModel(Mockito.eq(citizen));
     }
 
 
