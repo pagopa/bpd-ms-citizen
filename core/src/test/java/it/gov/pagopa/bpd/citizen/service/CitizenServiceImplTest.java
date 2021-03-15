@@ -281,6 +281,26 @@ public class CitizenServiceImplTest {
     }
 
     @Test
+    public void patch_technical_account_holder() {
+        Citizen citizen = new Citizen();
+        citizen.setPayoffInstr("testOK");
+        citizen.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
+        citizen.setAccountHolderCF("DTUMTO13I14I814Z");
+        citizen.setAccountHolderName("accountHolderName");
+        citizen.setAccountHolderSurname("accountHolderSurname");
+        citizen.setTechnicalAccountHolder("technicalAccountHolder");
+        citizen.setIssuerCardId("issuerCardId");
+        citizen.setFiscalCode(EXISTING_FISCAL_CODE);
+        citizen.setUpdateUser(EXISTING_FISCAL_CODE);
+
+        citizenService.patch(EXISTING_FISCAL_CODE, citizen);
+
+        BDDMockito.verify(citizenDAOMock).findById(Mockito.eq(EXISTING_FISCAL_CODE));
+        BDDMockito.verify(citizenDAOMock).save(Mockito.eq(citizen));
+        BDDMockito.verify(checkIbanRestConnectorMock, BDDMockito.times(0)).checkIban(BDDMockito.any(), BDDMockito.any());
+    }
+
+    @Test
     public void patch_KO() {
         Citizen citizen = new Citizen();
         citizen.setPayoffInstr("testKO");

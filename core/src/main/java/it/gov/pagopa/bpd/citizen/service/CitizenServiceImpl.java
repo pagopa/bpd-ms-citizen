@@ -107,6 +107,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
                 citizen.setAccountHolderCF(cz.getAccountHolderCF());
                 citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
+                citizen.setIssuerCardId(cz.getIssuerCardId());
                 citizenDAO.save(citizen);
             }
 
@@ -121,6 +122,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
             citizen.setAccountHolderCF(cz.getAccountHolderCF());
             citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
+            citizen.setIssuerCardId(cz.getIssuerCardId());
             citizenDAO.save(citizen);
             return UNKNOWN_PSP;
         }
