@@ -4,15 +4,21 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenUpdateResource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 /**
  * Mapper between <Citizen> Entity class and <CitizenResource> Resource class
  */
+@PropertySource("classpath:/config/citizen.properties")
 @Service
 public class CitizenResourceAssembler {
 
-    private final String TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER = "CONTO TECNICO";
+    @Value("${citizen.resource.assembler.technical.account.holder.placeholder}")
+    private String TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER;
+    @Value("${citizen.resource.assembler.payoff.instr.placeholder}")
+    private String PAYOFF_INSTR_PLACEHOLDER;
 
     public CitizenResource toCitizenResource(Citizen citizen, Boolean flagTechnicalAccount, Boolean isIssuer) {
         CitizenResource resource = null;
@@ -27,7 +33,7 @@ public class CitizenResourceAssembler {
                     resource.setTechnicalAccountHolder(null);
                     resource.setIssuerCardId(null);
                 }  else {
-                    resource.setPayoffInstr(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
+                    resource.setPayoffInstr(PAYOFF_INSTR_PLACEHOLDER);
                 }
             } else if((isIssuer == null || !isIssuer) && citizen.getTechnicalAccountHolder() != null){
                 resource.setTechnicalAccount(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
