@@ -28,7 +28,7 @@ public class CitizenResourceAssembler {
             BeanUtils.copyProperties(citizen, resource);
 
             if (isIssuer != null && isIssuer && citizen.getTechnicalAccountHolder() != null) {
-                resource.setTechnicalAccount(null);
+                    resource.setTechnicalAccount(null);
                 if (flagTechnicalAccount == null || !flagTechnicalAccount) {
                     resource.setTechnicalAccountHolder(null);
                     resource.setIssuerCardId(null);
