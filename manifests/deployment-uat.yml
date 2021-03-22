@@ -29,8 +29,6 @@ spec:
             - configMapRef:
                 name: eventhub-logging
             - configMapRef:
-                name: eventhub-common
-            - configMapRef:
                 name: bpdmscitizen
             - configMapRef:
                 name: jvm
@@ -41,6 +39,83 @@ spec:
             requests:
               cpu: 50m
               memory: 256Mi
+      hostAliases:
+        - hostnames:
+            - bpd-event-uat.servicebus.windows.net
+          ip: 10.70.67.5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpdmscitizenbatch
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bpdmscitizenbatch
+  template:
+    metadata:
+      labels:
+        app: bpdmscitizenbatch
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+        - name: bpdmscitizenbatch
+          image: cstaruatregistry.azurecr.io/bpdmscitizen
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: postgres-credentials
+            - secretRef:
+                name: bpdmscitizenbatch
+            - configMapRef:
+                name: eventhub-logging
+            - configMapRef:
+                name: eventhub-common
+            - configMapRef:
+                name: bpdmscitizenbatch
+            - configMapRef:
+                name: jvm
+          resources:
+            limits:
+              cpu: 800m
+              memory: 4Gi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 20
+          imagePullPolicy: Always
       hostAliases:
         - hostnames:
             - bpd-event-uat.servicebus.windows.net
