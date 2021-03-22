@@ -4,6 +4,7 @@ import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.PointTransactionPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,10 @@ public class PointTransactionPublisherServiceImpl implements PointTransactionPub
     private final SimpleEventResponseTransformer simpleEventResponseTransformer;
 
     @Autowired
-    public PointTransactionPublisherServiceImpl(PointTransactionPublisherConnector pointTransactionPublisherConnector,
+    public PointTransactionPublisherServiceImpl(ObjectProvider<PointTransactionPublisherConnector> pointTransactionPublisherConnector,
                                                 SimpleEventRequestTransformer<Transaction> simpleEventRequestTransformer,
                                                 SimpleEventResponseTransformer simpleEventResponseTransformer) {
-        this.pointTransactionPublisherConnector = pointTransactionPublisherConnector;
+        this.pointTransactionPublisherConnector = pointTransactionPublisherConnector.getIfAvailable();
         this.simpleEventRequestTransformer = simpleEventRequestTransformer;
         this.simpleEventResponseTransformer = simpleEventResponseTransformer;
     }
