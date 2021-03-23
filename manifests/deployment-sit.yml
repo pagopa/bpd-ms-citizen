@@ -94,10 +94,10 @@ spec:
                   name: postgres-credentials
                   key: POSTGRES_REPLICA_USERNAME
             - name: CITIZEN_DB_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: postgres-credentials
-                    key: POSTGRES_REPLICA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_REPLICA_PASSWORD
           envFrom:
             - secretRef:
                 name: bpdmscitizenbatch
