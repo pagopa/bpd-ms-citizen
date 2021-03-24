@@ -99,46 +99,46 @@ spec:
             - name: CITIZEN_DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_HOST
             - name: CITIZEN_DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_DB_NAME
             - name: CITIZEN_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_USERNAME
             - name: CITIZEN_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_PASSWORD
             - name: CITIZEN_REPLICA_DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_HOST
             - name: CITIZEN_REPLICA_DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_DB_NAME
             - name: CITIZEN_REPLICA_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_USERNAME
             - name: CITIZEN_REPLICA_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-credentials-read
                   key: POSTGRES_REPLICA_PASSWORD
           envFrom:
             - secretRef:
-                name: postgres-credentials
+                name: postgres-credentials-read
             - secretRef:
                 name: bpdmscitizenbatch
             - configMapRef:
