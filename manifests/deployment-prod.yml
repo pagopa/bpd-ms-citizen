@@ -138,8 +138,6 @@ spec:
                   key: POSTGRES_REPLICA_PASSWORD
           envFrom:
             - secretRef:
-                name: postgres-credentials-read
-            - secretRef:
                 name: bpdmscitizenbatch
             - configMapRef:
                 name: eventhub-logging
