@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.validation.*;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 /**
@@ -70,6 +71,10 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
             if (citizen.isEnabled() && citizen.getTimestampTC().isBefore(transaction.getTrxDate())) {
 
                 pointTransactionProducerService.publishPointTransactionEvent(transaction);
+                log.info("Executed publishing on BPD for transaction: {}, {}, {} ",
+                        transaction.getIdTrxAcquirer(),
+                        transaction.getAcquirerCode(),
+                        transaction.getTrxDate());
 
             } else {
                 log.info("Met a transaction for an inactive citizen on BPD. [{}, {}, {}]",
