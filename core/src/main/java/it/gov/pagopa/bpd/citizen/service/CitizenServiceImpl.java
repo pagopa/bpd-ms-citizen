@@ -10,6 +10,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,13 +35,13 @@ class CitizenServiceImpl implements CitizenService {
 
     @Autowired
     public CitizenServiceImpl(
-            CitizenDAO citizenDAO,
-            CitizenRankingDAO citizenRankingDAO,
-            CitizenRankingReplicaDAO citizenRankingReplicaDAO,
+            ObjectProvider<CitizenDAO> citizenDAO,
+            ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
+            ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
             CheckIbanRestConnector checkIbanRestConnector) {
-        this.citizenDAO = citizenDAO;
-        this.citizenRankingDAO = citizenRankingDAO;
-        this.citizenRankingReplicaDAO = citizenRankingReplicaDAO;
+        this.citizenDAO = citizenDAO.getIfAvailable();
+        this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
+        this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
