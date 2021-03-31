@@ -4,9 +4,6 @@ metadata:
   name: bpdmscitizen
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: bpdmscitizen
   template:
     metadata:
       labels:
