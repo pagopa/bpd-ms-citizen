@@ -86,42 +86,22 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: POSTGRES_REPLICA_HOST
+                  key: CITIZEN_DB_HOST
             - name: CITIZEN_DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: POSTGRES_REPLICA_DB_NAME
+                  key: CITIZEN_DB_NAME
             - name: CITIZEN_DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: POSTGRES_REPLICA_USERNAME
+                  key: CITIZEN_DB_USERNAME
             - name: CITIZEN_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: POSTGRES_REPLICA_PASSWORD
-            - name: CITIZEN_REPLICA_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: POSTGRES_REPLICA_HOST
-            - name: CITIZEN_REPLICA_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: POSTGRES_REPLICA_DB_NAME
-            - name: CITIZEN_REPLICA_DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: POSTGRES_REPLICA_USERNAME
-            - name: CITIZEN_REPLICA_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: POSTGRES_REPLICA_PASSWORD
+                  key: CITIZEN_DB_PASSWORD
           envFrom:
             - secretRef:
                 name: bpdmscitizenbatch
