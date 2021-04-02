@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -129,6 +130,7 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
+    @Transactional("transactionManagerPrimary")
     public void delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
