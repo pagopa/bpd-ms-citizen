@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -73,6 +74,18 @@ public interface BpdCitizenController {
             @RequestParam(value = "awardPeriodId", required = false)
                     Long awardPeriodId
     );
+
+    @GetMapping(value = "/{fiscalCode}/ranking/milestone", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    List<CitizenRankingMilestoneResource> findRankingMilestone(
+            @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
+            @PathVariable @UpperCase
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
+                    String fiscalCode,
+            @ApiParam(value = "${swagger.citizen.awardPeriodId}")
+            @RequestParam(value = "awardPeriodId", required = false)
+                    Long awardPeriodId
+    ) throws InvocationTargetException, IllegalAccessException;
 
     @GetMapping(value = "/total-cashback", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)

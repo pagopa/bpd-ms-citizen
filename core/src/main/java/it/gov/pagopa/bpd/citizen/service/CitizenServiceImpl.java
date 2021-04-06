@@ -3,17 +3,17 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenRankingDAO;
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
+import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -30,16 +30,19 @@ class CitizenServiceImpl implements CitizenService {
 
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
+    private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
 
     @Autowired
     public CitizenServiceImpl(
-            CitizenDAO citizenDAO,
-            CitizenRankingDAO citizenRankingDAO,
+            ObjectProvider<CitizenDAO> citizenDAO,
+            ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
+            ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
             CheckIbanRestConnector checkIbanRestConnector) {
-        this.citizenDAO = citizenDAO;
-        this.citizenRankingDAO = citizenRankingDAO;
+        this.citizenDAO = citizenDAO.getIfAvailable();
+        this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
+        this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
     }
 
@@ -87,11 +90,16 @@ class CitizenServiceImpl implements CitizenService {
             if (log.isDebugEnabled()) {
                 log.debug("Calling CheckIbanRestClient");
             }
-            String checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            String checkResult = null;
+            if (cz.getTechnicalAccountHolder() == null) {
+                checkResult = checkIbanRestConnector.checkIban(cz.getPayoffInstr(), fiscalCode);
+            } else {
+                checkResult = "OK";
+            }
             if (log.isDebugEnabled()) {
                 log.debug("End CheckIbanRestClient");
             }
-            if (!"KO".equals(checkResult)) {
+            if (!"KO".equals(checkResult) && checkResult != null) {
                 citizen.setPayoffInstr(cz.getPayoffInstr());
                 citizen.setPayoffInstrType(cz.getPayoffInstrType());
                 citizen.setUpdateUser(fiscalCode);
@@ -100,6 +108,7 @@ class CitizenServiceImpl implements CitizenService {
                 citizen.setAccountHolderName(cz.getAccountHolderName());
                 citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
                 citizen.setAccountHolderCF(cz.getAccountHolderCF());
+                citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
                 citizenDAO.save(citizen);
             }
 
@@ -113,6 +122,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderName(cz.getAccountHolderName());
             citizen.setAccountHolderSurname(cz.getAccountHolderSurname());
             citizen.setAccountHolderCF(cz.getAccountHolderCF());
+            citizen.setTechnicalAccountHolder(cz.getTechnicalAccountHolder());
             citizenDAO.save(citizen);
             return UNKNOWN_PSP;
         }
@@ -120,6 +130,7 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
+    @Transactional("transactionManagerPrimary")
     public void delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
@@ -128,6 +139,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setAccountHolderCF(null);
             citizen.setAccountHolderName(null);
             citizen.setAccountHolderSurname(null);
+            citizen.setTechnicalAccountHolder(null);
             citizen.setPayoffInstr(null);
             citizen.setPayoffInstrType(null);
             citizen.setCheckInstrStatus(null);
@@ -141,7 +153,7 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     public CitizenRanking getTotalCashback(CitizenRankingId id) {
-        Optional<CitizenRanking> citizenRanking = citizenRankingDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
+        Optional<CitizenRanking> citizenRanking = citizenRankingReplicaDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
         if (citizenRanking != null && citizenRanking.isPresent()) {
             return citizenRanking.get();
         }
@@ -157,8 +169,8 @@ class CitizenServiceImpl implements CitizenService {
         if (citizen.isPresent()) {
             if (citizen.get().isEnabled()) {
                 ranking = awardPeriodId == null ?
-                        citizenRankingDAO.getRanking(fiscalCode) :
-                        citizenRankingDAO.getRanking(fiscalCode, awardPeriodId);
+                        citizenRankingReplicaDAO.getRanking(fiscalCode) :
+                        citizenRankingReplicaDAO.getRanking(fiscalCode, awardPeriodId);
             } else {
                 throw new CitizenNotFoundException(fiscalCode);
             }
@@ -168,6 +180,27 @@ class CitizenServiceImpl implements CitizenService {
         }
 
         return ranking;
+    }
+
+    @Override
+    public List<CitizenTransactionMilestoneConverter> findRankingMilestoneDetails(String fiscalCode, Long awardPeriodId) {
+        List<CitizenTransactionMilestoneConverter> rankingWithMilestone;
+
+        Optional<Citizen> citizen = citizenDAO.findById(fiscalCode);
+        if (citizen.isPresent()) {
+            if (citizen.get().isEnabled()) {
+                rankingWithMilestone = awardPeriodId == null ?
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode) :
+                        citizenRankingReplicaDAO.getRankingWithMilestone(fiscalCode, awardPeriodId);
+            } else {
+                throw new CitizenNotFoundException(fiscalCode);
+            }
+
+        } else {
+            throw new CitizenNotFoundException(fiscalCode);
+        }
+
+        return rankingWithMilestone;
     }
 
 }
