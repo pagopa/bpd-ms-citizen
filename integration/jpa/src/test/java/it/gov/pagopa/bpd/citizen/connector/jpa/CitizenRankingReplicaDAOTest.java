@@ -30,8 +30,7 @@ public class CitizenRankingReplicaDAOTest extends BaseCrudJpaDAOTest<CitizenRank
     }
 
     @Override
-    protected void setId(CitizenRanking entity, CitizenRankingId id)
-    {
+    protected void setId(CitizenRanking entity, CitizenRankingId id) {
         entity.setAwardPeriodId(id.getAwardPeriodId());
         entity.setFiscalCode(id.getFiscalCode());
     }

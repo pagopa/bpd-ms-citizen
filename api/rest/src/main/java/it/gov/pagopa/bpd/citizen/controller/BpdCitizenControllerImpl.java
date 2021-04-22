@@ -101,7 +101,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public List<CitizenRankingResource> findRanking(String fiscalCode, Long awardPeriodId){
+    public List<CitizenRankingResource> findRanking(String fiscalCode, Long awardPeriodId) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.findRanking");
             logger.debug("fiscalCode = [" + fiscalCode + "]");

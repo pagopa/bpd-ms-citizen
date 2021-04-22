@@ -31,7 +31,7 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
     private PointTransactionPublisherService pointTransactionProducerService;
     private CitizenService citizenService;
 
-    private TransactionCommandModel transactionCommandModel;
+    private final TransactionCommandModel transactionCommandModel;
 
 
     public FilterTransactionCommandImpl(TransactionCommandModel transactionCommandModel) {

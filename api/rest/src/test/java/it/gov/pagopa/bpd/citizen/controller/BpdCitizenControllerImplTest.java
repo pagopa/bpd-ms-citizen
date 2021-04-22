@@ -51,6 +51,10 @@ public class BpdCitizenControllerImplTest {
     @Autowired
     protected MockMvc mvc;
     protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
+    private final CitizenTransactionConverter citizenTransactionConverter = BDDMockito.mock(CitizenTransactionConverter.class);
+    private final CitizenTransactionMilestoneConverter citizenTransactionMilestoneConverter = BDDMockito.mock(CitizenTransactionMilestoneConverter.class);
+    private final List<CitizenTransactionConverter> citizenRanking = Collections.singletonList(citizenTransactionConverter);
+    private final List<CitizenTransactionMilestoneConverter> citizenRankingMilestone = Collections.singletonList(citizenTransactionMilestoneConverter);
     @MockBean
     private CitizenService citizenServiceSpy;
     @SpyBean
@@ -65,11 +69,6 @@ public class BpdCitizenControllerImplTest {
     private CitizenRankingResourceAssembler citizenRankingResourceAssemblerSpy;
     @SpyBean
     private CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssemblerSpy;
-
-    private final CitizenTransactionConverter citizenTransactionConverter = BDDMockito.mock(CitizenTransactionConverter.class);
-    private final CitizenTransactionMilestoneConverter citizenTransactionMilestoneConverter = BDDMockito.mock(CitizenTransactionMilestoneConverter.class);
-    private final List<CitizenTransactionConverter> citizenRanking = Collections.singletonList(citizenTransactionConverter);
-    private final List<CitizenTransactionMilestoneConverter> citizenRankingMilestone = Collections.singletonList(citizenTransactionMilestoneConverter);
 
     @PostConstruct
     public void configureTest() {
@@ -294,7 +293,8 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         List<CitizenRankingResource> citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
-                new TypeReference<List<CitizenRankingResource>>() {});
+                new TypeReference<List<CitizenRankingResource>>() {
+                });
 
         Assert.assertNotNull(citizenRankingResult);
         BDDMockito.verify(citizenServiceSpy).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
@@ -312,7 +312,8 @@ public class BpdCitizenControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         List<CitizenRankingMilestoneResource> citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
-                new TypeReference<List<CitizenRankingMilestoneResource>>() {});
+                new TypeReference<List<CitizenRankingMilestoneResource>>() {
+                });
 
         Assert.assertNotNull(citizenRankingResult);
         BDDMockito.verify(citizenServiceSpy).findRankingMilestoneDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());

@@ -9,13 +9,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilderCustomizer;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -29,39 +27,48 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:config/CitizenReplicaJpaConnectionConfig.properties")
+@PropertySource("classpath:config/CitizenPrimaryJpaConnectionConfig.properties")
+@Conditional(PrimaryDataSourceEnabledCondition.class)
 @EnableJpaRepositories(
         repositoryBaseClass = CustomJpaRepository.class,
         basePackages = {"it.gov.pagopa.bpd.citizen.connector.jpa"},
-        includeFilters = @ComponentScan.Filter(ReadOnlyRepository.class),
-        excludeFilters = @ComponentScan.Filter(Repository.class),
-        entityManagerFactoryRef = "entityManagerFactoryReplica",
-        transactionManagerRef = "transactionManagerReplica"
+        excludeFilters = @ComponentScan.Filter(ReadOnlyRepository.class),
+        includeFilters = @ComponentScan.Filter(Repository.class),
+        entityManagerFactoryRef = "entityManagerFactoryPrimary",
+        transactionManagerRef = "transactionManagerPrimary"
 )
 @EntityScan(
         basePackages = {"it.gov.pagopa.bpd.citizen.connector.jpa"}
 )
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
-public class CitizenReplicaJpaConfig {
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+public class CitizenPrimaryJpaConfig {
 
-    @Bean("dataSourceReplicaProperties")
-    @ConfigurationProperties("spring.datasource.replica")
+    @Bean("dataSourcePrimaryProperties")
+    @ConfigurationProperties("spring.primary.datasource")
     public DataSourceProperties dataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    @Bean("dataSourceReplica")
-    @ConfigurationProperties(prefix = "spring.datasource.replica.hikari")
-    public DataSource dataSource(@Qualifier("dataSourceReplicaProperties") DataSourceProperties dataSourceProperties) {
+
+    @Bean("dataSourcePrimary")
+    @ConfigurationProperties(prefix = "spring.primary.datasource.hikari")
+    public DataSource dataSource(@Qualifier("dataSourcePrimaryProperties") DataSourceProperties dataSourceProperties) {
         return dataSourceProperties.initializeDataSourceBuilder().build();
     }
 
 
-    @Bean("entityManagerFactoryReplica")
-    @ConfigurationProperties("spring.jpa.replica")
+    @Bean("jpaPrimaryProperties")
+    @ConfigurationProperties("spring.primary.jpa")
+    public JpaProperties jpaProperties() {
+        return new JpaProperties();
+    }
+
+
+    @Bean("entityManagerFactoryPrimary")
+    @ConfigurationProperties("spring.primary.jpa")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            JpaProperties properties,
-            @Qualifier("dataSourceReplica") DataSource dataSource,
+            @Qualifier("jpaPrimaryProperties") JpaProperties properties,
+            @Qualifier("dataSourcePrimary") DataSource dataSource,
             ObjectProvider<PersistenceUnitManager> persistenceUnitManager,
             ObjectProvider<EntityManagerFactoryBuilderCustomizer> customizers) {
         AbstractJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -78,13 +85,13 @@ public class CitizenReplicaJpaConfig {
                 .forEach((customizer) -> customizer.customize(builder));
         return builder
                 .dataSource(dataSource)
-                .persistenceUnit("replica")
+                .persistenceUnit("primary")
                 .packages("it.gov.pagopa.bpd.citizen.connector.jpa.model")
                 .build();
     }
 
-    @Bean("transactionManagerReplica")
-    public PlatformTransactionManager transactionManager(@Qualifier("entityManagerFactoryReplica")
+    @Bean("transactionManagerPrimary")
+    public PlatformTransactionManager transactionManager(@Qualifier("entityManagerFactoryPrimary")
                                                                  EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }

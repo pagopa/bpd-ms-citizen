@@ -2,7 +2,7 @@ package it.gov.pagopa.bpd.citizen.connector.jpa;
 
 import java.math.BigDecimal;
 
-public interface CitizenTransactionMilestoneConverter extends CitizenTransactionConverter{
+public interface CitizenTransactionMilestoneConverter extends CitizenTransactionConverter {
 
     String getIdTrxPivot();
 
