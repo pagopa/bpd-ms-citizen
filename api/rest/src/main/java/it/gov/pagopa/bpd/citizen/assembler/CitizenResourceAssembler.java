@@ -17,6 +17,8 @@ public class CitizenResourceAssembler {
 
     @Value("${citizen.resource.assembler.technical.account.holder.placeholder}")
     private String TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER;
+    @Value("${citizen.resource.assembler.technical.account.holder.placeholder.not.issuer}")
+    private String TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER_NOT_ISSUER;
     @Value("${citizen.resource.assembler.payoff.instr.placeholder}")
     private String PAYOFF_INSTR_PLACEHOLDER;
 
@@ -36,7 +38,8 @@ public class CitizenResourceAssembler {
                     resource.setPayoffInstr(PAYOFF_INSTR_PLACEHOLDER);
                 }
             } else if((isIssuer == null || !isIssuer) && citizen.getTechnicalAccountHolder() != null){
-                resource.setTechnicalAccount(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER);
+                resource.setTechnicalAccount(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER_NOT_ISSUER
+                        +citizen.getTechnicalAccountHolder());
             }
         }
 
