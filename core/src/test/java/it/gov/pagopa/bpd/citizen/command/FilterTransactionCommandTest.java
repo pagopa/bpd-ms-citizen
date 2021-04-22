@@ -103,6 +103,7 @@ public class FilterTransactionCommandTest extends BaseTest {
                 .acquirerId("0")
                 .terminalId("0")
                 .bin("000004")
+                .par("par")
                 .build();
     }
 

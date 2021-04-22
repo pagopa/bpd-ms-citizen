@@ -80,4 +80,6 @@ public class Transaction {
     @NotNull
     String fiscalCode;
 
+    String par;
+
 }
