@@ -82,4 +82,8 @@ public class Transaction {
 
     String par;
 
+    @NotNull
+    @NotBlank
+    Boolean isToUpdate;
+
 }

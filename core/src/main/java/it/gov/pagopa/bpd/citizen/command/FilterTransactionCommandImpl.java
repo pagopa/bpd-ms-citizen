@@ -3,8 +3,10 @@ package it.gov.pagopa.bpd.citizen.command;
 import eu.sia.meda.core.command.BaseCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.TransactionCommandModel;
+import it.gov.pagopa.bpd.citizen.publisher.model.PaymentInstrumentUpdate;
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
+import it.gov.pagopa.bpd.citizen.service.PaymentInstrumentPublisherService;
 import it.gov.pagopa.bpd.citizen.service.PointTransactionPublisherService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
     private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private static final Validator validator = factory.getValidator();
     private PointTransactionPublisherService pointTransactionProducerService;
+    private PaymentInstrumentPublisherService paymentInstrumentPublisherService;
     private CitizenService citizenService;
 
     private final TransactionCommandModel transactionCommandModel;
@@ -41,10 +44,12 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
     public FilterTransactionCommandImpl(
             TransactionCommandModel transactionCommandModel,
             CitizenService citizenService,
-            PointTransactionPublisherService pointTransactionProducerService) {
+            PointTransactionPublisherService pointTransactionProducerService,
+            PaymentInstrumentPublisherService paymentInstrumentPublisherService) {
         this.transactionCommandModel = transactionCommandModel;
         this.citizenService = citizenService;
         this.pointTransactionProducerService = pointTransactionProducerService;
+        this.paymentInstrumentPublisherService = paymentInstrumentPublisherService;
     }
 
 
@@ -70,6 +75,11 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
             if (citizen.isEnabled() && citizen.getTimestampTC().isBefore(transaction.getTrxDate())) {
 
                 pointTransactionProducerService.publishPointTransactionEvent(transaction);
+
+                if (transaction.getIsToUpdate()) {
+                    PaymentInstrumentUpdate pi = new PaymentInstrumentUpdate(transaction.getHpan(), transaction.getPar());
+                    paymentInstrumentPublisherService.publishPaymentInstrumentUpdateEvent(pi);
+                }
 
             } else {
                 log.info("Met a transaction for an inactive citizen on BPD. [{}, {}, {}]",
@@ -101,6 +111,12 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
     public void setPointTransactionProducerService(
             PointTransactionPublisherService pointTransactionProducerService) {
         this.pointTransactionProducerService = pointTransactionProducerService;
+    }
+
+    @Autowired
+    public void setPaymentInstrumentPublisherService(
+            PaymentInstrumentPublisherService paymentInstrumentPublisherService) {
+        this.paymentInstrumentPublisherService = paymentInstrumentPublisherService;
     }
 
     @Autowired
