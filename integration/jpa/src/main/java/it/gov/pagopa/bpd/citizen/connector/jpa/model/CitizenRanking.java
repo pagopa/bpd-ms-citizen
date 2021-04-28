@@ -40,4 +40,13 @@ public class CitizenRanking extends BaseEntity {
     @Column(name = "max_cashback_n")
     private BigDecimal maxTotalCashback;
 
+    @Column(name = "id_trx_pivot")
+    private String idTrxPivot;
+
+    @Column(name = "cashback_norm_pivot")
+    private BigDecimal cashbackNormPivot;
+
+    @Column(name = "id_trx_min_transaction_number")
+    private String idTrxMinTransactionNumber;
+
 }
