@@ -4,7 +4,6 @@ import eu.sia.meda.event.BaseEventConnectorTest;
 import eu.sia.meda.util.TestUtils;
 import it.gov.pagopa.bpd.citizen.publisher.PaymentInstrumentPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.PaymentInstrumentUpdate;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
@@ -18,8 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(
         locations = "classpath:config/testPaymentInstrumentPublisher.properties",
         properties = {
-                "connectors.eventConfigurations.items.PaymentInstrumentPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
-                "connectors.eventConfigurations.items.PaymentInstrumentPublisherConnector.enable=true"
+                "connectors.eventConfigurations.items.PaymentInstrumentPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}"
         })
 public class PaymentInstrumentPublisherConnectorTest extends
         BaseEventConnectorTest<PaymentInstrumentUpdate, Boolean, PaymentInstrumentUpdate, Void, PaymentInstrumentPublisherConnector> {
@@ -28,11 +26,11 @@ public class PaymentInstrumentPublisherConnectorTest extends
     private String topic;
 
     @Autowired
-    private ObjectProvider<PaymentInstrumentPublisherConnector> paymentInstrumentPublisherConnector;
+    private PaymentInstrumentPublisherConnector paymentInstrumentPublisherConnector;
 
     @Override
     protected PaymentInstrumentPublisherConnector getEventConnector() {
-        return paymentInstrumentPublisherConnector.getIfAvailable();
+        return paymentInstrumentPublisherConnector;
     }
 
     @Override
