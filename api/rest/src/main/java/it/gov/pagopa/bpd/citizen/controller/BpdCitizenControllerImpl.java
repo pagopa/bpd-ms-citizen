@@ -1,10 +1,8 @@
 package it.gov.pagopa.bpd.citizen.controller;
 
 import eu.sia.meda.core.controller.StatelessController;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.AwardWinner;
+import it.gov.pagopa.bpd.citizen.assembler.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -34,6 +32,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     private final CitizenPatchFactory citizenPatchFactory;
     private final CitizenRankingResourceAssembler citizenRankingResourceAssembler;
     private final CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssembler;
+    private final AwardWinnerResourceAssembler awardWinnerResourceAssembler;
 
 
     @Autowired
@@ -42,7 +41,9 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
                                     ModelFactory<CitizenDTO, Citizen> citizenFactory,
                                     CitizenPatchFactory citizenPatchFactory,
                                     CitizenRankingResourceAssembler citizenRankingResourceAssembler,
-                                    CitizenCashbackResourceAssembler citizenCashbackResourceAssembler, CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssembler) {
+                                    CitizenCashbackResourceAssembler citizenCashbackResourceAssembler,
+                                    CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssembler,
+                                    AwardWinnerResourceAssembler awardWinnerResourceAssembler) {
         this.citizenService = citizenService;
         this.citizenResourceAssembler = citizenResourceAssembler;
         this.citizenFactory = citizenFactory;
@@ -50,6 +51,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
         this.citizenRankingResourceAssembler = citizenRankingResourceAssembler;
         this.citizenCashbackResourceAssembler = citizenCashbackResourceAssembler;
         this.citizenRankingMilestoneResourceAssembler = citizenRankingMilestoneResourceAssembler;
+        this.awardWinnerResourceAssembler = awardWinnerResourceAssembler;
     }
 
     @Override
@@ -136,6 +138,17 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
         CitizenRanking ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
         return citizenCashbackResourceAssembler.toResource(ranking);
+    }
+
+    @Override
+    public List<AwardWinnerResource> findCashbackBankTransfer(String fiscalCode, Long awardPeriodId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("BpdCitizenControllerImpl.findCashbackBankTransfer");
+            logger.debug("fiscalCode = [" + fiscalCode + "]");
+            logger.debug("awardPeriodId = [" + awardPeriodId + "]");
+        }
+        List<AwardWinner> awardWinnerList = citizenService.findCashbackResult(fiscalCode, awardPeriodId);
+        return awardWinnerResourceAssembler.toResource(awardWinnerList);
     }
 
     private CitizenRankingId getId(String fiscalCode, Long awardPeriodId) {

@@ -101,6 +101,18 @@ public interface BpdCitizenController {
 
     );
 
+    @GetMapping(value = "/{fiscalCode}/bankTransfer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    List<AwardWinnerResource> findCashbackBankTransfer(
+            @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
+            @PathVariable @UpperCase
+            @Valid @NotBlank @Size(min = 16, max = 16) @Pattern(regexp = Constants.FISCAL_CODE_REGEX)
+                    String fiscalCode,
+            @ApiParam(value = "${swagger.citizen.awardPeriodId}", required = false)
+            @RequestParam(value = "awardPeriodId", required = false, defaultValue = "-1")
+                    Long awardPeriodId
+    );
+
 }
 
 

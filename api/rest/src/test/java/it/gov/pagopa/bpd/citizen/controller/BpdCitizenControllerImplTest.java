@@ -3,10 +3,8 @@ package it.gov.pagopa.bpd.citizen.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.config.ArchConfiguration;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
-import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.AwardWinner;
+import it.gov.pagopa.bpd.citizen.assembler.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -39,6 +37,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,6 +68,8 @@ public class BpdCitizenControllerImplTest {
     private CitizenRankingResourceAssembler citizenRankingResourceAssemblerSpy;
     @SpyBean
     private CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssemblerSpy;
+    @SpyBean
+    private AwardWinnerResourceAssembler awardWinnerResourceAssembler;
 
     @PostConstruct
     public void configureTest() {
@@ -132,6 +133,14 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.doReturn(cashback).when(citizenServiceSpy).getTotalCashback(Mockito.eq(id));
 
         BDDMockito.when(citizenServiceSpy.findRankingMilestoneDetails(Mockito.eq("fiscalCode"), Mockito.anyLong())).thenReturn(citizenRankingMilestone);
+
+        BDDMockito.when(citizenServiceSpy.findCashbackResult(Mockito.eq("fiscalCode"),Mockito.anyLong())).thenAnswer(invocation -> {
+            List<AwardWinner> result = new ArrayList<AwardWinner>();
+            AwardWinner item = new AwardWinner();
+            item.setFiscalCode("fiscalCode");
+            result.add(item);
+            return result;
+        });
     }
 
 
@@ -298,6 +307,21 @@ public class BpdCitizenControllerImplTest {
         Assert.assertNotNull(resource);
         Assert.assertEquals(resource.getTotalCashback(), new BigDecimal(100));
         BDDMockito.verify(citizenServiceSpy).getTotalCashback(Mockito.eq(id));
+    }
+
+    @Test
+    public void findCashbackResult() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get("/bpd/citizens/fiscalCode/bankTransfer")
+                .param("awardPeriodId", String.valueOf(1L))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        List<AwardWinnerResource> resource = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<List<AwardWinnerResource>>() {});
+
+        Assert.assertNotNull(resource);
     }
 
 }

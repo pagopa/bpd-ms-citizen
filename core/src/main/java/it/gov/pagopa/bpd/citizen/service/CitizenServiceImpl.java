@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.AwardWinner;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPException;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
@@ -33,17 +34,20 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
+    private final AwardWinnerReplicaDAO awardWinnerReplicaDAO;
 
     @Autowired
     public CitizenServiceImpl(
             ObjectProvider<CitizenDAO> citizenDAO,
             ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
             ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
-            CheckIbanRestConnector checkIbanRestConnector) {
+            CheckIbanRestConnector checkIbanRestConnector,
+            AwardWinnerReplicaDAO awardWinnerReplicaDAO) {
         this.citizenDAO = citizenDAO.getIfAvailable();
         this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
         this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
+        this.awardWinnerReplicaDAO = awardWinnerReplicaDAO;
     }
 
 
@@ -201,6 +205,11 @@ class CitizenServiceImpl implements CitizenService {
         }
 
         return rankingWithMilestone;
+    }
+
+    @Override
+    public List<AwardWinner> findCashbackResult(String fiscalCode, Long awardPeriodId) {
+        return awardWinnerReplicaDAO.findByFiscalCodeAndAwardPeriod(fiscalCode,awardPeriodId);
     }
 
 }

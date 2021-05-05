@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.AwardWinner;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -40,6 +41,8 @@ public class CitizenServiceImplTest {
     private final BigDecimal rankingMock = new BigDecimal(100);
     private static final String EXISTING_FISCAL_CODE = "existing-fiscalCode";
     private static final String NOT_EXISTING_FISCAL_CODE = "not-existing-fiscalCode";
+    private static final Long EXISTING_AWARD_PERIOD = 1L;
+    private static final Long NOT_EXISTING_AWARD_PERIOD = 2L;
 
     @MockBean
     private CitizenDAO citizenDAOMock;
@@ -51,6 +54,8 @@ public class CitizenServiceImplTest {
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @SpyBean
     private CitizenService citizenService;
+    @MockBean
+    private AwardWinnerReplicaDAO awardWinnerReplicaDAOMock;
 
 
     @Before
@@ -224,6 +229,21 @@ public class CitizenServiceImplTest {
 
         Mockito.when(citizenRankingReplicaDAOMock.getRankingWithMilestone(Mockito.eq(NOT_EXISTING_FISCAL_CODE), Mockito.eq(1L)))
                 .thenReturn(new ArrayList<>());
+
+        Mockito.when(awardWinnerReplicaDAOMock.findByFiscalCodeAndAwardPeriod(anyString(),anyLong()))
+                .thenAnswer((Answer<List<AwardWinner>>) invocation ->{
+                    List<AwardWinner> result = null;
+                    if(EXISTING_FISCAL_CODE.equals(invocation.getArgument(0))){
+                        if(EXISTING_AWARD_PERIOD.equals(invocation.getArgument(1))) {
+                            result = new ArrayList<AwardWinner>();
+                            AwardWinner item = new AwardWinner();
+                            item.setFiscalCode(EXISTING_FISCAL_CODE);
+                            item.setAwardPeriodId(EXISTING_AWARD_PERIOD);
+                            result.add(item);
+                        }
+                    }
+                    return result;
+                });
     }
 
     @Test
@@ -390,6 +410,42 @@ public class CitizenServiceImplTest {
         Assert.assertTrue(converter.size() > 1);
         BDDMockito.verify(citizenRankingReplicaDAOMock).getRanking(EXISTING_FISCAL_CODE);
         BDDMockito.verifyNoMoreInteractions(citizenRankingDAOMock);
+    }
+
+    @Test
+    public void findCashbackResult(){
+        List<AwardWinner> awardWinner = citizenService
+                .findCashbackResult(EXISTING_FISCAL_CODE, EXISTING_AWARD_PERIOD);
+
+        Assert.assertNotNull(awardWinner);
+        Assert.assertTrue(awardWinner.size() > 0);
+        BDDMockito.verify(awardWinnerReplicaDAOMock)
+                .findByFiscalCodeAndAwardPeriod(EXISTING_FISCAL_CODE, EXISTING_AWARD_PERIOD);
+        BDDMockito.verifyNoMoreInteractions(awardWinnerReplicaDAOMock);
+    }
+
+    @Test
+    public void findCashbackResult_CitizenNotFound(){
+        List<AwardWinner> awardWinner = citizenService
+                .findCashbackResult(NOT_EXISTING_FISCAL_CODE, EXISTING_AWARD_PERIOD);
+
+        Assert.assertNull(awardWinner);
+        Assert.assertTrue(awardWinner==null || awardWinner.size() == 0);
+        BDDMockito.verify(awardWinnerReplicaDAOMock)
+                .findByFiscalCodeAndAwardPeriod(NOT_EXISTING_FISCAL_CODE, EXISTING_AWARD_PERIOD);
+        BDDMockito.verifyNoMoreInteractions(awardWinnerReplicaDAOMock);
+    }
+
+    @Test
+    public void findCashbackResult_AwardPeriodNotFound(){
+        List<AwardWinner> awardWinner = citizenService
+                .findCashbackResult(EXISTING_FISCAL_CODE, NOT_EXISTING_AWARD_PERIOD);
+
+        Assert.assertNull(awardWinner);
+        Assert.assertTrue(awardWinner==null || awardWinner.size() == 0);
+        BDDMockito.verify(awardWinnerReplicaDAOMock)
+                .findByFiscalCodeAndAwardPeriod(EXISTING_FISCAL_CODE, NOT_EXISTING_AWARD_PERIOD);
+        BDDMockito.verifyNoMoreInteractions(awardWinnerReplicaDAOMock);
     }
 
 }
