@@ -24,7 +24,10 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
             "ranking = null, " +
             "rankingMinRequired = null, " +
             "maxTotalCashback = null, " +
-            "enabled = false " +
+            "enabled = false, " +
+            "idTrxPivot = null, " +
+            "cashbackNormPivot = 0, " +
+            "idTrxMinTransactionNumber = null " +
             "where fiscalCode = :fiscalCode ")
     void deactivateCitizenRankingByFiscalCode(@Param("fiscalCode") String fiscalCode);
 }
