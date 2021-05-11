@@ -20,7 +20,8 @@ public interface CitizenRankingReplicaDAO extends CrudJpaDAO<CitizenRanking, Cit
     @Query(nativeQuery = true, value = "select bcr.fiscal_code_c, bre.award_period_id_n, " +
             "bcr.cashback_n, bcr.transaction_n, bcr.ranking_n, bcr.ranking_min_n, " +
             "bre.period_cashback_max_n as max_cashback_n, " +
-            "bcr.id_trx_pivot, bcr.cashback_norm_pivot, bcr.id_trx_min_transaction_number " +
+            "bcr.id_trx_pivot, bcr.cashback_norm_pivot, bcr.id_trx_min_transaction_number, " +
+            "bcr.insert_date_t, bcr.insert_user_s, bcr.update_date_t, bcr.update_user_s, bc.enabled_b "+
             "from bpd_citizen_ranking bcr " +
             "inner join bpd_citizen bc on bc.fiscal_code_s = bcr.fiscal_code_c " +
             "inner join bpd_ranking_ext bre on bcr.award_period_id_n = bre.award_period_id_n "+
