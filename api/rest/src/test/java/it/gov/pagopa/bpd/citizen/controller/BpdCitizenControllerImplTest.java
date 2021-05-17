@@ -7,6 +7,8 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.command.DeleteCitizenCommand;
+import it.gov.pagopa.bpd.citizen.command.FilterTransactionCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -17,11 +19,13 @@ import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,6 +57,8 @@ public class BpdCitizenControllerImplTest {
     protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
     @MockBean
     private CitizenService citizenServiceSpy;
+    @MockBean
+    DeleteCitizenCommand deleteCitizenCommandMock;
     @SpyBean
     private CitizenResourceAssembler citizenResourceAssemblerSpy;
     @SpyBean
@@ -71,6 +77,7 @@ public class BpdCitizenControllerImplTest {
     private final List<CitizenTransactionConverter> citizenRanking = Collections.singletonList(citizenTransactionConverter);
     private final List<CitizenTransactionMilestoneConverter> citizenRankingMilestone = Collections.singletonList(citizenTransactionMilestoneConverter);
 
+    @SneakyThrows
     @PostConstruct
     public void configureTest() {
 
@@ -116,6 +123,8 @@ public class BpdCitizenControllerImplTest {
         id.setFiscalCode("fiscalCode");
         id.setAwardPeriodId(1L);
 
+
+        BDDMockito.doReturn(true).when(deleteCitizenCommandMock).execute();
 
         BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
 
@@ -175,8 +184,7 @@ public class BpdCitizenControllerImplTest {
     public void delete() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/bpd/citizens/fiscalCode"))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-
-        BDDMockito.verify(citizenServiceSpy).delete(Mockito.any());
+        BDDMockito.verify(deleteCitizenCommandMock).execute();
     }
 
     @Test
