@@ -83,7 +83,7 @@ public interface CitizenRankingReplicaDAO extends CrudJpaDAO<CitizenRanking, Cit
                     "     bcr.cashback_norm_pivot as cashbackNorm," +
                     "     bcr.id_trx_min_transaction_number as idTrxMinTransactionNumber," +
                     "     bcr.cashback_n as totalCashback," +
-                    "     bcr.max_cashback_n as maxCashback" +
+                    "     bre.period_cashback_max_n as maxCashback" +
                     " from" +
                     "     bpd_citizen bc" +
                     " cross join bpd_ranking_ext bre" +
@@ -110,7 +110,7 @@ public interface CitizenRankingReplicaDAO extends CrudJpaDAO<CitizenRanking, Cit
                     "     bcr.cashback_norm_pivot as cashbackNorm," +
                     "     bcr.id_trx_min_transaction_number as idTrxMinTransactionNumber," +
                     "     bcr.cashback_n as totalCashback," +
-                    "     bcr.max_cashback_n as maxCashback" +
+                    "     bre.period_cashback_max_n as maxCashback" +
                     " from" +
                     "     bpd_citizen bc" +
                     " cross join bpd_ranking_ext bre" +
