@@ -2,6 +2,8 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
 
+import java.time.OffsetDateTime;
+
 /**
  * public interface for the PointTransactionPublisherService
  */
@@ -14,5 +16,5 @@ public interface PointTransactionPublisherService {
      *
      * @param outgoingTransaction OutgoingTransaction instance to be published
      */
-    void publishPointTransactionEvent(Transaction outgoingTransaction);
+    void publishPointTransactionEvent(Transaction outgoingTransaction, OffsetDateTime validationDateTime);
 }
