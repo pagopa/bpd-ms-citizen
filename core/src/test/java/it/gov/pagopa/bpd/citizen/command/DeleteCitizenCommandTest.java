@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.command;
 
+import eu.sia.meda.async.util.AsyncUtils;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
 import it.gov.pagopa.bpd.citizen.service.CitizenStatusUpdatePublisherService;
@@ -13,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 
 import java.time.OffsetDateTime;
 
@@ -24,12 +26,15 @@ public class DeleteCitizenCommandTest extends BaseTest {
     CitizenService citizenServiceMock;
     @Mock
     CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherServiceMock;
+    @Spy
+    AsyncUtils asyncUtils;
 
 
     @Before
     public void initTest() {
         Mockito.reset(
                 citizenServiceMock,
+                asyncUtils,
                 citizenStatusUpdatePublisherServiceMock);
     }
 
@@ -41,13 +46,14 @@ public class DeleteCitizenCommandTest extends BaseTest {
         DeleteCitizenCommand deleteCitizenCommand = new DeleteCitizenCommandImpl(
                 "fiscalCode",
                 citizenServiceMock,
-                citizenStatusUpdatePublisherServiceMock
+                citizenStatusUpdatePublisherServiceMock,
+                asyncUtils
         );
 
 
         try {
 
-            BDDMockito.doNothing().when(citizenServiceMock)
+            BDDMockito.doReturn(true).when(citizenServiceMock)
                     .delete("fiscalCode");
             BDDMockito.doNothing().when(citizenStatusUpdatePublisherServiceMock)
                     .publishCitizenStatus(Mockito.eq(statusUpdate));
@@ -71,7 +77,8 @@ public class DeleteCitizenCommandTest extends BaseTest {
         return new DeleteCitizenCommandImpl(
                 fiscalCode,
                 citizenServiceMock,
-                citizenStatusUpdatePublisherServiceMock
+                citizenStatusUpdatePublisherServiceMock,
+                asyncUtils
 
         );
     }

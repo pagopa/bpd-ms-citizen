@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.command;
 
+import eu.sia.meda.async.util.AsyncUtils;
 import eu.sia.meda.core.command.BaseCommand;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
@@ -15,6 +16,7 @@ import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Base implementation of the SaveTransactionCommandInterface, extending Meda BaseCommand class, the command
@@ -40,10 +42,12 @@ public class DeleteCitizenCommandImpl extends BaseCommand<Boolean> implements De
     public DeleteCitizenCommandImpl(
             String fiscalCode,
             CitizenService citizenService,
-            CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService) {
+            CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService,
+            AsyncUtils asyncUtils) {
         this.fiscalCode = fiscalCode;
         this.citizenService = citizenService;
         this.citizenStatusUpdatePublisherService = citizenStatusUpdatePublisherService;
+        super.asyncUtils = asyncUtils;
     }
 
 
@@ -58,17 +62,18 @@ public class DeleteCitizenCommandImpl extends BaseCommand<Boolean> implements De
     @SneakyThrows
     @Override
     public Boolean doExecute() {
-        citizenService.delete(fiscalCode);
-        CompletableFuture.supplyAsync(() -> {
-            citizenStatusUpdatePublisherService.publishCitizenStatus(
-                    StatusUpdate.builder()
-                            .fiscalCode(fiscalCode)
-                            .updateDateTime(OffsetDateTime.now())
-                            .enabled(false)
-                            .build()
-            );
-            return true;
-        });
+        if (citizenService.delete(fiscalCode)) {
+            super.callAsyncService(() -> {
+                citizenStatusUpdatePublisherService.publishCitizenStatus(
+                        StatusUpdate.builder()
+                                .fiscalCode(fiscalCode)
+                                .updateDateTime(OffsetDateTime.now())
+                                .enabled(false)
+                                .build()
+                );
+                return true;
+            });
+        }
         return true;
     }
 
@@ -82,6 +87,5 @@ public class DeleteCitizenCommandImpl extends BaseCommand<Boolean> implements De
     public void setCitizenService(CitizenService citizenService) {
         this.citizenService = citizenService;
     }
-
 
 }
