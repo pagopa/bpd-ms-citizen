@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.validation.*;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 /**
@@ -69,7 +70,7 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
 
             if (citizen.isEnabled() && citizen.getTimestampTC().isBefore(transaction.getTrxDate())) {
 
-                pointTransactionProducerService.publishPointTransactionEvent(transaction);
+                pointTransactionProducerService.publishPointTransactionEvent(transaction, OffsetDateTime.now());
 
             } else {
                 log.info("Met a transaction for an inactive citizen on BPD. [{}, {}, {}]",
