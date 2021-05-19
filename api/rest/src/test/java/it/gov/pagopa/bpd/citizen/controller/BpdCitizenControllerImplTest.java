@@ -77,7 +77,7 @@ public class BpdCitizenControllerImplTest {
     private CitizenRankingMilestoneResourceAssembler citizenRankingMilestoneResourceAssemblerSpy;
 
     @PostConstruct
-    public void configureTest() {
+    public void configureTest() throws Exception {
 
         Citizen citizen = new Citizen();
         citizen.setFiscalCode("fiscalCode");

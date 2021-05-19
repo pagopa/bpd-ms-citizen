@@ -3,7 +3,7 @@
     <parent>
         <groupId>it.gov.pagopa.bpd.ms</groupId>
         <artifactId>bpd-ms-citizen</artifactId>
-        <version>CEN-156-rc1</version>
+        <version>CEN-156-rc2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
