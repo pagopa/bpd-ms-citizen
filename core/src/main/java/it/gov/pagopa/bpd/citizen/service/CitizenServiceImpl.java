@@ -133,7 +133,7 @@ class CitizenServiceImpl implements CitizenService {
 
     @Override
     @Transactional("transactionManagerPrimary")
-    public void delete(String fiscalCode) {
+    public Boolean delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
             Citizen citizen = citizenFound.get();
@@ -151,7 +151,9 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
+            return true;
         }
+        return false;
     }
 
     @Override

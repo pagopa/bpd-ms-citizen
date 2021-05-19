@@ -4,7 +4,9 @@ import eu.sia.meda.event.BaseEventConnector;
 import eu.sia.meda.event.transformer.IEventRequestTransformer;
 import eu.sia.meda.event.transformer.IEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 /**
