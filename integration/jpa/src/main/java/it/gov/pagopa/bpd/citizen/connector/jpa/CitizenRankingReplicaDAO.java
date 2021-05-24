@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface CitizenRankingReplicaDAO extends CrudJpaDAO<CitizenRanking, CitizenRankingId> {
 
     @Query(nativeQuery = true, value = "select bcr.fiscal_code_c, bre.award_period_id_n, " +
-            "bcr.cashback_n, bcr.transaction_n, bcr.ranking_n, bcr.ranking_min_n, " +
+            "bcr.cashback_n, bcr.transaction_n, bcr.ranking_n, bre.ranking_min_n, " +
             "bre.period_cashback_max_n as max_cashback_n, " +
             "bcr.id_trx_pivot, bcr.cashback_norm_pivot, bcr.id_trx_min_transaction_number, " +
             "bcr.insert_date_t, bcr.insert_user_s, bcr.update_date_t, bcr.update_user_s, bc.enabled_b "+
