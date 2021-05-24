@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bpd-ms-citizen</artifactId>
-    <version>switch-rc1</version>
+    <version>switch-rc2</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-rest</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
@@ -45,27 +45,27 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-jpa</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
                 <artifactId>bpd-ms-citizen-integration-event</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
                 <artifactId>bpd-ms-citizen-core</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.api</groupId>
                 <artifactId>bpd-ms-citizen-api-rest</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.citizen.api</groupId>
                 <artifactId>bpd-ms-citizen-api-event</artifactId>
-                <version>switch-rc1</version>
+                <version>switch-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons</groupId>

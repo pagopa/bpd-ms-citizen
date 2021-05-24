@@ -3,7 +3,7 @@
     <parent>
         <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
         <artifactId>bpd-ms-citizen-integration</artifactId>
-        <version>switch-rc1</version>
+        <version>switch-rc2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
