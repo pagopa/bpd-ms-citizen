@@ -13,6 +13,7 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.CashbackResource;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.factory.CitizenFactory;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
@@ -129,7 +130,32 @@ public class BpdCitizenControllerImplTest {
 
         BDDMockito.doReturn(citizenRanking).when(citizenServiceSpy).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
 
-        BDDMockito.doReturn(cashback).when(citizenServiceSpy).getTotalCashback(Mockito.eq(id));
+        BDDMockito.doReturn(new GetTotalCashbackResource() {
+            @Override
+            public String getFiscalCode() {
+                return "fiscalCode";
+            }
+
+            @Override
+            public Long getAwardPeriodId() {
+                return 1L;
+            }
+
+            @Override
+            public BigDecimal getTotalCashback() {
+                return new BigDecimal(100);
+            }
+
+            @Override
+            public BigDecimal getMaxTotalCashback() {
+                return new BigDecimal(150);
+            }
+
+            @Override
+            public Long getTransactionNumber() {
+                return 10L;
+            }
+        }).when(citizenServiceSpy).getTotalCashback(Mockito.eq(id));
 
         BDDMockito.when(citizenServiceSpy.findRankingMilestoneDetails(Mockito.eq("fiscalCode"), Mockito.anyLong())).thenReturn(citizenRankingMilestone);
     }
