@@ -22,8 +22,6 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
             "totalCashback = 0, " +
             "transactionNumber = 0, " +
             "ranking = null, " +
-            "rankingMinRequired = null, " +
-            "maxTotalCashback = null, " +
             "idTrxPivot = null, " +
             "cashbackNormPivot = 0, " +
             "idTrxMinTransactionNumber = null " +

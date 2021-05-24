@@ -3,8 +3,8 @@ package it.gov.pagopa.bpd.citizen.service;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface CitizenService {
 
     void delete(String fiscalCode);
 
-    CitizenRanking getTotalCashback(CitizenRankingId id);
+    GetTotalCashbackResource getTotalCashback(CitizenRankingId id);
 
     List<CitizenTransactionConverter> findRankingDetails(String fiscalCode, Long awardPeriodId);
 

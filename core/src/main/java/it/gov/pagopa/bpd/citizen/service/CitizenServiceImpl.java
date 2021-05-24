@@ -5,8 +5,8 @@ import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPExceptio
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -152,8 +152,8 @@ class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public CitizenRanking getTotalCashback(CitizenRankingId id) {
-        Optional<CitizenRanking> citizenRanking = citizenRankingReplicaDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
+    public GetTotalCashbackResource getTotalCashback(CitizenRankingId id) {
+        Optional<GetTotalCashbackResource> citizenRanking = citizenRankingReplicaDAO.getByIdIfCitizenIsEnabled(id.getFiscalCode(), id.getAwardPeriodId());
         if (citizenRanking != null && citizenRanking.isPresent()) {
             return citizenRanking.get();
         }
