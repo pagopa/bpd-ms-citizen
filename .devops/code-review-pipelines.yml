@@ -87,7 +87,7 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              goals: 'test'
+              goals: 'package'
               options: '-B -s $(settingsxml.secureFilePath)'
               publishJUnitResults: true
               testResultsFiles: '**/surefire-reports/TEST-*.xml'
