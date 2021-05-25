@@ -1,0 +1,269 @@
+#parameters:
+#  - name: SEMVER
+#    displayName: "When packing a release, define the version bump to apply"
+#    type: string
+#    values:
+#      - major
+#      - minor
+#      - patch
+#    default: patch
+#  - name: ENV
+#    displayName: Target Environment
+#    type: string
+#    default: dev
+#    values:
+#      - dev
+#      - prod
+#  - name: MS_NAME
+#    displayName: "Microservice to deploy"
+#    type: string
+#    values:
+#      - ente-creditore
+#      - hub-spid-login-ms
+#      - payments
+#      - queue-worker
+#      - service-managment
+#      - upload-payments
+#    default: ente-creditore
+#  - name: REPOSITORY
+#    displayName: "Docker Repository"
+#    type: string
+#    values:
+#      - creditor
+#      - auth
+#      - job
+#      - queue-worker
+#      - service
+#      - payments
+#    default: creditor
+#  - name: STACK
+#    displayName: "Stack of the microservice"
+#    default: java
+#    type: string
+#    values:
+#      - java
+#      - node
+#variables:
+#  NODE_VERSION: "10.14.2"
+#  ${{ if eq(parameters['ENV'], 'dev') }}:
+#    AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION)
+#    CONTAINER_REGISTRY: $(DEV_CONTAINER_REGISTRY)
+#    PREFIX: "hubpa-d"
+#    CONTAINER_REGISTRY_NAME: "hubpadarc"
+#  ${{ if eq(parameters['ENV'], 'prod') }}:
+#    AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
+#    CONTAINER_REGISTRY: $(PROD_CONTAINER_REGISTRY)
+#    PREFIX: "hubpa-p"
+#    CONTAINER_REGISTRY_NAME: "hubpaparc"
+#  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+#  MAVEN_OPTS: "-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)"
+#  title: ""
+#  sha: ""
+#  tag: ""
+#
+## Only manual triggers
+#trigger: none
+#pr: none
+#
+#pool:
+#  vmImage: ubuntu-latest
+#
+#stages:
+#  # Create a release
+#  - stage: release_service
+#    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+#      ne('${{ parameters.REPOSITORY }}', 'auth'))
+#    pool:
+#      vmImage: "ubuntu-latest"
+#    jobs:
+#      - job: release_service
+#        steps:
+#          - checkout: self
+#            clean: true
+#            persistCredentials: true
+#
+#          - script: |
+#              git config --global user.name "$(GIT_USERNAME)"
+#              git config --global user.email "$(GIT_EMAIL)"
+#
+#          - template: azure-templates/maven-versioning.yml
+#            parameters:
+#              subproject: "${{ parameters.MS_NAME }}"
+#              semver: "${{ parameters.SEMVER }}"
+#
+#          - task: Bash@3
+#            name: pomversion
+#            inputs:
+#              targetType: "inline"
+#              script: |
+#                version=$(cat ${{ parameters.MS_NAME }}/pom.xml | grep '^.*<version>' | sed -n 2p | awk -F'[><]' '{print $3}')
+#                echo "##vso[task.setvariable variable=next;isOutput=true]$version"
+#              failOnStderr: true
+#
+#          - script: |
+#              HEAD_SHA=$(git rev-parse HEAD)
+#              TAG="${{ parameters.MS_NAME }}/$(pomversion.next)"
+#              TITLE="Release ${{ parameters.MS_NAME }}/$(pomversion.next)"
+#              echo "##vso[task.setvariable variable=title]$TITLE"
+#              echo "##vso[task.setvariable variable=sha]$HEAD_SHA"
+#              echo "##vso[task.setvariable variable=tag]$TAG"
+#
+#          - script: |
+#              git checkout ${{variables['Build.SourceBranchName']}}
+#
+#          - script: |
+#              echo $(tag)
+#              echo $(title)
+#              echo $(sha)
+#
+#          - script: |
+#              git add ${{ parameters.MS_NAME }}/pom.xml
+#              git commit -m "Bump version [skip ci]"
+#              git push origin ${{variables['Build.SourceBranchName']}}
+#              git push --tags
+#
+#          # create new releae
+#          - task: GitHubRelease@0
+#            inputs:
+#              gitHubConnection: $(GITHUB_CONNECTION)
+#              repositoryName: $(Build.Repository.Name)
+#              action: create
+#              target: $(sha)
+#              tagSource: manual
+#              tag: $(tag)
+#              title: $(title)
+#              addChangelog: true
+#
+#  # Create a release
+#  - stage: deploy
+#    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+#      not(failed('release_service')))
+#    pool:
+#      vmImage: "ubuntu-latest"
+#    jobs:
+#      - job: deploy
+#        steps:
+#          - checkout: self
+#            clean: true
+#            persistCredentials: true
+#            submodules: true
+#
+#          - task: Cache@2
+#            condition: eq('${{ parameters.STACK }}', 'java')
+#            inputs:
+#              key: 'maven | "$(Agent.OS)" | pom.xml'
+#              restoreKeys: |
+#                maven | "$(Agent.OS)"
+#                maven
+#              path: $(MAVEN_CACHE_FOLDER)
+#            displayName: Cache Maven local repo
+#
+#          - task: Bash@3
+#            condition: eq('${{ parameters.STACK }}', 'java')
+#            name: pomversion
+#            inputs:
+#              targetType: "inline"
+#              script: |
+#                version=$(cat ${{ parameters.MS_NAME }}/pom.xml | grep '^.*<version>' | sed -n 2p | awk -F'[><]' '{print $3}')
+#                echo "##vso[task.setvariable variable=next;isOutput=true]$version"
+#              failOnStderr: true
+#
+#          - task: Bash@3
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            name: pkgversion
+#            inputs:
+#              targetType: "inline"
+#              workingDirectory: "${{ parameters.MS_NAME }}"
+#              script: |
+#                version=$(node -p "require('./package.json').version")
+#                echo "##vso[task.setvariable variable=next;isOutput=true]$version"
+#              failOnStderr: true
+#
+#          - task: Maven@3
+#            condition: eq('${{ parameters.STACK }}', 'java')
+#            displayName: Build Service
+#            inputs:
+#              mavenPomFile: "${{ parameters.MS_NAME }}/pom.xml"
+#              mavenOptions: "-Xmx3072m $(MAVEN_OPTS)"
+#              javaHomeOption: "JDKVersion"
+#              jdkVersionOption: "1.11"
+#              jdkArchitectureOption: "x64"
+#              publishJUnitResults: false
+#              testResultsFiles: "**/surefire-reports/TEST-*.xml"
+#              goals: "package"
+#
+#          - task: UseNode@1
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            inputs:
+#              version: $(NODE_VERSION)
+#              displayName: "Set up Node.js"
+#
+#          - task: Bash@3
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            displayName: ls
+#            inputs:
+#              workingDirectory: "${{ parameters.MS_NAME }}"
+#              targetType: "inline"
+#              script: |
+#                ls
+#
+#          - task: Bash@3
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            displayName: Install Node Packages
+#            inputs:
+#              workingDirectory: "${{ parameters.MS_NAME }}"
+#              targetType: "inline"
+#              script: |
+#                yarn install --frozen-lockfile --no-progress --non-interactive --network-concurrency 1
+#
+#          - task: Bash@3
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            displayName: Build
+#            inputs:
+#              workingDirectory: "${{ parameters.MS_NAME }}"
+#              targetType: "inline"
+#              script: |
+#                yarn predeploy
+#
+#          - task: Docker@2
+#            condition: eq('${{ parameters.STACK }}', 'java')
+#            displayName: Build and Push Image
+#            inputs:
+#              containerRegistry: $(CONTAINER_REGISTRY)
+#              repository: "${{ parameters.REPOSITORY }}"
+#              command: "buildAndPush"
+#              Dockerfile: "./${{ parameters.MS_NAME }}/Dockerfile.deploy"
+#              tags: "$(pomversion.next)"
+#
+#          # to be removed: rename dockerfile
+#          - task: Docker@2
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            displayName: Build and Push Image
+#            inputs:
+#              containerRegistry: $(CONTAINER_REGISTRY)
+#              repository: "${{ parameters.REPOSITORY }}"
+#              command: "buildAndPush"
+#              Dockerfile: "./${{ parameters.MS_NAME }}/Dockerfile"
+#              tags: "$(pkgversion.next)"
+#
+#          - task: AzureRMWebAppDeployment@4
+#            condition: eq('${{ parameters.STACK }}', 'java')
+#            displayName: Deploy Microservice
+#            inputs:
+#              appType: webAppContainer
+#              ConnectedServiceName: $(AZURE_SUBSCRIPTION)
+#              WebAppName: "${{variables.PREFIX}}-${{ parameters.REPOSITORY }}-ms"
+#              DockerNamespace: "${{variables.CONTAINER_REGISTRY_NAME}}.azurecr.io"
+#              DockerRepository: "${{ parameters.REPOSITORY }}"
+#              DockerImageTag: "$(pomversion.next)"
+#
+#          - task: AzureRMWebAppDeployment@4
+#            condition: eq('${{ parameters.STACK }}', 'node')
+#            displayName: Deploy Microservice
+#            inputs:
+#              appType: webAppContainer
+#              ConnectedServiceName: $(AZURE_SUBSCRIPTION)
+#              WebAppName: "${{variables.PREFIX}}-${{ parameters.REPOSITORY }}-ms"
+#              DockerNamespace: "${{variables.CONTAINER_REGISTRY_NAME}}.azurecr.io"
+#              DockerRepository: "${{ parameters.REPOSITORY }}"
+#              DockerImageTag: "$(pkgversion.next)"
