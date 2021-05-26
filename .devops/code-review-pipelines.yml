@@ -31,29 +31,6 @@ variables:
   # Image Repository Name
   imageRepository: 'bpdmscitizen'
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')))]
-  isSIT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/st')]
-  isUAT: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))]
-  isPROD: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
-
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/st') }}:
-    dockerRegistryServiceConnection: 'cstarregistry-connection'
-    containerRegistry: 'cstarregistry.azurecr.io'
-    imagePullSecret: 'cstarregistry-auth'
-    deployment: 'deployment-sit'
-  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
-    dockerRegistryServiceConnection: 'cstaruatregistry-connection'
-    containerRegistry: 'cstaruatregistry.azurecr.io'
-    imagePullSecret: 'cstaruatregistry-auth'
-    deployment: 'deployment-uat'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    dockerRegistryServiceConnection: 'cstarprodregistry-connection'
-    containerRegistry: 'cstarprodregistry.azurecr.io'
-    deployment: deployment-prod
-    imagePullSecret: 'cstarprodregistry-auth'
-  ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release')), ne(variables['Build.SourceBranch'], 'refs/heads/master'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))) }}:
-    dockerRegistryServiceConnection: 'cstarregistry-connection'
-
 stages:
   - stage: Test
     displayName: Test
@@ -82,45 +59,33 @@ stages:
           #                  sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
           #                  sonar.junit.reportPaths=target/surefire-reports/
 
+#          - task: Maven@3
+#            inputs:
+#              mavenPomFile: 'pom.xml'
+#              options: '-B -s $(settingsxml.secureFilePath)'
+#              publishJUnitResults: true
+#              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#              codeCoverageToolOption: 'JaCoCo'
+#              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
+#              codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/bpd-ms-citizen'
+#              javaHomeOption: 'JDKVersion'
+#              jdkVersionOption: '1.8'
+#              mavenVersionOption: 'Default'
+#              mavenOptions: '-Xmx3072m'
+#              mavenAuthenticateFeed: false
+#              effectivePomSkip: true
+#              sonarQubeRunAnalysis: false
 
-
-          - task: Maven@3
+          - task: Bash@3
+            displayName: Bash
+            name: Bash
             inputs:
-              mavenPomFile: 'pom.xml'
-              options: '-B -s $(settingsxml.secureFilePath)'
-              publishJUnitResults: true
-              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-              codeCoverageToolOption: 'JaCoCo'
-              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
-              codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/bpd-ms-citizen'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: '1.8'
-              mavenVersionOption: 'Default'
-              mavenOptions: '-Xmx3072m'
-              mavenAuthenticateFeed: false
-              effectivePomSkip: true
-              sonarQubeRunAnalysis: false
-
-
-
-
-
-
-
-
-
-
-
-
+              targetType: 'inline'
+              script: |
+                cd $(System.DefaultWorkingDirectory) | ls
+              failOnStderr: true
 
 #  - task: SonarCloudPublish@1
 #      displayName: 'Publish SonarCloud results on build summary'
 #      inputs:
 #        pollingTimeoutSec: '300'
-
-
-
-
-
-
-
