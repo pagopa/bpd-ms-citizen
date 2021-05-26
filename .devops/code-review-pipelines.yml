@@ -59,22 +59,22 @@ stages:
           #                  sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
           #                  sonar.junit.reportPaths=target/surefire-reports/
 
-#          - task: Maven@3
-#            inputs:
-#              mavenPomFile: 'pom.xml'
-#              options: '-B -s $(settingsxml.secureFilePath)'
-#              publishJUnitResults: true
-#              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-#              codeCoverageToolOption: 'JaCoCo'
-#              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
-#              codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/bpd-ms-citizen'
-#              javaHomeOption: 'JDKVersion'
-#              jdkVersionOption: '1.8'
-#              mavenVersionOption: 'Default'
-#              mavenOptions: '-Xmx3072m'
-#              mavenAuthenticateFeed: false
-#              effectivePomSkip: true
-#              sonarQubeRunAnalysis: false
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              options: '-B -s $(settingsxml.secureFilePath)'
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              codeCoverageToolOption: 'JaCoCo'
+              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
+              codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/bpd-ms-citizen'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.8'
+              mavenVersionOption: 'Default'
+              mavenOptions: '-Xmx3072m'
+              mavenAuthenticateFeed: false
+              effectivePomSkip: true
+              sonarQubeRunAnalysis: false
 
           - task: Bash@3
             displayName: Bash
