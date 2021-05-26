@@ -82,7 +82,7 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                cd $(System.DefaultWorkingDirectory) | ls
+                cd $(System.DefaultWorkingDirectory) | ls -lR
               failOnStderr: true
 
 #  - task: SonarCloudPublish@1
