@@ -8,8 +8,8 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
@@ -134,7 +134,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
-        CitizenRanking ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
+        GetTotalCashbackResource ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
         return citizenCashbackResourceAssembler.toResource(ranking);
     }
 
