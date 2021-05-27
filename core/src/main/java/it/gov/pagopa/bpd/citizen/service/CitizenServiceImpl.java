@@ -148,6 +148,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setUpdateUser(fiscalCode);
             citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCancellation(OffsetDateTime.now());
+            citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
         }
