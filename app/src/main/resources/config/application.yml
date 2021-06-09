@@ -36,5 +36,4 @@ logging:
     it.gov.pagopa.bpd.citizen: ${LOG_LEVEL_CITIZEN:DEBUG}
     com.zaxxer.hikari.HikariConfig: ${LOG_LEVEL_BPD_CITIZEN_DATASOURCE_POOL_CONFIG:OFF}
     com.zaxxer.hikari.pool.HikariPool: ${LOG_LEVEL_BPD_CITIZEN_DATASOURCE_POOL:OFF}
-    org.hibernate.stat: ${LOG_LEVEL_BPD_CITIZEN_HIBERNATE_STAT:OFF}
-    org.hibernate.SQL:  ${LOG_LEVEL_BPD_CITIZEN_HIBERNATE_SQL:OFF}
+    org.hibernate: ${LOG_LEVEL_BPD_CITIZEN_HIBERNATE:INFO}
