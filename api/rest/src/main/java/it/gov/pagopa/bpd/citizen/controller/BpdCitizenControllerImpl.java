@@ -10,8 +10,8 @@ import it.gov.pagopa.bpd.citizen.command.FilterTransactionCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
-import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRanking;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
@@ -63,18 +63,18 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
     }
 
     @Override
-    public CitizenResource find(String fiscalCode) {
+    public CitizenResource find(String fiscalCode, Boolean flagTechnicalAccount, Boolean isIssuer) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.find");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
 
         final Citizen citizen = citizenService.find(fiscalCode);
-        return citizenResourceAssembler.toResource(citizen);
+        return citizenResourceAssembler.toCitizenResource(citizen, flagTechnicalAccount, isIssuer);
     }
 
     @Override
-    public CitizenResource update(String fiscalCode, CitizenDTO citizen) {
+    public CitizenUpdateResource update(String fiscalCode, CitizenDTO citizen) {
         if (logger.isDebugEnabled()) {
             logger.debug("BpdCitizenControllerImpl.update");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
@@ -82,7 +82,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
 
         final Citizen entity = citizenFactory.createModel(citizen);
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
-        return citizenResourceAssembler.toResource(citizenEntity);
+        return citizenResourceAssembler.toCitizenUpdateResource(citizenEntity);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("awardPeriodId = [" + awardPeriodId + "]");
         }
 
-        CitizenRanking ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
+        GetTotalCashbackResource ranking = citizenService.getTotalCashback(getId(fiscalCode, awardPeriodId));
         return citizenCashbackResourceAssembler.toResource(ranking);
     }
 

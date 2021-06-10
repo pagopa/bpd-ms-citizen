@@ -41,7 +41,7 @@ variables:
     containerRegistry: 'cstarregistry.azurecr.io'
     imagePullSecret: 'cstarregistry-auth'
     deployment: 'deployment-sit'
-  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
     dockerRegistryServiceConnection: 'cstaruatregistry-connection'
     containerRegistry: 'cstaruatregistry.azurecr.io'
     imagePullSecret: 'cstaruatregistry-auth'
