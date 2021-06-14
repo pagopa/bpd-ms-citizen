@@ -4,9 +4,13 @@ import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.PointTransactionPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
+import it.gov.pagopa.bpd.citizen.service.transformer.HeaderAwareRequestTransformer;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
 
 /**
  * Implementation of the PointTransactionPublisherService, defines the service used for the interaction
@@ -17,12 +21,12 @@ import org.springframework.stereotype.Service;
 public class PointTransactionPublisherServiceImpl implements PointTransactionPublisherService {
 
     private final PointTransactionPublisherConnector pointTransactionPublisherConnector;
-    private final SimpleEventRequestTransformer<Transaction> simpleEventRequestTransformer;
+    private final HeaderAwareRequestTransformer<Transaction> simpleEventRequestTransformer;
     private final SimpleEventResponseTransformer simpleEventResponseTransformer;
 
     @Autowired
     public PointTransactionPublisherServiceImpl(ObjectProvider<PointTransactionPublisherConnector> pointTransactionPublisherConnector,
-                                                SimpleEventRequestTransformer<Transaction> simpleEventRequestTransformer,
+                                                HeaderAwareRequestTransformer<Transaction> simpleEventRequestTransformer,
                                                 SimpleEventResponseTransformer simpleEventResponseTransformer) {
         this.pointTransactionPublisherConnector = pointTransactionPublisherConnector.getIfAvailable();
         this.simpleEventRequestTransformer = simpleEventRequestTransformer;
@@ -36,8 +40,10 @@ public class PointTransactionPublisherServiceImpl implements PointTransactionPub
      */
 
     @Override
-    public void publishPointTransactionEvent(Transaction transaction) {
+    public void publishPointTransactionEvent(Transaction transaction, OffsetDateTime validationDateTime) {
+        RecordHeaders recordHeaders = new RecordHeaders();
+        recordHeaders.add("CITIZEN_VALIDATION_DATETIME", validationDateTime.toString().getBytes());
         pointTransactionPublisherConnector.doCall(
-                transaction, simpleEventRequestTransformer, simpleEventResponseTransformer);
+                transaction, simpleEventRequestTransformer, simpleEventResponseTransformer, recordHeaders);
     }
 }

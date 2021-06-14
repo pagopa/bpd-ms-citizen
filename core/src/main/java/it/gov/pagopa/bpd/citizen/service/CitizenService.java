@@ -20,7 +20,7 @@ public interface CitizenService {
 
     String patch(String fiscalCode, Citizen cz);
 
-    void delete(String fiscalCode);
+    Boolean delete(String fiscalCode);
 
     GetTotalCashbackResource getTotalCashback(CitizenRankingId id);
 
