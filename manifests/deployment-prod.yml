@@ -27,6 +27,8 @@ spec:
             - secretRef:
                 name: bpdmscitizen
             - configMapRef:
+                name: eventhub-common
+            - configMapRef:
                 name: eventhub-logging
             - configMapRef:
                 name: bpdmscitizen
