@@ -33,6 +33,8 @@ public class FilterTransactionCommandTest extends BaseTest {
     CitizenService citizenServiceMock;
     @Mock
     PointTransactionPublisherService pointTransactionProducerServiceMock;
+    @Mock
+    PaymentInstrumentPublisherService paymentInstrumentPublisherServiceMock;
 
 
     @Before
@@ -65,7 +67,7 @@ public class FilterTransactionCommandTest extends BaseTest {
             BDDMockito.doReturn(citizen).when(citizenServiceMock)
                     .find(Mockito.eq(transaction.getFiscalCode()));
             BDDMockito.doNothing().when(pointTransactionProducerServiceMock)
-                    .publishPointTransactionEvent(Mockito.eq(transaction));
+                    .publishPointTransactionEvent(Mockito.eq(transaction), Mockito.any());
             BDDMockito.doNothing().when(paymentInstrumentPublisherServiceMock)
                     .publishPaymentInstrumentUpdateEvent(Mockito.eq(paymentInstrumentUpdate));
 
@@ -75,7 +77,7 @@ public class FilterTransactionCommandTest extends BaseTest {
             BDDMockito.verify(citizenServiceMock, Mockito.atLeastOnce())
                     .find(Mockito.eq(transaction.getFiscalCode()));
             BDDMockito.verify(pointTransactionProducerServiceMock, Mockito.atLeastOnce())
-                    .publishPointTransactionEvent(Mockito.any());
+                    .publishPointTransactionEvent(Mockito.any(), Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
