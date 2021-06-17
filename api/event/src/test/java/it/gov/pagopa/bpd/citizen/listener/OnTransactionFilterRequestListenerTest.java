@@ -78,6 +78,7 @@ public class OnTransactionFilterRequestListenerTest extends BaseEventListenerTes
                 .acquirerId("0")
                 .bin("000001")
                 .terminalId("0")
+                .isToUpdate(true)
                 .build();
     }
 

@@ -2,8 +2,10 @@ package it.gov.pagopa.bpd.citizen.command;
 
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.TransactionCommandModel;
+import it.gov.pagopa.bpd.citizen.publisher.model.PaymentInstrumentUpdate;
 import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
+import it.gov.pagopa.bpd.citizen.service.PaymentInstrumentPublisherService;
 import it.gov.pagopa.bpd.citizen.service.PointTransactionPublisherService;
 import it.gov.pagopa.bpd.common.BaseTest;
 import lombok.SneakyThrows;
@@ -37,7 +39,8 @@ public class FilterTransactionCommandTest extends BaseTest {
     public void initTest() {
         Mockito.reset(
                 citizenServiceMock,
-                pointTransactionProducerServiceMock);
+                pointTransactionProducerServiceMock,
+                paymentInstrumentPublisherServiceMock);
     }
 
     @Test
@@ -48,10 +51,12 @@ public class FilterTransactionCommandTest extends BaseTest {
         citizen.setTimestampTC(OffsetDateTime.parse("2020-01-09T16:22:45.304Z"));
         Transaction transaction = getRequestObject();
         transaction.setFiscalCode(citizen.getFiscalCode());
+        PaymentInstrumentUpdate paymentInstrumentUpdate = getPaymentInstrumentUpdate();
         FilterTransactionCommand filterTransactionCommand = new FilterTransactionCommandImpl(
                 TransactionCommandModel.builder().payload(transaction).build(),
                 citizenServiceMock,
-                pointTransactionProducerServiceMock
+                pointTransactionProducerServiceMock,
+                paymentInstrumentPublisherServiceMock
         );
 
 
@@ -60,7 +65,9 @@ public class FilterTransactionCommandTest extends BaseTest {
             BDDMockito.doReturn(citizen).when(citizenServiceMock)
                     .find(Mockito.eq(transaction.getFiscalCode()));
             BDDMockito.doNothing().when(pointTransactionProducerServiceMock)
-                    .publishPointTransactionEvent(Mockito.eq(transaction),Mockito.any());
+                    .publishPointTransactionEvent(Mockito.eq(transaction));
+            BDDMockito.doNothing().when(paymentInstrumentPublisherServiceMock)
+                    .publishPaymentInstrumentUpdateEvent(Mockito.eq(paymentInstrumentUpdate));
 
             Boolean isOk = filterTransactionCommand.execute();
 
@@ -68,7 +75,7 @@ public class FilterTransactionCommandTest extends BaseTest {
             BDDMockito.verify(citizenServiceMock, Mockito.atLeastOnce())
                     .find(Mockito.eq(transaction.getFiscalCode()));
             BDDMockito.verify(pointTransactionProducerServiceMock, Mockito.atLeastOnce())
-                    .publishPointTransactionEvent(Mockito.any(),Mockito.any());
+                    .publishPointTransactionEvent(Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,7 +88,8 @@ public class FilterTransactionCommandTest extends BaseTest {
         return new FilterTransactionCommandImpl(
                 TransactionCommandModel.builder().payload(transaction).headers(null).build(),
                 citizenServiceMock,
-                pointTransactionProducerServiceMock
+                pointTransactionProducerServiceMock,
+                paymentInstrumentPublisherServiceMock
 
         );
     }
@@ -103,6 +111,15 @@ public class FilterTransactionCommandTest extends BaseTest {
                 .acquirerId("0")
                 .terminalId("0")
                 .bin("000004")
+                .par("par")
+                .isToUpdate(true)
+                .build();
+    }
+
+    protected PaymentInstrumentUpdate getPaymentInstrumentUpdate() {
+        return PaymentInstrumentUpdate.builder()
+                .par("par")
+                .hpan("hpan")
                 .build();
     }
 
