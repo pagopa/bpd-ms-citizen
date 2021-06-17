@@ -85,4 +85,6 @@ public class Transaction {
     @NotNull
     Boolean isToUpdate;
 
+    String hpanMaster;
+
 }
