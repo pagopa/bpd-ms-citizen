@@ -70,6 +70,9 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
 
         try {
 
+            log.debug("Validating transaction with hpan {}, par {}, isToUpdate {}",
+                    transaction.getHpan(), transaction.getPar(), transaction.getIsToUpdate());
+
             validateRequest(transaction);
             Citizen citizen = citizenService.find(transaction.getFiscalCode());
 
@@ -79,6 +82,8 @@ public class FilterTransactionCommandImpl extends BaseCommand<Boolean> implement
 
                 if (transaction.getIsToUpdate()) {
                     PaymentInstrumentUpdate pi = new PaymentInstrumentUpdate(transaction.getHpan(), transaction.getPar());
+                    log.debug("Sending transaction with hpan {}, par {} back to payment instrument for saving token data",
+                            transaction.getHpan(), transaction.getPar());
                     paymentInstrumentPublisherService.publishPaymentInstrumentUpdateEvent(pi);
                 }
 
