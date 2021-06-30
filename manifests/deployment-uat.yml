@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bpdmscitizen
-          image: cstaruatregistry.azurecr.io/bpdmscitizen
+          image: cstaruacr.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
           envFrom:
@@ -25,6 +25,8 @@ spec:
                 name: postgres-credentials
             - secretRef:
                 name: bpdmscitizen
+            - secretRef:
+                name: application-insights
             - configMapRef:
                 name: eventhub-logging
             - configMapRef:
@@ -67,10 +69,6 @@ spec:
             successThreshold: 1
             failureThreshold: 20
           imagePullPolicy: Always
-      hostAliases:
-        - hostnames:
-            - bpd-event-uat.servicebus.windows.net
-          ip: 10.70.67.5
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -92,7 +90,7 @@ spec:
     spec:
       containers:
         - name: bpdmscitizenbatch
-          image: cstaruatregistry.azurecr.io/bpdmscitizen
+          image: cstaruacr.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
           env:
@@ -183,7 +181,3 @@ spec:
             successThreshold: 1
             failureThreshold: 20
           imagePullPolicy: Always
-      hostAliases:
-        - hostnames:
-            - bpd-event-uat.servicebus.windows.net
-          ip: 10.70.67.5
