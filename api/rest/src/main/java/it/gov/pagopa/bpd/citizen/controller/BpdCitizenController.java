@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 public interface BpdCitizenController {
 
-    @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenResource find(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -40,7 +40,7 @@ public interface BpdCitizenController {
                     Boolean isIssuer
     );
 
-    @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenUpdateResource update(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -50,7 +50,7 @@ public interface BpdCitizenController {
                     String fiscalCode,
             @RequestBody @Valid CitizenDTO citizen);
 
-    @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PatchMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenPatchResource updatePaymentMethod(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -59,7 +59,7 @@ public interface BpdCitizenController {
                     String fiscalCode,
             @RequestBody @Valid CitizenPatchDTO citizen);
 
-    @DeleteMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value = "/{fiscalCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -68,7 +68,7 @@ public interface BpdCitizenController {
                     String fiscalCode
     );
 
-    @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{fiscalCode}/ranking", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     List<CitizenRankingResource> findRanking(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -80,7 +80,7 @@ public interface BpdCitizenController {
                     Long awardPeriodId
     );
 
-    @GetMapping(value = "/{fiscalCode}/ranking/milestone", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{fiscalCode}/ranking/milestone", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     List<CitizenRankingMilestoneResource> findRankingMilestone(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)
@@ -92,7 +92,7 @@ public interface BpdCitizenController {
                     Long awardPeriodId
     ) throws InvocationTargetException, IllegalAccessException;
 
-    @GetMapping(value = "/total-cashback", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/total-cashback", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     CitizenCashbackResource getTotalCashback(
             @ApiParam(value = "${swagger.citizen.fiscalCode}", required = true)

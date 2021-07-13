@@ -1,13 +1,10 @@
 package it.gov.pagopa.bpd.citizen.assembler;
 
-import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.model.CitizenRankingMilestoneResource;
 import it.gov.pagopa.bpd.citizen.model.MilestoneResource;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +14,12 @@ import java.util.List;
 @Service
 public class CitizenRankingMilestoneResourceAssembler {
 
-    public List<CitizenRankingMilestoneResource> toResource(List<CitizenTransactionMilestoneConverter> citizenTransaction) throws InvocationTargetException, IllegalAccessException {
+    public List<CitizenRankingMilestoneResource> toResource(List<CitizenTransactionMilestoneConverter> citizenTransaction) {
         List<CitizenRankingMilestoneResource> resource = null;
 
         if (citizenTransaction != null) {
             resource = new ArrayList<>();
-            for (CitizenTransactionConverter citizenTransactionConverter : citizenTransaction) {
+            for (CitizenTransactionMilestoneConverter citizenTransactionConverter : citizenTransaction) {
                 CitizenRankingMilestoneResource item = new CitizenRankingMilestoneResource();
                 item.setRanking(citizenTransactionConverter.getRanking() == null ?
                         citizenTransactionConverter.getTotalParticipants() + 1 :
@@ -36,7 +33,11 @@ public class CitizenRankingMilestoneResourceAssembler {
                 item.setAwardPeriodId(citizenTransactionConverter.getAwardPeriodId());
 
                 MilestoneResource milestoneResource = new MilestoneResource();
-                BeanUtils.copyProperties(milestoneResource, citizenTransactionConverter);
+                milestoneResource.setCashbackNorm(citizenTransactionConverter.getCashbackNorm());
+                milestoneResource.setIdTrxMinTransactionNumber(citizenTransactionConverter.getIdTrxMinTransactionNumber());
+                milestoneResource.setIdTrxPivot(citizenTransactionConverter.getIdTrxPivot());
+                milestoneResource.setMaxCashback(citizenTransactionConverter.getMaxCashback());
+                milestoneResource.setTotalCashback(citizenTransactionConverter.getTotalCashback());
                 item.setMilestoneResource(milestoneResource);
 
                 resource.add(item);
