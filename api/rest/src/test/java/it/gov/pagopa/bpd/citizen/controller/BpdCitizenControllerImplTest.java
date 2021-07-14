@@ -3,7 +3,6 @@ package it.gov.pagopa.bpd.citizen.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.DummyConfiguration;
-import eu.sia.meda.config.ArchConfiguration;
 import eu.sia.meda.error.config.LocalErrorConfig;
 import eu.sia.meda.error.handler.MedaExceptionHandler;
 import eu.sia.meda.error.service.impl.LocalErrorManagerServiceImpl;
@@ -38,7 +37,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -51,7 +50,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(value = {BpdCitizenControllerImpl.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         BpdCitizenControllerImpl.class,
@@ -68,7 +67,8 @@ public class BpdCitizenControllerImplTest {
 
     @Autowired
     protected MockMvc mvc;
-    protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
+    @Autowired
+    protected ObjectMapper objectMapper;
     @MockBean
     private CitizenService citizenServiceSpy;
     @MockBean

@@ -30,9 +30,11 @@ public class CitizenResourceAssembler {
             resource.setFiscalCode(citizen.getFiscalCode());
             resource.setIssuerCardId(citizen.getIssuerCardId());
             resource.setPayoffInstr(citizen.getPayoffInstr());
-            resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
             resource.setTechnicalAccountHolder(citizen.getTechnicalAccountHolder());
             resource.setTimestampTC(citizen.getTimestampTC());
+            if (citizen.getPayoffInstrType() != null) {
+                resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
+            }
 
             if (isIssuer != null && isIssuer && citizen.getTechnicalAccountHolder() != null) {
                 resource.setTechnicalAccount(null);
@@ -59,8 +61,10 @@ public class CitizenResourceAssembler {
             resource.setEnabled(citizen.isEnabled());
             resource.setFiscalCode(citizen.getFiscalCode());
             resource.setPayoffInstr(citizen.getPayoffInstr());
-            resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
             resource.setTimestampTC(citizen.getTimestampTC());
+            if (citizen.getPayoffInstrType() != null) {
+                resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
+            }
         }
 
         return resource;
