@@ -4,12 +4,12 @@
     <parent>
         <artifactId>bpd-ms-citizen-integration</artifactId>
         <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
-        <version>cen-383-rc1</version>
+        <version>cen-383-rc2</version>
     </parent>
 
     <groupId>it.gov.pagopa.bpd.ms.citizen.integration</groupId>
     <artifactId>bpd-ms-citizen-integration-rest</artifactId>
-    <version>cen-383-rc1</version>
+    <version>cen-383-rc2</version>
 
     <dependencies>
         <dependency>

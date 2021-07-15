@@ -4,7 +4,7 @@
     <parent>
         <artifactId>bpd-ms-citizen-integration</artifactId>
         <groupId>it.gov.pagopa.bpd.ms.citizen</groupId>
-        <version>cen-383-rc1</version>
+        <version>cen-383-rc2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
