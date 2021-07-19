@@ -28,6 +28,8 @@ spec:
             - secretRef:
                 name: application-insights
             - configMapRef:
+                name: eventhub-common
+            - configMapRef:
                 name: eventhub-logging
             - configMapRef:
                 name: bpdmscitizen
