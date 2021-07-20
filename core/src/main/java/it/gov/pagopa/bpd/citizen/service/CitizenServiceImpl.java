@@ -9,10 +9,13 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
+import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -33,17 +36,20 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
+    private final CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService;
 
     @Autowired
     public CitizenServiceImpl(
             ObjectProvider<CitizenDAO> citizenDAO,
             ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
             ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
-            CheckIbanRestConnector checkIbanRestConnector) {
+            CheckIbanRestConnector checkIbanRestConnector,
+            CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService) {
         this.citizenDAO = citizenDAO.getIfAvailable();
         this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
         this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
+        this.citizenStatusUpdatePublisherService = citizenStatusUpdatePublisherService;
     }
 
 
@@ -54,6 +60,7 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
+    @Transactional(transactionManager = "transactionManagerPrimary")
     public Citizen update(String fiscalCode, Citizen cz) {
         final Citizen result;
         final Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
@@ -78,6 +85,7 @@ class CitizenServiceImpl implements CitizenService {
 
 
     @Override
+    @Transactional(transactionManager = "transactionManagerPrimary")
     public String patch(String fiscalCode, Citizen cz) {
 
         Citizen citizen = citizenDAO.findById(fiscalCode)
@@ -131,8 +139,10 @@ class CitizenServiceImpl implements CitizenService {
     }
 
 
+    @SneakyThrows
     @Override
-    @Transactional("transactionManagerPrimary")
+    @Transactional(transactionManager = "transactionManagerPrimary",
+            propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public Boolean delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
@@ -151,7 +161,13 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
-            return true;
+            citizenStatusUpdatePublisherService.publishCitizenStatus(
+                    StatusUpdate.builder()
+                            .fiscalCode(fiscalCode)
+                            .updateDateTime(OffsetDateTime.now())
+                            .enabled(false)
+                            .build()
+            );
         }
         return false;
     }

@@ -40,10 +40,11 @@ public class CitizenStatusUpdatePublisherServiceImpl implements CitizenStatusUpd
      */
 
     @Override
-    public void publishCitizenStatus(StatusUpdate statusUpdate) {
+    public void publishCitizenStatus(StatusUpdate statusUpdate) throws Exception {
         RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add("CITIZEN_STATUS_UPDATE", "true".getBytes());
+        recordHeaders.add("CITIZEN_STATUS_UPDATE", "ALL".getBytes());
         citizenStatusPublisherConnectors.doCall(
                 statusUpdate, simpleEventRequestTransformer, simpleEventResponseTransformer, recordHeaders);
     }
+
 }

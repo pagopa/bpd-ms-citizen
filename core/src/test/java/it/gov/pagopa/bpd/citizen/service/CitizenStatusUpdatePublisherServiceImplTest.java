@@ -5,6 +5,7 @@ import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.CitizenStatusPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.transformer.HeaderAwareRequestTransformer;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,6 +67,7 @@ public class CitizenStatusUpdatePublisherServiceImplTest extends BaseTest {
 
     }
 
+    @SneakyThrows
     @Test
     public void testSave_KO_Connector() {
 
