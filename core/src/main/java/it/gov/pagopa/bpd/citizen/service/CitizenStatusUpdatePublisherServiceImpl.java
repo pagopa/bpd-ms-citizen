@@ -10,7 +10,9 @@ import it.gov.pagopa.bpd.citizen.service.transformer.HeaderAwareRequestTransform
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the PointTransactionPublisherService, defines the service used for the interaction
@@ -40,6 +42,7 @@ public class CitizenStatusUpdatePublisherServiceImpl implements CitizenStatusUpd
      */
 
     @Override
+    @Transactional("citizenKafkaTransactionManager")
     public void publishCitizenStatus(StatusUpdate statusUpdate) {
         RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add("CITIZEN_STATUS_UPDATE", "true".getBytes());

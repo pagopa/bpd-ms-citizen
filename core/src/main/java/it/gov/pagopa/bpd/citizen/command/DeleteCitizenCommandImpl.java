@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -61,18 +62,15 @@ public class DeleteCitizenCommandImpl extends BaseCommand<Boolean> implements De
 
     @SneakyThrows
     @Override
+    @Transactional("transactionManagerPrimary")
     public Boolean doExecute() {
         if (citizenService.delete(fiscalCode)) {
-            super.callAsyncService(() -> {
-                citizenStatusUpdatePublisherService.publishCitizenStatus(
-                        StatusUpdate.builder()
-                                .fiscalCode(fiscalCode)
-                                .updateDateTime(OffsetDateTime.now())
-                                .enabled(false)
-                                .build()
-                );
-                return true;
-            });
+            citizenStatusUpdatePublisherService.publishCitizenStatus(
+                    StatusUpdate.builder()
+                            .fiscalCode(fiscalCode)
+                            .updateDateTime(OffsetDateTime.now())
+                            .enabled(false)
+                            .build());
         }
         return true;
     }
