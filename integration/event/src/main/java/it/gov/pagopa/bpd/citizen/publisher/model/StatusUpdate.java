@@ -14,5 +14,6 @@ public class StatusUpdate {
     private String fiscalCode;
     private boolean enabled;
     private OffsetDateTime updateDateTime;
+    private String applyTo = "all";
 
 }
