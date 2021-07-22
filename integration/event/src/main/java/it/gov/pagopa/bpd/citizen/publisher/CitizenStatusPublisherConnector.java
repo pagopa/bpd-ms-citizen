@@ -20,7 +20,6 @@ public class CitizenStatusPublisherConnector extends BaseEventConnector<StatusUp
             StatusUpdate statusUpdate, IEventRequestTransformer<StatusUpdate, StatusUpdate> requestTransformer,
             IEventResponseTransformer<Void, Boolean> responseTransformer,
             Object... args) throws Exception {
-        throw new Exception("test");
-        //return this.call(statusUpdate, requestTransformer, responseTransformer, args);
+        return this.call(statusUpdate, requestTransformer, responseTransformer, args);
     }
 }
