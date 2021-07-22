@@ -166,6 +166,7 @@ class CitizenServiceImpl implements CitizenService {
                             .fiscalCode(fiscalCode)
                             .updateDateTime(OffsetDateTime.now())
                             .enabled(false)
+                            .applyTo("all")
                             .build()
             );
         }
