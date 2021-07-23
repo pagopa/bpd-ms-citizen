@@ -1,15 +1,13 @@
 package it.gov.pagopa.bpd.citizen.service;
 
-import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.CitizenStatusPublisherConnector;
-import it.gov.pagopa.bpd.citizen.publisher.PointTransactionPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
-import it.gov.pagopa.bpd.citizen.publisher.model.Transaction;
 import it.gov.pagopa.bpd.citizen.service.transformer.HeaderAwareRequestTransformer;
 import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,6 +38,15 @@ public class CitizenStatusUpdatePublisherServiceImpl implements CitizenStatusUpd
      */
 
     @Override
+    @Retryable(
+            maxAttempts=10,
+            value=RuntimeException.class,
+            backoff = @Backoff(
+                    delay = 5000,
+                    multiplier = 1.5,
+                    maxDelay = 300000
+            )
+    )
     public void publishCitizenStatus(StatusUpdate statusUpdate) throws Exception {
         RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add("CITIZEN_STATUS_UPDATE", "ALL".getBytes());

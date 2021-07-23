@@ -27,4 +27,5 @@ public interface CitizenRankingDAO extends CrudJpaDAO<CitizenRanking, CitizenRan
             "idTrxMinTransactionNumber = null " +
             "where fiscalCode = :fiscalCode ")
     void deactivateCitizenRankingByFiscalCode(@Param("fiscalCode") String fiscalCode);
+
 }

@@ -7,6 +7,8 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.command.DeleteCitizenCommand;
+import it.gov.pagopa.bpd.citizen.command.FilterTransactionCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -24,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,6 +58,8 @@ public class BpdCitizenControllerImplTest {
     protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
     @MockBean
     private CitizenService citizenServiceSpy;
+    @MockBean
+    DeleteCitizenCommand deleteCitizenCommandMock;
     @SpyBean
     private CitizenResourceAssembler citizenResourceAssemblerSpy;
     @SpyBean
@@ -120,7 +125,7 @@ public class BpdCitizenControllerImplTest {
         id.setAwardPeriodId(1L);
 
 
-        BDDMockito.doReturn(true).when(citizenServiceSpy).delete(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(true).when(deleteCitizenCommandMock).execute();
 
         BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
 
@@ -248,7 +253,7 @@ public class BpdCitizenControllerImplTest {
     public void delete() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/bpd/citizens/fiscalCode"))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-        BDDMockito.verify(citizenServiceSpy).delete(Mockito.eq("fiscalCode"));
+        BDDMockito.verify(deleteCitizenCommandMock).execute();
     }
 
     @Test
@@ -365,7 +370,6 @@ public class BpdCitizenControllerImplTest {
                 .andReturn();
         CashbackResource resource = objectMapper.readValue(result.getResponse().getContentAsString(),
                 CashbackResource.class);
-
 
         Assert.assertNotNull(resource);
         Assert.assertEquals(resource.getTotalCashback(), new BigDecimal(100));

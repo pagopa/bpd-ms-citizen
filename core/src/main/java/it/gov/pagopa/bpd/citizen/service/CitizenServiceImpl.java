@@ -142,7 +142,8 @@ class CitizenServiceImpl implements CitizenService {
     @SneakyThrows
     @Override
     @Transactional(transactionManager = "transactionManagerPrimary",
-            propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+            propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 10
+    )
     public Boolean delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
         if (citizenFound.isPresent() && citizenFound.get().isEnabled()) {
@@ -161,14 +162,6 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
-            citizenStatusUpdatePublisherService.publishCitizenStatus(
-                    StatusUpdate.builder()
-                            .fiscalCode(fiscalCode)
-                            .updateDateTime(OffsetDateTime.now())
-                            .enabled(false)
-                            .applyTo("all")
-                            .build()
-            );
         }
         return false;
     }

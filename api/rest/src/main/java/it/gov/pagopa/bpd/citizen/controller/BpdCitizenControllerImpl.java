@@ -5,6 +5,8 @@ import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
+import it.gov.pagopa.bpd.citizen.command.DeleteCitizenCommand;
+import it.gov.pagopa.bpd.citizen.command.FilterTransactionCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -13,13 +15,16 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackRe
 import it.gov.pagopa.bpd.citizen.factory.CitizenPatchFactory;
 import it.gov.pagopa.bpd.citizen.factory.ModelFactory;
 import it.gov.pagopa.bpd.citizen.model.*;
+import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
+import it.gov.pagopa.bpd.citizen.service.CitizenStatusUpdatePublisherService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -103,7 +108,9 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("BpdCitizenControllerImpl.delete");
             logger.debug("fiscalCode = [" + fiscalCode + "]");
         }
-        citizenService.delete(fiscalCode);
+        DeleteCitizenCommand deleteCitizenCommand = beanFactory.getBean(
+                DeleteCitizenCommand.class, fiscalCode);
+        deleteCitizenCommand.execute();
     }
 
     @Override
