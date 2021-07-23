@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.citizen.service;
 
+import it.gov.pagopa.bpd.citizen.command.SendAsyncEventCommand;
 import it.gov.pagopa.bpd.citizen.connector.checkiban.CheckIbanRestConnector;
 import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,12 +48,13 @@ public class CitizenServiceImplTest {
     @MockBean
     private CitizenRankingDAO citizenRankingDAOMock;
     @MockBean
+    private CitizenEventRecordDAO citizenEventRecordDAOMock;
+    @MockBean
     private CitizenRankingReplicaDAO citizenRankingReplicaDAOMock;
     @MockBean
     private CheckIbanRestConnector checkIbanRestConnectorMock;
     @SpyBean
     private CitizenService citizenService;
-
 
     @Before
     public void initTest() {
@@ -256,7 +259,6 @@ public class CitizenServiceImplTest {
     @Test
     public void delete() {
         citizenService.delete(EXISTING_FISCAL_CODE);
-
         BDDMockito.verify(citizenDAOMock).save(Mockito.any(Citizen.class));
     }
 
