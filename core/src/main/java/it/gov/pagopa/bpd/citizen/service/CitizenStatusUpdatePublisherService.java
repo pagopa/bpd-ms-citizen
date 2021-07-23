@@ -14,6 +14,6 @@ public interface CitizenStatusUpdatePublisherService {
      *
      * @param statusUpdate StatusUpdate instance to be published
      */
-    void publishCitizenStatus(StatusUpdate statusUpdate) throws Exception;
+    void publishCitizenStatus(StatusUpdate statusUpdate);
 
 }

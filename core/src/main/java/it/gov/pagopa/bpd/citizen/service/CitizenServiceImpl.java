@@ -9,7 +9,6 @@ import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotFoundException;
-import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -36,20 +35,17 @@ class CitizenServiceImpl implements CitizenService {
     private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
-    private final CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService;
 
     @Autowired
     public CitizenServiceImpl(
             ObjectProvider<CitizenDAO> citizenDAO,
             ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
             ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
-            CheckIbanRestConnector checkIbanRestConnector,
-            CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherService) {
+            CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO.getIfAvailable();
         this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
         this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
-        this.citizenStatusUpdatePublisherService = citizenStatusUpdatePublisherService;
     }
 
 
@@ -142,7 +138,8 @@ class CitizenServiceImpl implements CitizenService {
     @SneakyThrows
     @Override
     @Transactional(transactionManager = "transactionManagerPrimary",
-            propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 10
+            propagation = Propagation.REQUIRED, rollbackFor = Exception.class,
+            timeoutString = "${core.citizen.delete.transaction.timeout}"
     )
     public Boolean delete(String fiscalCode) {
         Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
@@ -162,6 +159,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
+            return true;
         }
         return false;
     }

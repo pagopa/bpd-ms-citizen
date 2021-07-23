@@ -4,6 +4,8 @@ import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.citizen.publisher.CitizenStatusPublisherConnector;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.transformer.HeaderAwareRequestTransformer;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
+@Slf4j
 public class CitizenStatusUpdatePublisherServiceImpl implements CitizenStatusUpdatePublisherService {
 
     private final CitizenStatusPublisherConnector citizenStatusPublisherConnectors;
@@ -37,17 +40,18 @@ public class CitizenStatusUpdatePublisherServiceImpl implements CitizenStatusUpd
      * @param statusUpdate Transaction instance to be used as payload for the outbound channel used bu the related connector
      */
 
+    @SneakyThrows
     @Override
     @Retryable(
-            maxAttempts=10,
+            maxAttemptsExpression= "${core.citizen.publish.retry.maxAttempts}",
             value=RuntimeException.class,
             backoff = @Backoff(
-                    delay = 5000,
-                    multiplier = 1.5,
-                    maxDelay = 300000
+                    delayExpression = "${core.citizen.publish.retry.delay}",
+                    multiplierExpression = "${core.citizen.publish.retry.multiplierExpression}",
+                    maxDelayExpression = "${core.citizen.publish.retry.maxDelayExpression}"
             )
     )
-    public void publishCitizenStatus(StatusUpdate statusUpdate) throws Exception {
+    public void publishCitizenStatus(StatusUpdate statusUpdate) {
         RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add("CITIZEN_STATUS_UPDATE", "ALL".getBytes());
         citizenStatusPublisherConnectors.doCall(

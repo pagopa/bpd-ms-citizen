@@ -17,9 +17,9 @@ import javax.validation.Valid;
 @FeignClient(name = "${rest-client.checkiban.serviceCode}", url = "${rest-client.checkiban.base-url}")
 public interface CheckIbanRestClient {
 
-    @PostMapping(value = "${rest-client.checkiban.url}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "${rest-client.checkiban.url}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     CheckIbanResource checkIban(@RequestBody @Valid CheckIbanDTO checkIbanDTO,
-                             @RequestHeader("apikey") String apikey,
+                                @RequestHeader("apikey") String apikey,
                                 @RequestHeader("Auth-Schema") String authSchema);
 }
