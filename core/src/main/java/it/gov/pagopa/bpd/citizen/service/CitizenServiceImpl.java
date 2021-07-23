@@ -5,6 +5,7 @@ import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPExceptio
 import it.gov.pagopa.bpd.citizen.connector.checkiban.exception.UnknowPSPTimeoutException;
 import it.gov.pagopa.bpd.citizen.connector.jpa.*;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenEventRecord;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.CitizenRankingId;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.resource.GetTotalCashbackResource;
 import it.gov.pagopa.bpd.citizen.exception.CitizenNotEnabledException;
@@ -32,6 +33,7 @@ class CitizenServiceImpl implements CitizenService {
 
     private final CitizenDAO citizenDAO;
     private final CitizenRankingDAO citizenRankingDAO;
+    private final CitizenEventRecordDAO citizenEventRecordDAO;
     private final CitizenRankingReplicaDAO citizenRankingReplicaDAO;
     private final CheckIbanRestConnector checkIbanRestConnector;
     private final static String UNKNOWN_PSP = "UNKNOWN_PSP";
@@ -40,12 +42,14 @@ class CitizenServiceImpl implements CitizenService {
     public CitizenServiceImpl(
             ObjectProvider<CitizenDAO> citizenDAO,
             ObjectProvider<CitizenRankingDAO> citizenRankingDAO,
+            ObjectProvider<CitizenEventRecordDAO> citizenEventRecordDAO,
             ObjectProvider<CitizenRankingReplicaDAO> citizenRankingReplicaDAO,
             CheckIbanRestConnector checkIbanRestConnector) {
         this.citizenDAO = citizenDAO.getIfAvailable();
         this.citizenRankingDAO = citizenRankingDAO.getIfAvailable();
         this.citizenRankingReplicaDAO = citizenRankingReplicaDAO.getIfAvailable();
         this.checkIbanRestConnector = checkIbanRestConnector;
+        this.citizenEventRecordDAO = citizenEventRecordDAO.getIfAvailable();
     }
 
 
@@ -159,6 +163,14 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setIssuerCardId(null);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
+
+            CitizenEventRecord citizenEventRecord = new CitizenEventRecord();
+            citizenEventRecord.setFiscalCode(fiscalCode);
+            citizenEventRecord.setEventTimestamp(OffsetDateTime.now());
+            citizenEventRecord.setSentTimestamp(null);
+            citizenEventRecord.setEventStatus(false);
+            citizenEventRecordDAO.save(citizenEventRecord);
+
             return true;
         }
         return false;
@@ -214,6 +226,16 @@ class CitizenServiceImpl implements CitizenService {
         }
 
         return rankingWithMilestone;
+    }
+
+    @Override
+    public void updateEvent(CitizenEventRecord citizenEventRecord) {
+        citizenEventRecordDAO.save(citizenEventRecord);
+    }
+
+    @Override
+    public List<CitizenEventRecord> retrieveActiveEvents(String fiscalCode) {
+        return citizenEventRecordDAO.retrieveEventToSend(fiscalCode);
     }
 
 }

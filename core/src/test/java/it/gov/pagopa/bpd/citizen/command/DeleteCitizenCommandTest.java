@@ -1,9 +1,7 @@
 package it.gov.pagopa.bpd.citizen.command;
 
-import eu.sia.meda.async.util.AsyncUtils;
 import it.gov.pagopa.bpd.citizen.publisher.model.StatusUpdate;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
-import it.gov.pagopa.bpd.citizen.service.CitizenStatusUpdatePublisherService;
 import it.gov.pagopa.bpd.common.BaseTest;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -14,7 +12,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.springframework.beans.factory.BeanFactory;
 
 import java.time.OffsetDateTime;
 
@@ -25,17 +23,17 @@ public class DeleteCitizenCommandTest extends BaseTest {
     @Mock
     CitizenService citizenServiceMock;
     @Mock
-    CitizenStatusUpdatePublisherService citizenStatusUpdatePublisherServiceMock;
-    @Spy
-    AsyncUtils asyncUtils;
+    BeanFactory beanFactory;
+    @Mock
+    SendAsyncEventCommand sendAsyncEventCommand;
 
 
     @Before
     public void initTest() {
         Mockito.reset(
                 citizenServiceMock,
-                asyncUtils,
-                citizenStatusUpdatePublisherServiceMock);
+                beanFactory
+        );
     }
 
     @Test
@@ -46,25 +44,25 @@ public class DeleteCitizenCommandTest extends BaseTest {
         DeleteCitizenCommand deleteCitizenCommand = new DeleteCitizenCommandImpl(
                 "fiscalCode",
                 citizenServiceMock,
-                citizenStatusUpdatePublisherServiceMock,
-                asyncUtils
+                beanFactory
         );
-
 
         try {
 
             BDDMockito.doReturn(true).when(citizenServiceMock)
                     .delete("fiscalCode");
-            BDDMockito.doNothing().when(citizenStatusUpdatePublisherServiceMock)
-                    .publishCitizenStatus(Mockito.eq(statusUpdate));
+            BDDMockito.doReturn(sendAsyncEventCommand).when(beanFactory)
+                    .getBean(Mockito.eq(SendAsyncEventCommand.class), Mockito.any());
+            BDDMockito.doReturn(true).when(sendAsyncEventCommand)
+                    .execute();
+
 
             Boolean isOk = deleteCitizenCommand.execute();
 
             Assert.assertTrue(isOk);
             BDDMockito.verify(citizenServiceMock, Mockito.atLeastOnce())
                     .delete("fiscalCode");
-            BDDMockito.verify(citizenStatusUpdatePublisherServiceMock, Mockito.atLeastOnce())
-                    .publishCitizenStatus(Mockito.any());
+            BDDMockito.verify(sendAsyncEventCommand, Mockito.atLeastOnce()).execute();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,8 +75,7 @@ public class DeleteCitizenCommandTest extends BaseTest {
         return new DeleteCitizenCommandImpl(
                 fiscalCode,
                 citizenServiceMock,
-                citizenStatusUpdatePublisherServiceMock,
-                asyncUtils
+                beanFactory
 
         );
     }
@@ -104,7 +101,7 @@ public class DeleteCitizenCommandTest extends BaseTest {
         deleteCitizenCommand.execute();
 
         BDDMockito.verifyZeroInteractions(citizenServiceMock);
-        BDDMockito.verifyZeroInteractions(citizenStatusUpdatePublisherServiceMock);
+        BDDMockito.verifyZeroInteractions(sendAsyncEventCommand);
 
     }
 
