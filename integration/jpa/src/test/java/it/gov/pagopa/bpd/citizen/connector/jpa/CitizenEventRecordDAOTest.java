@@ -6,6 +6,7 @@ import it.gov.pagopa.bpd.common.connector.jpa.BaseCrudJpaDAOTest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.OffsetDateTime;
 import java.util.function.Function;
 
 public class CitizenEventRecordDAOTest extends BaseCrudJpaDAOTest<CitizenEventRecordDAO, CitizenEventRecord, String> {
@@ -51,6 +52,7 @@ public class CitizenEventRecordDAOTest extends BaseCrudJpaDAOTest<CitizenEventRe
     @Override
     protected void alterEntityToUpdate(CitizenEventRecord entity) {
         entity.setEventStatus(true);
+        entity.setSentTimestamp(OffsetDateTime.now());
     }
 
 
