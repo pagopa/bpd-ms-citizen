@@ -2,7 +2,6 @@ package it.gov.pagopa.bpd.citizen.command;
 
 import eu.sia.meda.core.command.BaseCommand;
 import it.gov.pagopa.bpd.citizen.service.CitizenService;
-import it.gov.pagopa.bpd.citizen.service.CitizenStatusUpdatePublisherService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
@@ -10,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 
 /**
  * Base implementation of the DeleteCitizenCommand, extending Meda BaseCommand class, the command

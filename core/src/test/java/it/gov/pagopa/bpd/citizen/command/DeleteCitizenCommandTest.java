@@ -37,7 +37,7 @@ public class DeleteCitizenCommandTest extends BaseTest {
     }
 
     @Test
-    public void test_BDPActive() {
+    public void test_OK_Active() {
 
         StatusUpdate statusUpdate = getRequestObject();
 
@@ -55,7 +55,6 @@ public class DeleteCitizenCommandTest extends BaseTest {
                     .getBean(Mockito.eq(SendAsyncEventCommand.class), Mockito.any());
             BDDMockito.doReturn(true).when(sendAsyncEventCommand)
                     .execute();
-
 
             Boolean isOk = deleteCitizenCommand.execute();
 
@@ -117,6 +116,7 @@ public class DeleteCitizenCommandTest extends BaseTest {
             BDDMockito.verifyZeroInteractions(citizenServiceMock);
             BDDMockito.verifyZeroInteractions(deleteCitizenCommand);
             BDDMockito.verifyZeroInteractions();
+
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();

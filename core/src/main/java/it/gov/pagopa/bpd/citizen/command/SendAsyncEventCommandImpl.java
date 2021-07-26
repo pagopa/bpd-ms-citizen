@@ -13,6 +13,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Component
@@ -56,6 +57,8 @@ public class SendAsyncEventCommandImpl extends BaseCommand<Boolean> implements S
                                 .applyTo("all")
                                 .build()
                 );
+                citizenEventRecord.setSentTimestamp(OffsetDateTime.now());
+                citizenService.updateEvent(citizenEventRecord);
                 return true;
             });
         }
