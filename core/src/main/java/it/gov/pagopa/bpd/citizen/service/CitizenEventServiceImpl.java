@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.citizen.service;
 
 import it.gov.pagopa.bpd.citizen.command.SendAsyncEventCommand;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class CitizenEventServiceImpl implements CitizenEventService {
 
     private BeanFactory beanFactory;
@@ -25,9 +27,10 @@ public class CitizenEventServiceImpl implements CitizenEventService {
     @Scheduled(cron = "${core.CitizenEventService.retrySendingEvents.scheduler}")
     @SchedulerLock(name = "CitizenEventServiceImpl.retrySendingEvents",
             lockAtMostFor = "${core.CitizenEventService.retrySendingEvents.lockAtMostFor}")
-    public void retrySendingEvents(String fiscalCode) {
+    public void retrySendingEvents() {
+        log.debug("CitizenEventServiceImpl.retrySendingEvents");
         SendAsyncEventCommand sendAsyncEventCommand = beanFactory.getBean(
-                SendAsyncEventCommand.class, fiscalCode);
+                SendAsyncEventCommand.class);
         sendAsyncEventCommand.execute();
     }
 

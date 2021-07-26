@@ -26,6 +26,8 @@ public class SendAsyncEventCommandImpl extends BaseCommand<Boolean> implements S
 
     private String fiscalCode;
 
+    public SendAsyncEventCommandImpl() {}
+
     public SendAsyncEventCommandImpl(String fiscalCode) {
         this.fiscalCode = fiscalCode;
     }
@@ -44,6 +46,8 @@ public class SendAsyncEventCommandImpl extends BaseCommand<Boolean> implements S
     @SneakyThrows
     @Override
     public Boolean doExecute() {
+
+        log.debug("SendAsyncEventCommandImpl.doExecute");
 
         List<CitizenEventRecord> citizenEventRecordList = citizenService.retrieveActiveEvents(fiscalCode);
 

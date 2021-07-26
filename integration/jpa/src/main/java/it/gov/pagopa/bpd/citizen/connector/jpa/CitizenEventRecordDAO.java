@@ -20,7 +20,7 @@ public interface CitizenEventRecordDAO extends CrudJpaDAO<CitizenEventRecord, St
     CitizenEventRecord save(@NotNull CitizenEventRecord entity);
 
     @Query(value = "SELECT cer FROM CitizenEventRecord cer WHERE" +
-            "(fiscalCode IS NULL OR cer.fiscalCode = :fiscalCode) AND " +
+            "(:fiscalCode IS NULL OR cer.fiscalCode = :fiscalCode) AND " +
             "cer.sentTimestamp IS NULL AND cer.enabled = true")
     List<CitizenEventRecord> retrieveEventToSend(String fiscalCode);
 
