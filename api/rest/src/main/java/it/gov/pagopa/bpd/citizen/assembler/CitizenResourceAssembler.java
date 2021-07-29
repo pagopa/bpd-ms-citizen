@@ -3,7 +3,6 @@ package it.gov.pagopa.bpd.citizen.assembler;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenResource;
 import it.gov.pagopa.bpd.citizen.model.CitizenUpdateResource;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -27,19 +26,27 @@ public class CitizenResourceAssembler {
 
         if (citizen != null) {
             resource = new CitizenResource();
-            BeanUtils.copyProperties(citizen, resource);
+            resource.setEnabled(citizen.isEnabled());
+            resource.setFiscalCode(citizen.getFiscalCode());
+            resource.setIssuerCardId(citizen.getIssuerCardId());
+            resource.setPayoffInstr(citizen.getPayoffInstr());
+            resource.setTechnicalAccountHolder(citizen.getTechnicalAccountHolder());
+            resource.setTimestampTC(citizen.getTimestampTC());
+            if (citizen.getPayoffInstrType() != null) {
+                resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
+            }
 
             if (isIssuer != null && isIssuer && citizen.getTechnicalAccountHolder() != null) {
-                    resource.setTechnicalAccount(null);
+                resource.setTechnicalAccount(null);
                 if (flagTechnicalAccount == null || !flagTechnicalAccount) {
                     resource.setTechnicalAccountHolder(null);
                     resource.setIssuerCardId(null);
-                }  else {
+                } else {
                     resource.setPayoffInstr(PAYOFF_INSTR_PLACEHOLDER);
                 }
-            } else if((isIssuer == null || !isIssuer) && citizen.getTechnicalAccountHolder() != null){
+            } else if ((isIssuer == null || !isIssuer) && citizen.getTechnicalAccountHolder() != null) {
                 resource.setTechnicalAccount(TECHNICAL_ACCOUNT_HOLDER_PLACEHOLDER_NOT_ISSUER
-                        +citizen.getTechnicalAccountHolder());
+                        + citizen.getTechnicalAccountHolder());
             }
         }
 
@@ -51,8 +58,13 @@ public class CitizenResourceAssembler {
 
         if (citizen != null) {
             resource = new CitizenUpdateResource();
-            BeanUtils.copyProperties(citizen, resource);
-
+            resource.setEnabled(citizen.isEnabled());
+            resource.setFiscalCode(citizen.getFiscalCode());
+            resource.setPayoffInstr(citizen.getPayoffInstr());
+            resource.setTimestampTC(citizen.getTimestampTC());
+            if (citizen.getPayoffInstrType() != null) {
+                resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
+            }
         }
 
         return resource;

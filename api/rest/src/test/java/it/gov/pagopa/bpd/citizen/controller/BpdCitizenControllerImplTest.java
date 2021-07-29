@@ -2,13 +2,15 @@ package it.gov.pagopa.bpd.citizen.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.sia.meda.config.ArchConfiguration;
+import eu.sia.meda.DummyConfiguration;
+import eu.sia.meda.error.config.LocalErrorConfig;
+import eu.sia.meda.error.handler.MedaExceptionHandler;
+import eu.sia.meda.error.service.impl.LocalErrorManagerServiceImpl;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenCashbackResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingMilestoneResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenRankingResourceAssembler;
 import it.gov.pagopa.bpd.citizen.assembler.CitizenResourceAssembler;
 import it.gov.pagopa.bpd.citizen.command.DeleteCitizenCommand;
-import it.gov.pagopa.bpd.citizen.command.FilterTransactionCommand;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.CitizenTransactionMilestoneConverter;
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
@@ -26,19 +28,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
@@ -47,15 +50,25 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = BpdCitizenControllerImpl.class)
-@AutoConfigureMockMvc(secure = false)
-@EnableWebMvc
+@RunWith(SpringRunner.class)
+@WebMvcTest(value = {BpdCitizenControllerImpl.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@ContextConfiguration(classes = {
+        BpdCitizenControllerImpl.class,
+        DummyConfiguration.class,
+        MedaExceptionHandler.class,
+        LocalErrorManagerServiceImpl.class
+})
+@Import(LocalErrorConfig.class)
+@TestPropertySource(properties = {
+        "error-manager.enabled=true",
+        "spring.application.name=bpd-ms-citizen-api-rest"
+})
 public class BpdCitizenControllerImplTest {
 
     @Autowired
     protected MockMvc mvc;
-    protected ObjectMapper objectMapper = new ArchConfiguration().objectMapper();
+    @Autowired
+    protected ObjectMapper objectMapper;
     @MockBean
     private CitizenService citizenServiceSpy;
     @MockBean
@@ -83,19 +96,19 @@ public class BpdCitizenControllerImplTest {
     public void configureTest() {
 
         Citizen citizen = new Citizen();
-        citizen.setFiscalCode("fiscalCode");
+        citizen.setFiscalCode("AAAAAA00A00A000A");
 
-        BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("AAAAAA00A00A000A"));
         Citizen citizenPatched = new Citizen();
         citizenPatched.setPayoffInstr("Test");
         citizenPatched.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
-        citizenPatched.setUpdateUser("fiscalCode");
+        citizenPatched.setUpdateUser("AAAAAA00A00A000A");
 
         Citizen citizenPatch = new Citizen();
         citizenPatch.setPayoffInstr("Test");
         citizenPatch.setPayoffInstrType(Citizen.PayoffInstrumentType.IBAN);
 
-        Mockito.when(citizenTransactionConverter.getFiscalCode()).thenReturn("fiscalCode");
+        Mockito.when(citizenTransactionConverter.getFiscalCode()).thenReturn("AAAAAA00A00A000A");
         Mockito.when(citizenTransactionConverter.getRanking()).thenReturn(1L);
         Mockito.when(citizenTransactionConverter.getTotalParticipants()).thenReturn(100L);
         Mockito.when(citizenTransactionConverter.getMaxTrxNumber()).thenReturn(15L);
@@ -103,7 +116,7 @@ public class BpdCitizenControllerImplTest {
         Mockito.when(citizenTransactionConverter.getTrxNumber()).thenReturn(5L);
         Mockito.when(citizenTransactionConverter.getAwardPeriodId()).thenReturn(1L);
 
-        Mockito.when(citizenTransactionMilestoneConverter.getFiscalCode()).thenReturn("fiscalCode");
+        Mockito.when(citizenTransactionMilestoneConverter.getFiscalCode()).thenReturn("AAAAAA00A00A000A");
         Mockito.when(citizenTransactionMilestoneConverter.getRanking()).thenReturn(1L);
         Mockito.when(citizenTransactionMilestoneConverter.getTotalParticipants()).thenReturn(100L);
         Mockito.when(citizenTransactionMilestoneConverter.getMaxTrxNumber()).thenReturn(15L);
@@ -121,29 +134,29 @@ public class BpdCitizenControllerImplTest {
         cashback.setTransactionNumber(10L);
 
         CitizenRankingId id = new CitizenRankingId();
-        id.setFiscalCode("fiscalCode");
+        id.setFiscalCode("AAAAAA00A00A000A");
         id.setAwardPeriodId(1L);
 
 
         BDDMockito.doReturn(true).when(deleteCitizenCommandMock).execute();
 
-        BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(citizen).when(citizenServiceSpy).find(Mockito.eq("AAAAAA00A00A000A"));
 
-        BDDMockito.doReturn(new Citizen()).when(citizenServiceSpy).update(Mockito.eq("fiscalCode"), Mockito.any());
+        BDDMockito.doReturn(new Citizen()).when(citizenServiceSpy).update(Mockito.eq("AAAAAA00A00A000A"), Mockito.any());
 
-        BDDMockito.doReturn(true).when(citizenServiceSpy).delete(Mockito.eq("fiscalCode"));
+        BDDMockito.doReturn(true).when(citizenServiceSpy).delete(Mockito.eq("AAAAAA00A00A000A"));
 
-        BDDMockito.doReturn("OK").when(citizenServiceSpy).patch(Mockito.eq("fiscalCode"), Mockito.eq(citizenPatch));
+        BDDMockito.doReturn("OK").when(citizenServiceSpy).patch(Mockito.eq("AAAAAA00A00A000A"), Mockito.eq(citizenPatch));
 
         BDDMockito.doThrow(new EntityNotFoundException("Unable to find " + Citizen.class.getName() + " with id noFiscalCode"))
                 .when(citizenServiceSpy).patch(Mockito.eq("noFiscalCode"), Mockito.any());
 
-        BDDMockito.doReturn(citizenRanking).when(citizenServiceSpy).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
+        BDDMockito.doReturn(citizenRanking).when(citizenServiceSpy).findRankingDetails(Mockito.eq("AAAAAA00A00A000A"), Mockito.anyLong());
 
         BDDMockito.doReturn(new GetTotalCashbackResource() {
             @Override
             public String getFiscalCode() {
-                return "fiscalCode";
+                return "AAAAAA00A00A000A";
             }
 
             @Override
@@ -167,17 +180,17 @@ public class BpdCitizenControllerImplTest {
             }
         }).when(citizenServiceSpy).getTotalCashback(Mockito.eq(id));
 
-        BDDMockito.when(citizenServiceSpy.findRankingMilestoneDetails(Mockito.eq("fiscalCode"), Mockito.anyLong())).thenReturn(citizenRankingMilestone);
+        BDDMockito.when(citizenServiceSpy.findRankingMilestoneDetails(Mockito.eq("AAAAAA00A00A000A"), Mockito.anyLong())).thenReturn(citizenRankingMilestone);
     }
 
 
     @Test
     public void find() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode")
-                .param("isIssuer","false")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .get("/bpd/citizens/AAAAAA00A00A000A")
+                .param("isIssuer", "false")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         CitizenUpdateResource pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
@@ -187,11 +200,11 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(false));
 
         result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode")
+                .get("/bpd/citizens/AAAAAA00A00A000A")
                 .param("flagTechnicalAccount", "true")
-                .param("isIssuer","true")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .param("isIssuer", "true")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
@@ -201,11 +214,11 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(true), Mockito.eq(true));
 
         result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode")
+                .get("/bpd/citizens/AAAAAA00A00A000A")
                 .param("flagTechnicalAccount", "false")
-                .param("isIssuer","true")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .param("isIssuer", "true")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
@@ -215,9 +228,9 @@ public class BpdCitizenControllerImplTest {
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(false), Mockito.eq(true));
 
         result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .get("/bpd/citizens/AAAAAA00A00A000A")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         pageResult = objectMapper.readValue(result.getResponse().getContentAsString(),
@@ -226,7 +239,7 @@ public class BpdCitizenControllerImplTest {
         Assert.assertNotNull(pageResult);
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenResource(Mockito.any(Citizen.class), Mockito.eq(null), Mockito.eq(null));
 
-        BDDMockito.verify(citizenServiceSpy, Mockito.times(4)).find(Mockito.eq("fiscalCode"));
+        BDDMockito.verify(citizenServiceSpy, Mockito.times(4)).find(Mockito.eq("AAAAAA00A00A000A"));
 
     }
 
@@ -234,9 +247,9 @@ public class BpdCitizenControllerImplTest {
     public void update() throws Exception {
         CitizenDTO citizen = new CitizenDTO();
         citizen.setTimestampTC(OffsetDateTime.now());
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/bpd/citizens/fiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/bpd/citizens/AAAAAA00A00A000A")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -244,14 +257,14 @@ public class BpdCitizenControllerImplTest {
                 CitizenUpdateResource.class);
 
         Assert.assertNotNull(pageResult);
-        BDDMockito.verify(citizenServiceSpy).update(Mockito.eq("fiscalCode"), Mockito.any());
+        BDDMockito.verify(citizenServiceSpy).update(Mockito.eq("AAAAAA00A00A000A"), Mockito.any());
         BDDMockito.verify(citizenFactorySpy).createModel(Mockito.any());
         BDDMockito.verify(citizenResourceAssemblerSpy).toCitizenUpdateResource(Mockito.any(Citizen.class));
     }
 
     @Test
     public void delete() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.delete("/bpd/citizens/fiscalCode"))
+        mvc.perform(MockMvcRequestBuilders.delete("/bpd/citizens/AAAAAA00A00A000A"))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
         BDDMockito.verify(deleteCitizenCommandMock).execute();
     }
@@ -269,8 +282,8 @@ public class BpdCitizenControllerImplTest {
         citizen.setIssuerCardId("issuerCardId");
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/DTUMTO13B14I814Z")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(citizen)))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
@@ -283,8 +296,8 @@ public class BpdCitizenControllerImplTest {
     public void updatePaymentMethodKoValidation() throws Exception {
 
         mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/noFiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(new CitizenPatchDTO())))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
@@ -305,9 +318,9 @@ public class BpdCitizenControllerImplTest {
 //        citizen.setAccountHolderSurname("accountHolderSurname");
 //
 //
-//        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/fiscalCode")
-//                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-//                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//        mvc.perform(MockMvcRequestBuilders.patch("/bpd/citizens/AAAAAA00A00A000A")
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .accept(MediaType.APPLICATION_JSON_VALUE)
 //                .content(objectMapper.writeValueAsString(citizen)))
 //                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
 //                .andReturn();
@@ -321,35 +334,37 @@ public class BpdCitizenControllerImplTest {
     public void findRanking() throws Exception {
         Long awardPeriodId = 1L;
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode/ranking")
+                .get("/bpd/citizens/AAAAAA00A00A000A/ranking")
                 .param("awardPeriodId", String.valueOf(awardPeriodId))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         List<CitizenRankingResource> citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
-                new TypeReference<List<CitizenRankingResource>>() {});
+                new TypeReference<List<CitizenRankingResource>>() {
+                });
 
         Assert.assertNotNull(citizenRankingResult);
-        BDDMockito.verify(citizenServiceSpy).findRankingDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
+        BDDMockito.verify(citizenServiceSpy).findRankingDetails(Mockito.eq("AAAAAA00A00A000A"), Mockito.anyLong());
     }
 
     @Test
     public void findRankingMilestone() throws Exception {
         Long awardPeriodId = 1L;
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get("/bpd/citizens/fiscalCode/ranking/milestone")
+                .get("/bpd/citizens/AAAAAA00A00A000A/ranking/milestone")
                 .param("awardPeriodId", String.valueOf(awardPeriodId))
-                .param("fiscalCode", "fiscalCode")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .param("fiscalCode", "AAAAAA00A00A000A")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         List<CitizenRankingMilestoneResource> citizenRankingResult = objectMapper.readValue(result.getResponse().getContentAsString(),
-                new TypeReference<List<CitizenRankingMilestoneResource>>() {});
+                new TypeReference<List<CitizenRankingMilestoneResource>>() {
+                });
 
         Assert.assertNotNull(citizenRankingResult);
-        BDDMockito.verify(citizenServiceSpy).findRankingMilestoneDetails(Mockito.eq("fiscalCode"), Mockito.anyLong());
+        BDDMockito.verify(citizenServiceSpy).findRankingMilestoneDetails(Mockito.eq("AAAAAA00A00A000A"), Mockito.anyLong());
         BDDMockito.verify(citizenRankingMilestoneResourceAssemblerSpy).toResource(Mockito.eq(citizenRankingMilestone));
     }
 
@@ -357,15 +372,15 @@ public class BpdCitizenControllerImplTest {
     public void getTotalCashback() throws Exception {
         CitizenRankingId id = new CitizenRankingId();
         Long awardPeriodId = 1L;
-        String fiscalCode = "fiscalCode";
+        String fiscalCode = "AAAAAA00A00A000A";
         id.setFiscalCode(fiscalCode);
         id.setAwardPeriodId(awardPeriodId);
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get("/bpd/citizens/total-cashback")
                 .param("fiscalCode", fiscalCode)
                 .param("awardPeriodId", String.valueOf(awardPeriodId))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         CashbackResource resource = objectMapper.readValue(result.getResponse().getContentAsString(),

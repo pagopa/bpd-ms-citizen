@@ -2,7 +2,6 @@ package it.gov.pagopa.bpd.citizen.factory;
 
 import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
 import it.gov.pagopa.bpd.citizen.model.CitizenPatchDTO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,8 +13,13 @@ public class CitizenPatchFactory implements ModelFactory<CitizenPatchDTO, Citize
     @Override
     public Citizen createModel(CitizenPatchDTO dto) {
         final Citizen result = new Citizen();
-
-        BeanUtils.copyProperties(dto, result);
+        result.setPayoffInstr(dto.getPayoffInstr());
+        result.setPayoffInstrType(dto.getPayoffInstrType());
+        result.setAccountHolderCF(dto.getAccountHolderCF());
+        result.setAccountHolderName(dto.getAccountHolderName());
+        result.setAccountHolderSurname(dto.getAccountHolderSurname());
+        result.setTechnicalAccountHolder(dto.getTechnicalAccountHolder());
+        result.setIssuerCardId(dto.getIssuerCardId());
 
         return result;
     }
