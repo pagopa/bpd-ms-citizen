@@ -17,6 +17,13 @@ spec:
           image: cstardacr.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2000Mi"
+            requests:
+              cpu: "0.5"
+              memory: "700Mi"
           envFrom:
             - secretRef:
                 name: postgres-credentials
@@ -81,6 +88,13 @@ spec:
           image: cstardacr.azurecr.io/bpdmscitizen
           ports:
             - containerPort: 8080
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2000Mi"
+            requests:
+              cpu: "0.5"
+              memory: "500Mi"
           env:
             - name: CITIZEN_DB_HOST
               valueFrom:
