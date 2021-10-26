@@ -37,11 +37,11 @@ spec:
                 name: jvm
           resources:
             limits:
-              cpu: 800m
-              memory: 4Gi
+              cpu: 500m
+              memory: 1Gi
             requests:
-              cpu: 50m
-              memory: 256Mi
+              cpu: 200m
+              memory: 600Mi
           livenessProbe:
             httpGet:
               path: /actuator/health
@@ -149,11 +149,11 @@ spec:
                 name: jvm
           resources:
             limits:
-              cpu: 800m
-              memory: 4Gi
+              cpu: 500m
+              memory: 1Gi
             requests:
-              cpu: 50m
-              memory: 256Mi
+              cpu: 200m
+              memory: 600Mi
           livenessProbe:
             httpGet:
               path: /actuator/health
