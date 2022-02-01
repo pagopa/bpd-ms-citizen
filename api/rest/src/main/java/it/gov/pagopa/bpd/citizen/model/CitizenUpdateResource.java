@@ -1,5 +1,7 @@
 package it.gov.pagopa.bpd.citizen.model;
 
+import it.gov.pagopa.bpd.citizen.connector.jpa.model.Citizen;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,5 +29,8 @@ public class CitizenUpdateResource {
     @ApiModelProperty(value = "${swagger.citizen.enabled}", required = true)
     @JsonProperty(required = true)
     private boolean enabled;
+    @ApiModelProperty(value = "${swagger.citizen.optInStatus}", required = false)
+    @JsonProperty(required = false)
+    private Citizen.OptInStatus optInStatus;
 
 }
