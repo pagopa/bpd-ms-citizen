@@ -32,6 +32,7 @@ public class CitizenResourceAssembler {
             resource.setPayoffInstr(citizen.getPayoffInstr());
             resource.setTechnicalAccountHolder(citizen.getTechnicalAccountHolder());
             resource.setTimestampTC(citizen.getTimestampTC());
+            resource.setOptInStatus(citizen.getOptInStatus());
             if (citizen.getPayoffInstrType() != null) {
                 resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
             }
@@ -62,6 +63,7 @@ public class CitizenResourceAssembler {
             resource.setFiscalCode(citizen.getFiscalCode());
             resource.setPayoffInstr(citizen.getPayoffInstr());
             resource.setTimestampTC(citizen.getTimestampTC());
+            resource.setOptInStatus(citizen.getOptInStatus());
             if (citizen.getPayoffInstrType() != null) {
                 resource.setPayoffInstrType(citizen.getPayoffInstrType().toString());
             }
