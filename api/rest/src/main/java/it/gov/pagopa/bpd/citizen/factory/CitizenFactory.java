@@ -15,6 +15,7 @@ public class CitizenFactory implements ModelFactory<CitizenDTO, Citizen> {
         final Citizen result = new Citizen();
 
         result.setTimestampTC(dto.getTimestampTC());
+        result.setOptInStatus(dto.getOptInStatus());
 
         return result;
     }
