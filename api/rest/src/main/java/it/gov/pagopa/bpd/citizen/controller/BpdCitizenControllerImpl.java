@@ -79,9 +79,10 @@ public class BpdCitizenControllerImpl extends StatelessController implements Bpd
             logger.debug("BpdCitizenControllerImpl.update");
             logger.debug("fiscalCode = [" + fiscalCode + "], citizen = [" + citizen + "]");
         }
-
+        logger.info("BpdCitizenControllerImpl.update: fiscalCode = [" + fiscalCode + "], ReceivedOptInStatus = [" + citizen.getOptInStatus() + "]");
         final Citizen entity = citizenFactory.createModel(citizen);
         Citizen citizenEntity = citizenService.update(fiscalCode, entity);
+        logger.info("BpdCitizenControllerImpl.update: fiscalCode = [" + fiscalCode + "], SavedOptInStatus = [" + citizenEntity.getOptInStatus() + "]");
         return citizenResourceAssembler.toCitizenUpdateResource(citizenEntity);
     }
 
