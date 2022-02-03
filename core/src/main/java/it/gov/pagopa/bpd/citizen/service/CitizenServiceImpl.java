@@ -61,7 +61,7 @@ class CitizenServiceImpl implements CitizenService {
             if (citizenFound.get().isEnabled()) { // Citizen enrolled and enabled
                 if (cz.getOptInStatus() != null &&
                     citizenFound.get().getOptInStatus() == Citizen.OptInStatus.NOREQ && 
-                    cz.getOptInStatus() != Citizen.OptInStatus.NOREQ && ) {
+                    cz.getOptInStatus() != Citizen.OptInStatus.NOREQ ) {
                     // If opt in status has never been set ..
                     citizenFound.get().setOptInStatus(cz.getOptInStatus());
                     result = citizenDAO.save(citizenFound.get());
