@@ -55,4 +55,14 @@ public class Citizen extends BaseEntity {
     @Column(name = "issuer_card_id_s")
     private String issuerCardId;
 
+    @Column(name = "opt_in_status_s")
+    @Enumerated(EnumType.STRING)
+    private OptInStatus optInStatus;
+
+    public enum OptInStatus {
+        NOREQ,
+        ACCEPTED,
+        DENIED
+    }
+
 }

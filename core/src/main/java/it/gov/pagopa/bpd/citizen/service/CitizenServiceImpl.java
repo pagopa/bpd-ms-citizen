@@ -57,17 +57,27 @@ class CitizenServiceImpl implements CitizenService {
     public Citizen update(String fiscalCode, Citizen cz) {
         final Citizen result;
         final Optional<Citizen> citizenFound = citizenDAO.findById(fiscalCode);
-        if (citizenFound.isPresent()) {
-            if (citizenFound.get().isEnabled()) {
-                result = citizenFound.get();
-            } else {
+        if (citizenFound.isPresent()) { // Citizen already enrolled
+            if (citizenFound.get().isEnabled()) { // Citizen enrolled and enabled
+                if (cz.getOptInStatus() != null &&
+                    citizenFound.get().getOptInStatus() == Citizen.OptInStatus.NOREQ && 
+                    cz.getOptInStatus() != Citizen.OptInStatus.NOREQ ) {
+                    // If opt in status has never been set ..
+                    citizenFound.get().setOptInStatus(cz.getOptInStatus());
+                    result = citizenDAO.save(citizenFound.get());
+                }
+                else {
+                    result = citizenFound.get();
+                }
+            } else { 
+                // Citizen enrolled but not enabled: can't set optin status
                 citizenFound.get().setEnabled(true);
                 citizenFound.get().setUpdateUser(fiscalCode);
                 citizenFound.get().setUpdateDate(OffsetDateTime.now());
                 citizenFound.get().setTimestampTC(cz.getTimestampTC());
                 result = citizenDAO.save(citizenFound.get());
             }
-        } else {
+        } else { // Citizen never enrolled
             cz.setFiscalCode(fiscalCode);
             cz.setInsertUser(fiscalCode);
             cz.setInsertDate(OffsetDateTime.now());
@@ -149,6 +159,7 @@ class CitizenServiceImpl implements CitizenService {
             citizen.setUpdateDate(OffsetDateTime.now());
             citizen.setCancellation(OffsetDateTime.now());
             citizen.setIssuerCardId(null);
+            citizen.setOptInStatus(Citizen.OptInStatus.NOREQ);
             citizenDAO.save(citizen);
             citizenRankingDAO.deactivateCitizenRankingByFiscalCode(fiscalCode);
             return true;
